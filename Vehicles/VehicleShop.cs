@@ -198,7 +198,7 @@ namespace GTA_RP.Vehicles
                         // Inform bueyer that he got new vehicle
 
                         character.money -= price;
-                        string licensePlate = VehicleManager.Instance().GenerateUnusedCivilianLicensePlate();
+                        string licensePlate = VehicleManager.Instance().GenerateUnusedLicensePlate();
                         int id = VehicleManager.Instance().AddVehicleToDatabase(character.ID, Factions.FactionI.CIVILIAN, model, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, licensePlate, 0, color1, color2);
                         VehicleManager.Instance().SendUpdatedVehicleToClient(character, id, licensePlate, false);
                         API.shared.triggerClientEvent(character.owner.client, "EVENT_CHARACTER_EXIT_VEHICLE_SHOP");

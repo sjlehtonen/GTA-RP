@@ -8,6 +8,7 @@ using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Factions;
 using GTA_RP.Misc;
 using System;
+using System.Text;
 
 namespace GTA_RP.Vehicles
 {
@@ -141,6 +142,47 @@ namespace GTA_RP.Vehicles
                 this.OnVehicleEnterEvent.Invoke(c, vehicle);
         }
 
+        /// <summary>
+        /// Generates a random string with given length
+        /// </summary>
+        /// <param name="length">Length</param>
+        /// <returns>Random string</returns>
+        private String GenerateRandomString(int length)
+        {
+            string values = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+            Random rnd = new Random();
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < length; i++)
+                builder.Append(values[rnd.Next(0, values.Length)]);
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// Informs player whether vehicles was locked or unlocked
+        /// </summary>
+        /// <param name="client">Client</param>
+        /// <param name="locked">Locked</param>
+        private void SendVehicleLockedMessage(Client client, Boolean locked)
+        {
+            if (locked) API.shared.sendNotificationToPlayer(client, "Vehicle locked");
+            else API.shared.sendNotificationToPlayer(client, "Vehicle unlocked");
+        }
+
+        /// <summary>
+        /// Checks if vehicle exists with the given license plate
+        /// </summary>
+        /// <param name="licensePlate">Text of the license plate</param>
+        /// <returns>True if vehicle exists, otherwise false</returns>
+        private Boolean DoesVehicleExistWithLicensePlate(String licensePlate)
+        {
+            foreach(RPVehicle v in vehicles)
+            {
+                if (v.licensePlateText.Equals(licensePlate))
+                    return true;
+            }
+
+            return false;
+        }
         
         /// <summary>
         /// Checks whether any vehicles exist
@@ -270,9 +312,16 @@ namespace GTA_RP.Vehicles
         /// Generates an unused license plate for civilian vehicle
         /// </summary>
         /// <returns>License plate text</returns>
-        public string GenerateUnusedCivilianLicensePlate()
+        public string GenerateUnusedLicensePlate()
         {
-            return "a";
+            StringBuilder nameBuilder = new StringBuilder();
+            do
+            {
+                nameBuilder.Append("LS ");
+                nameBuilder.Append(this.GenerateRandomString(5));
+            } while (this.DoesVehicleExistWithLicensePlate(nameBuilder.ToString()));
+
+            return nameBuilder.ToString();
         }
 
         /// <summary>
@@ -339,10 +388,8 @@ namespace GTA_RP.Vehicles
             RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
             if (vehicle != null && character.ID == vehicle.ownerId)
             {
-                if (!vehicle.spawned)
-                    vehicle.Spawn();
-                else
-                    API.shared.sendNotificationToPlayer(c, "This vehicle is already active!");
+                if (!vehicle.spawned) vehicle.Spawn();
+                else API.shared.sendNotificationToPlayer(c, "This vehicle is already active!");
             }
 
         }
@@ -360,13 +407,38 @@ namespace GTA_RP.Vehicles
             {
                 if (vehicle.handle == API.shared.getPlayerVehicle(c))
                 {
-                    if (vehicle.position.DistanceTo(vehicle.parkPosition) <= parkDistance)
-                        vehicle.Park();
-                    else
-                        API.shared.sendNotificationToPlayer(c, "You have to close to the parking spot in order to park the vehicle!");
+                    if (vehicle.position.DistanceTo(vehicle.parkPosition) <= parkDistance) vehicle.Park();
+                    else API.shared.sendNotificationToPlayer(c, "You have to close to the parking spot in order to park the vehicle!");
                 }
                 else
                     API.shared.sendNotificationToPlayer(c, "You need to be in the vehicle you want to park!");
+            }
+        }
+
+        public void LockVehicleWithId(Client client, int id)
+        {
+            RPVehicle vehicle = GetVehicleWithId(id);
+
+            if (vehicle != null && vehicle.spawned)
+            {
+                if (PlayerManager.Instance().IsClientUsingCharacter(client))
+                {
+                    Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
+                    if (vehicle.ownerId == character.ID)
+                    {
+                        if (vehicle.position.DistanceTo(character.position) < doorLockDistance)
+                        {
+                            vehicle.ToggleDoorLock();
+                            this.SendVehicleLockedMessage(client, vehicle.locked);
+                        }
+                        else
+                            API.shared.sendNotificationToPlayer(client, "You need to be closer to the vehicle");
+                    }
+                }
+            }
+            else
+            {
+                API.shared.sendNotificationToPlayer(client, "Vehicle needs to be active!");
             }
         }
 
@@ -377,25 +449,22 @@ namespace GTA_RP.Vehicles
         public void LockVehicle(Client client)
         {
             RPVehicle nearest = VehicleManager.Instance().GetNearestVehicle(client.position);
+            if (!PlayerManager.Instance().IsClientUsingCharacter(client)) return;
+
             if (nearest != null && client.position.DistanceTo(nearest.position) < doorLockDistance)
             {
                 Character c = PlayerManager.Instance().GetPlayerByClient(client).activeCharacter;
                 Boolean locked = false;
 
-                if (c.factionID == nearest.factionID && c.onDuty)
-                    locked = true;
-                else if (c.owner.id == nearest.ownerId)
-                    locked = true;
+                if (c.factionID == nearest.factionID && c.onDuty) locked = true;
+                else if (c.owner.id == nearest.ownerId) locked = true;
 
                 // check if player has keys to the car 
 
                 if (locked)
                 {
                     nearest.ToggleDoorLock();
-                    if (nearest.locked)
-                        API.shared.sendNotificationToPlayer(client, "Vehicle locked");
-                    else
-                        API.shared.sendNotificationToPlayer(client, "Vehicle unlocked");
+                    this.SendVehicleLockedMessage(client, locked);
                 }
             }
 
@@ -424,6 +493,7 @@ namespace GTA_RP.Vehicles
             reader.Close();
 
             // other inits
+            // switch inside the shop
             vehicleShop.LoadVehiclePricesFromDatabase();
         }
     }

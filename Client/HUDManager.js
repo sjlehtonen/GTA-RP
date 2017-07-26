@@ -44,6 +44,7 @@ class HUDManager
 
         // Vehicle menu values
         this.vehicles = [];
+        this.vehiclesMenu = null;
         this.vehicleMenuItems = [];
         //
 
@@ -292,27 +293,35 @@ class HUDManager
         return menu;
     }
 
+    spawnVehicle(id) {
+        API.triggerServerEvent("EVENT_TRY_SPAWN_VEHICLE", id);
+    }
+
+    parkVehicle(id) {
+        API.triggerServerEvent("EVENT_TRY_PARK_VEHICLE", id);
+    }
+
+    lockVehicle(id) {
+        API.triggerServerEvent("EVENT_TRY_LOCK_VEHICLE", id);
+    }
+
     createVehicleDetailMenu(id, licensePlate, spawned) {
         let menu = API.createMenu("Player Menu", "Vehicle " + licensePlate, 0, 0, 6);
-        let item1;
-
-        if (spawned)
-            item1 = API.createMenuItem("Park vehicle", "You have to be inside the vehicle and at the park spot in order to park the vehicle");
-        else
-            item1 = API.createMenuItem("Spawn vehicle", "Spawns the vehicle at the spot where it was parked");
-
-        let item2 = API.createMenuItem("Lock/Unlock vehicle", "");
+        let item1 = API.createMenuItem("Park vehicle", "You have to be inside the vehicle and at the park spot in order to park the vehicle");
+        let item2 = API.createMenuItem("Spawn vehicle", "Spawns the vehicle at the spot where it was parked");
+        let item3 = API.createMenuItem("Lock/Unlock vehicle", "");
 
         menu.AddItem(item1);
         menu.AddItem(item2);
+        menu.AddItem(item3);
         return menu;
     }
 
     createVehicleMenu()
     {
-        this.vehicleMenuItems.length = 0;
         this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Player Menu", "Vehicles", 0, 0, 6);
+        this.vehiclesMenu = menu;
 
         for (var i = 0; i < this.vehicles.length; i++) {
             let item = API.createMenuItem(this.vehicles[i].licensePlate, "");
@@ -321,7 +330,6 @@ class HUDManager
             else
                 item.SetRightLabel("Inactive");
 
-            this.vehicleMenuItems.push(item);
             menu.AddItem(item);
 
             // Create detail menus for every vehicle
@@ -708,7 +716,6 @@ class HUDManager
     }
 
     endPhoneCall(menu, sender) {
-        // Trigger end phone call client event
         API.triggerServerEvent("EVENT_END_PHONE_CALL");
     }
 

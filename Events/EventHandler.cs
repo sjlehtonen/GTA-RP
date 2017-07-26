@@ -102,6 +102,18 @@ namespace GTA_RP.Events
                 case "EVENT_BUY_VEHICLE":
                     VehicleManager.Instance().TryPurchaseVehicle(player, (string)arguments[0], (int)arguments[1], (int)arguments[2]);
                     break;
+
+                case "EVENT_TRY_SPAWN_VEHICLE":
+                    VehicleManager.Instance().SpawnVehicleForCharacter(player, (int)arguments[0]);
+                    break;
+
+                case "EVENT_TRY_PARK_VEHICLE":
+                    VehicleManager.Instance().ParkVehicle(player, (int)arguments[0]);
+                    break;
+
+                case "EVENT_TRY_LOCK_VEHICLE":
+                    VehicleManager.Instance().LockVehicleWithId(player, (int)arguments[0]);
+                    break;
             }
         }
     }
