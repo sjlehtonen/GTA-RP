@@ -1,0 +1,11 @@
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\GTA-RP.dll.config
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\GTA-RP.dll
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\GTA-RP.pdb
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\GrandTheftMultiplayer.Server.exe
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\GrandTheftMultiplayer.Shared.dll
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\MySql.Data.dll
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\NLog.dll
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\NLog.xml
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\obj\Release\GTA-RP.csprojResolveAssemblyReference.cache
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\obj\Release\GTA-RP.dll
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\obj\Release\GTA-RP.pdb

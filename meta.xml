@@ -1,0 +1,63 @@
+﻿<meta>
+    <info name="GTA-RP" description="GTA V Roleplay" />
+
+    <assembly ref="System.Data.dll"/>
+    <assembly ref="MySql.Data.dll"/>
+  
+    <script src="client/EventResponder.js" type="client" lang="javascript" />
+    <script src="client/CameraManager.js" type="client" lang="javascript" />
+    <script src="client/CheckpointManager.js" type="client" lang="javascript" />
+    <script src="client/HouseManager.js" type="client" lang="javascript" />
+    <script src="client/HUDManager.js" type="client" lang="javascript" />
+    <script src="client/AccountManager.js" type="client" lang="javascript" />
+    <script src="client/HelpMenu.js" type="client" lang="javascript" />
+    <script src="client/VehicleShopManager.js" type="client" lang="javascript" />
+
+    <script src="Misc/Roleplay.cs" type="server" lang="csharp" />
+  
+    <script src="Chat/ChatManager.cs" type="server" lang="csharp" />
+  
+    <script src="Players/Phone.cs" type="server" lang="csharp" />
+    <script src="Players/Player.cs" type="server" lang="csharp" />
+    <script src="Players/Character.cs" type="server" lang="csharp" />
+    <script src="Players/PlayerManager.cs" type="server" lang="csharp" />
+    <script src="Players/CharacterSelector.cs" type="server" lang="csharp" />
+  
+    <script src="Factions/Faction.cs" type="server" lang="csharp" />
+    <script src="Factions/Civilian.cs" type="server" lang="csharp" />
+    <script src="Factions/FactionManager.cs" type="server" lang="csharp" />
+    <script src="Factions/Factions.cs" type="server" lang="csharp" />
+    <script src="Factions/FactionCommands.cs" type="server" lang="csharp" />
+    <script src="Factions/LawEnforcement.cs" type="server" lang="csharp" />
+    <script src="Factions/LawEnforcementCommands.cs" type="server" lang="csharp" />
+  
+    <script src="Misc/DBManager.cs" type="server" lang="csharp" />
+    <script src="Admin/AdminCommands.cs" type="server" lang="csharp" />
+    <script src="PedManager/PedManager.cs" type="server" lang="csharp" />
+  
+    <script src="Vehicles/RPVehicle.cs" type="server" lang="csharp" />
+    <script src="Vehicles/VehicleManager.cs" type="server" lang="csharp" />
+    <script src="Vehicles/VehicleCommands.cs" type="server" lang="csharp" />
+    <script src="Vehicles/VehicleShop.cs" type="server" lang="csharp" />
+  
+    <script src="Houses/House.cs" type="server" lang="csharp" />
+    <script src="Houses/HouseManager.cs" type="server" lang="csharp" />
+    <script src="Houses/HouseTemplate.cs" type="server" lang="csharp" />
+  
+    <script src="Weather/WeatherManager.cs" type="server" lang="csharp" />
+  
+    <script src="Events/EventHandler.cs" type="server" lang="csharp" />
+  
+    <script src="IPLManager/IPLManager.cs" type="server" lang="csharp" />
+  
+    <script src="Misc/Teleport.cs" type="server" lang="csharp" />
+    <script src="Misc/ClientCheckpoint.cs" type="server" lang="csharp" />
+    <script src="Misc/Checkpoint.cs" type="server" lang="csharp" />
+    <script src="Misc/Singleton.cs" type="server" lang="csharp" />
+  
+    <script src="Jobs/CheckpointJob.cs" type="server" lang="csharp" />
+    <script src="Jobs/Job.cs" type="server" lang="csharp" />
+    <script src="Jobs/JobCommands.cs" type="server" lang="csharp" />
+    <script src="Jobs/JobManager.cs" type="server" lang="csharp" />
+    <script src="Jobs/TrashJob.cs" type="server" lang="csharp" />
+</meta>
