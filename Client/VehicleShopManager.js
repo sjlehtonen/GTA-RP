@@ -7,6 +7,7 @@
 
 class VehicleShopManager {
     constructor() {
+        this.id = null;
         this.vehicleInfos = [];
         this.menuPool = null;
         this.vehicleMenu = null;
@@ -32,8 +33,9 @@ class VehicleShopManager {
 
     handleVehicleShopEvent(eventName, args) {
         if (eventName == "EVENT_CHARACTER_ENTER_VEHICLE_SHOP") {
-            this.createVehicleMenu(args[0], args[1]);
-            this.initVehicleModel(args[2], args[3]);
+            this.id = args[0];
+            this.createVehicleMenu(args[1], args[2]);
+            this.initVehicleModel(args[3], args[4]);
         }
         else if (eventName == "EVENT_CHARACTER_EXIT_VEHICLE_SHOP") {
             this.exitShop(null, null);
@@ -45,7 +47,6 @@ class VehicleShopManager {
         for (var i = 0; i < models.Count; i++) {
             this.vehicleInfos.push(new VehicleInfo(models[i], prices[i]));
         }
-        // Set current model to the first
         this.currentVehicleModel = this.vehicleInfos[0].model;
     }
 
@@ -79,7 +80,7 @@ class VehicleShopManager {
     }
 
     exitShop(menu, sender) {
-        API.triggerServerEvent("EVENT_EXIT_VEHICLE_SHOP");
+        API.triggerServerEvent("EVENT_EXIT_VEHICLE_SHOP", this.id);
         this.vehicleMenu.Visible = false;
         this.customiseVehicleMenu.Visible = false;
     }
@@ -131,7 +132,7 @@ class VehicleShopManager {
     }
 
     buyVehicle() {
-        API.triggerServerEvent("EVENT_BUY_VEHICLE", this.currentVehicleModel, this.currentColor1, this.currentColor2);
+        API.triggerServerEvent("EVENT_BUY_VEHICLE", this.id, this.currentVehicleModel, this.currentColor1, this.currentColor2);
     }
 
     createVehicleCustomiseMenu(parent, buttonList) {

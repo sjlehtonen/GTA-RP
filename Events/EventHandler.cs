@@ -96,11 +96,11 @@ namespace GTA_RP.Events
                     break;
 
                 case "EVENT_EXIT_VEHICLE_SHOP":
-                    VehicleManager.Instance().TryExitVehicleShop(player);
+                    VehicleManager.Instance().TryExitVehicleShop(player, (int)arguments[0]);
                     break;
 
                 case "EVENT_BUY_VEHICLE":
-                    VehicleManager.Instance().TryPurchaseVehicle(player, (string)arguments[0], (int)arguments[1], (int)arguments[2]);
+                    VehicleManager.Instance().TryPurchaseVehicle(player, (int)arguments[0], (string)arguments[1], (int)arguments[2], (int)arguments[3]);
                     break;
 
                 case "EVENT_TRY_SPAWN_VEHICLE":

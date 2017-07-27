@@ -12,26 +12,16 @@ using GrandTheftMultiplayer.Shared.Math;
 
 namespace GTA_RP.Vehicles
 {
-    public struct VehicleInfo
-    {
-        public string model;
-        public int price;
-
-        public VehicleInfo(string model, int price)
-        {
-            this.model = model;
-            this.price = price;
-        }
-    }
-
     /// <summary>
     /// Class for buying vehicles
     /// </summary>
     class VehicleShop
     {
         private List<Character> characters = new List<Character>();
-        private List<VehicleInfo> availableVehicles = new List<VehicleInfo>();
+        private List<string> availableVehicles = new List<string>();
         private Dictionary<string, int> vehiclePrice = new Dictionary<string, int>();
+
+        private int id;
         private Checkpoint enterStoreCheckpoint;
         private Vector3 exitPos;
         private Vector3 exitRot;
@@ -41,15 +31,21 @@ namespace GTA_RP.Vehicles
         private Vector3 cameraPosition = new Vector3(205.331, -1004.533, -98.0);
         private Vector3 cameraRotation = new Vector3(-18, 0, 50.22344);
 
-        // FIX
         private Vector3 vehiclePosition = new Vector3(201.9024, -1001.854, -99.00001);
         private Vector3 vehicleRotation = new Vector3(0, 0, 176.9532);
 
-        public VehicleShop(Vector3 entrance, Vector3 exitPos, Vector3 exitRot)
+        public VehicleShop(int id, Vector3 entrance, Vector3 exitPos, Vector3 exitRot, Vector3 cameraPos, Vector3 cameraRot, Vector3 charPos, Vector3 vehiclePos, Vector3 vehicleRot)
         {
-            enterStoreCheckpoint = new Checkpoint(entrance, this.CharacterWalkedToEntrance);
+            this.LoadVehiclePricesFromDatabase();
+            this.id = id;
+            this.enterStoreCheckpoint = new Checkpoint(entrance, this.CharacterWalkedToEntrance);
             this.exitPos = exitPos;
             this.exitRot = exitRot;
+            this.cameraPosition = cameraPos;
+            this.cameraRotation = cameraRot;
+            this.characterShopPosition = charPos;
+            this.vehiclePosition = vehiclePos;
+            this.vehicleRotation = vehicleRot;
 
             PlayerManager.Instance().SubscribeToPlayerDisconnectEvent(this.CharacterDisconnected);
         }
@@ -112,7 +108,7 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Loads vehicle prices and models from the database
         /// </summary>
-        public void LoadVehiclePricesFromDatabase()
+        private void LoadVehiclePricesFromDatabase()
         {
             var cmd = DBManager.SimpleQuery("SELECT * FROM vehicle_prices");
             var reader = cmd.ExecuteReader();
@@ -120,7 +116,7 @@ namespace GTA_RP.Vehicles
             while (reader.Read())
             {
                 vehiclePrice.Add(reader.GetString(0), reader.GetInt32(1));
-                availableVehicles.Add(new VehicleInfo(reader.GetString(0), reader.GetInt32(1)));
+                availableVehicles.Add(reader.GetString(0));
             }
 
             reader.Close();
@@ -156,7 +152,9 @@ namespace GTA_RP.Vehicles
             {
                 characters.Add(character);
                 TeleportPlayerInsideShop(character);
-                API.shared.triggerClientEvent(character.owner.client, "EVENT_CHARACTER_ENTER_VEHICLE_SHOP", availableVehicles.Select(x => x.model).ToList(), availableVehicles.Select(x => x.price).ToList(), vehiclePosition, vehicleRotation);
+                List<int> prices = new List<int>();
+                availableVehicles.ForEach(x => prices.Add(vehiclePrice[x]));
+                API.shared.triggerClientEvent(character.owner.client, "EVENT_CHARACTER_ENTER_VEHICLE_SHOP", id, availableVehicles, prices, vehiclePosition, vehicleRotation);
                 API.shared.triggerClientEvent(character.owner.client, "EVENT_SET_LOGIN_SCREEN_CAMERA", cameraPosition, cameraRotation);
             }
         }

@@ -31,7 +31,6 @@
     <script src="Factions/LawEnforcement.cs" type="server" lang="csharp" />
     <script src="Factions/LawEnforcementCommands.cs" type="server" lang="csharp" />
   
-    <script src="Misc/DBManager.cs" type="server" lang="csharp" />
     <script src="Admin/AdminCommands.cs" type="server" lang="csharp" />
     <script src="PedManager/PedManager.cs" type="server" lang="csharp" />
   
@@ -50,10 +49,14 @@
   
     <script src="IPLManager/IPLManager.cs" type="server" lang="csharp" />
   
+    <script src="Misc/DBManager.cs" type="server" lang="csharp" />
     <script src="Misc/Teleport.cs" type="server" lang="csharp" />
     <script src="Misc/ClientCheckpoint.cs" type="server" lang="csharp" />
     <script src="Misc/Checkpoint.cs" type="server" lang="csharp" />
     <script src="Misc/Singleton.cs" type="server" lang="csharp" />
+    <script src="Misc/Query.cs" type="server" lang="csharp" />
+    <script src="Misc/SelectQuery.cs" type="server" lang="csharp" />
+    <script src="Misc/UpdateQuery.cs" type="server" lang="csharp" />
   
     <script src="Jobs/CheckpointJob.cs" type="server" lang="csharp" />
     <script src="Jobs/Job.cs" type="server" lang="csharp" />

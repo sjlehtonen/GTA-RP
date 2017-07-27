@@ -22,7 +22,9 @@ namespace GTA_RP.Vehicles
     class VehicleManager : Singleton<VehicleManager>
     {
         List<RPVehicle> vehicles = new List<RPVehicle>();
-        VehicleShop vehicleShop = new VehicleShop(new Vector3(-177.2077, -1158.487, 23.8137), new Vector3(-177.0255, -1153.632, 23.11556), new Vector3(0, 0, -2.621614));
+        Dictionary<int, VehicleShop> vehicleShops = new Dictionary<int, VehicleShop>();
+
+        //VehicleShop vehicleShop = new VehicleShop(new Vector3(-177.2077, -1158.487, 23.8137), new Vector3(-177.0255, -1153.632, 23.11556), new Vector3(0, 0, -2.621614));
 
         private event OnVehicleDestroyedDelegate OnVehicleDestroyedEvent;
         private event OnVehicleExitedDelegate OnVehicleExitedEvent;
@@ -143,6 +145,14 @@ namespace GTA_RP.Vehicles
         }
 
         /// <summary>
+        /// Initializes vehicle shops
+        /// </summary>
+        private void InitializeVehicleShops()
+        {
+            CreateVehicleShop(0, new Vector3(-177.2077, -1158.487, 23.8137), new Vector3(-177.0255, -1153.632, 23.11556), new Vector3(0, 0, -2.621614), new Vector3(205.331, -1004.533, -98.0), new Vector3(-18, 0, 50.22344), new Vector3(207.1324, -1007.67, -98.99998), new Vector3(201.9024, -1001.854, -99.00001), new Vector3(0, 0, 176.9532));
+        }
+
+        /// <summary>
         /// Generates a random string with given length
         /// </summary>
         /// <param name="length">Length</param>
@@ -225,6 +235,29 @@ namespace GTA_RP.Vehicles
         {
             if (this.OnVehicleExitedEvent != null)
                 this.OnVehicleExitedEvent.Invoke(c, vehicle);
+        }
+
+        /// <summary>
+        /// Creates a new vehicle shop
+        /// </summary>
+        /// <param name="id">Shop id</param>
+        /// <param name="entrance">Entrance position</param>
+        /// <param name="exit">Exit position</param>
+        /// <param name="exitRot">Exit rotation</param>
+        private void CreateVehicleShop(int id, Vector3 entrance, Vector3 exit, Vector3 exitRot, Vector3 cameraPos, Vector3 cameraRot, Vector3 charPos, Vector3 vehiclePos, Vector3 vehicleRot)
+        {
+            VehicleShop shop = new VehicleShop(id, entrance, exit, exitRot, cameraPos, cameraRot, charPos, vehiclePos, vehicleRot);
+            if (!vehicleShops.ContainsKey(id)) vehicleShops[id] = shop;
+        }
+
+        /// <summary>
+        /// Gets vehicle shop with certain id
+        /// </summary>
+        /// <param name="id">Vehicle shop</param>
+        private VehicleShop GetVehicleShopWithId(int id)
+        {
+            if (vehicleShops.ContainsKey(id)) return vehicleShops[id];
+            return null;
         }
 
         /// <summary>
@@ -344,10 +377,11 @@ namespace GTA_RP.Vehicles
         /// <param name="model">Vehicle model</param>
         /// <param name="color1">Vehicle color 1</param>
         /// <param name="color2">Vehicle color 2</param>
-        public void TryPurchaseVehicle(Client c, string model, int color1, int color2)
+        public void TryPurchaseVehicle(Client c, int id, string model, int color1, int color2)
         {
             Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
-            vehicleShop.PurchaseVehicle(character, model, color1, color2);
+            VehicleShop shop = GetVehicleShopWithId(id);
+            if (shop != null) shop.PurchaseVehicle(character, model, color1, color2);
         }
 
         /// <summary>
@@ -384,12 +418,15 @@ namespace GTA_RP.Vehicles
         /// <param name="vehicleId">Vehicle id</param>
         public void SpawnVehicleForCharacter(Client c, int vehicleId)
         {
-            Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
-            RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
-            if (vehicle != null && character.ID == vehicle.ownerId)
+            if (PlayerManager.Instance().IsClientUsingCharacter(c))
             {
-                if (!vehicle.spawned) vehicle.Spawn();
-                else API.shared.sendNotificationToPlayer(c, "This vehicle is already active!");
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+                RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
+                if (vehicle != null && character.ID == vehicle.ownerId)
+                {
+                    if (!vehicle.spawned) vehicle.Spawn();
+                    else API.shared.sendNotificationToPlayer(c, "This vehicle is already active!");
+                }
             }
 
         }
@@ -401,17 +438,20 @@ namespace GTA_RP.Vehicles
         /// <param name="vehicleId">Vehicle id</param>
         public void ParkVehicle(Client c, int vehicleId)
         {
-            Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
-            RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
-            if (vehicle != null && character.ID == vehicle.ownerId && vehicle.spawned)
+            if (PlayerManager.Instance().IsClientUsingCharacter(c))
             {
-                if (vehicle.handle == API.shared.getPlayerVehicle(c))
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+                RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
+                if (vehicle != null && character.ID == vehicle.ownerId && vehicle.spawned)
                 {
-                    if (vehicle.position.DistanceTo(vehicle.parkPosition) <= parkDistance) vehicle.Park();
-                    else API.shared.sendNotificationToPlayer(c, "You have to close to the parking spot in order to park the vehicle!");
+                    if (vehicle.handle == API.shared.getPlayerVehicle(c))
+                    {
+                        if (vehicle.position.DistanceTo(vehicle.parkPosition) <= parkDistance) vehicle.Park();
+                        else API.shared.sendNotificationToPlayer(c, "You have to close to the parking spot in order to park the vehicle!");
+                    }
+                    else
+                        API.shared.sendNotificationToPlayer(c, "You need to be in the vehicle you want to park!");
                 }
-                else
-                    API.shared.sendNotificationToPlayer(c, "You need to be in the vehicle you want to park!");
             }
         }
 
@@ -470,10 +510,19 @@ namespace GTA_RP.Vehicles
 
         }
 
-        public void TryExitVehicleShop(Client c)
+        /// <summary>
+        /// Character attempts to exit a vehicle shop
+        /// </summary>
+        /// <param name="c">Client</param>
+        /// <param name="id">Shop id</param>
+        public void TryExitVehicleShop(Client c, int id)
         {
-            Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
-            vehicleShop.ExitShop(character);
+            if (PlayerManager.Instance().IsClientUsingCharacter(c))
+            {
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+                VehicleShop shop = GetVehicleShopWithId(id);
+                if (shop != null) shop.ExitShop(character);
+            }
         }
 
         /// <summary>
@@ -481,20 +530,12 @@ namespace GTA_RP.Vehicles
         /// </summary>
         public void LoadVehiclesFromDB()
         {
-            var cmd = DBManager.SimpleQuery("SELECT * FROM vehicles");
-            var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
+            DBManager.SelectQuery("SELECT * FROM vehicles", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
+                API.shared.consoleOutput("Vehicle loaded!");
                 RPVehicle v = new RPVehicle(reader.GetInt32(0), reader.GetInt32(1), (FactionI)reader.GetInt32(2), (VehicleHash)reader.GetInt32(3), reader.GetFloat(4), reader.GetFloat(5), reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9), reader.GetInt32(12), reader.GetInt32(13), reader.GetString(10), true);
                 vehicles.Add(v);
-            }
-
-            reader.Close();
-
-            // other inits
-            // switch inside the shop
-            vehicleShop.LoadVehiclePricesFromDatabase();
+            }).Execute();
         }
     }
 }

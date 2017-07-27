@@ -52,10 +52,6 @@ namespace GTA_RP
 
         public PlayerManager()
         {
-            //_instance = this;
-            //API.onPlayerConnected += HandlePlayerConnect;
-            //API.onPlayerDisconnected += HandlePlayerDisconnect;
-            //API.onPlayerFinishedDownload += HandlePlayerConnect;
             textMessageId = 0;
             dbCon.DatabaseName = "gta_rp";
             InitStartCameraPositions();
