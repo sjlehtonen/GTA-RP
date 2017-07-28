@@ -200,14 +200,15 @@ namespace GTA_RP.Vehicles
         /// <returns>True if vehicles exist, otherwise false</returns>
         private Boolean HasVehicles()
         {
-            var cmd = DBManager.SimpleQuery("SELECT COUNT(*) FROM vehicles");
+            return !DBManager.IsTableEmpty("vehicles");
+            /*var cmd = DBManager.SimpleQuery("SELECT COUNT(*) FROM vehicles");
             var reader = cmd.ExecuteReader();
             reader.Read();
             int rows = reader.GetInt32(0);
             reader.Close();
             if (rows < 1)
                 return false;
-            return true;
+            return true;*/
         }
 
         /// <summary>

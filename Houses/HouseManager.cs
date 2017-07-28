@@ -60,10 +60,7 @@ namespace GTA_RP
         /// </summary>
         public HouseManager()
         {
-           /*if (_instance == null)
-            {
-                _instance = this;
-            }*/
+
         }
 
         /// <summary>
@@ -84,13 +81,17 @@ namespace GTA_RP
         /// </summary>
         private void InitBuildingNames()
         {
-            var cmd = DBManager.SimpleQuery("SELECT * FROM buildings");
+            /*var cmd = DBManager.SimpleQuery("SELECT * FROM buildings");
             var reader = cmd.ExecuteReader();
 
             while (reader.Read())
                 this.buildingNames.Add(reader.GetInt32(0), reader.GetString(1));
 
-            reader.Close();
+            reader.Close();*/
+            DBManager.SelectQuery("SELECT * FROM buildings", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                this.buildingNames.Add(reader.GetInt32(0), reader.GetString(1));
+            }).Execute();
         }
 
         /// <summary>
@@ -99,14 +100,20 @@ namespace GTA_RP
         /// </summary>
         private void LoadHousesFromDB()
         {
-            var cmd = DBManager.SimpleQuery("SELECT * FROM houses");
+            /*var cmd = DBManager.SimpleQuery("SELECT * FROM houses");
             var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 House h = new House(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetString(3));
                 ownedHouses.Add(h);
             }
-            reader.Close();
+            reader.Close();*/
+
+            DBManager.SelectQuery("SELECT * FROM houses", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                House h = new House(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetString(3));
+                ownedHouses.Add(h);
+            }).Execute();
         }
 
         /// <summary>
@@ -115,7 +122,7 @@ namespace GTA_RP
         /// <returns>List of all building entrances</returns>
         private List<HouseEntrance> GetHouseEntrances()
         {
-            var cmd = DBManager.SimpleQuery("SELECT * FROM house_teleports");
+            /*var cmd = DBManager.SimpleQuery("SELECT * FROM house_teleports");
             var reader = cmd.ExecuteReader();
 
             List<HouseEntrance> entrances = new List<HouseEntrance>();
@@ -129,6 +136,18 @@ namespace GTA_RP
                 entrances.Add(e);
             }
             reader.Close();
+            return entrances;*/
+
+            List<HouseEntrance> entrances = new List<HouseEntrance>();
+            DBManager.SelectQuery("SELECT * FROM house_teleports", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                HouseEntrance e;
+                e.id = reader.GetInt32(0);
+                e.building_id = reader.GetInt32(1);
+                e.coordinates = new Vector3(reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
+                e.name = reader.GetString(5);
+                entrances.Add(e);
+            }).Execute();
             return entrances;
         }
 
@@ -138,7 +157,7 @@ namespace GTA_RP
         /// <returns>List of all building exits</returns>
         private List<HouseExit> GetHouseExits()
         {
-            var cmd = DBManager.SimpleQuery("SELECT * FROM house_exits");
+            /*var cmd = DBManager.SimpleQuery("SELECT * FROM house_exits");
             var reader = cmd.ExecuteReader();
 
             List<HouseExit> exits = new List<HouseExit>();
@@ -151,6 +170,17 @@ namespace GTA_RP
                 exits.Add(e);
             }
             reader.Close();
+            return exits;*/
+
+            List<HouseExit> exits = new List<HouseExit>();
+            DBManager.SelectQuery("SELECT * FROM house_exits", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                HouseExit e;
+                e.id = reader.GetInt32(0);
+                e.house_template_id = reader.GetInt32(1);
+                e.coordinates = new Vector3(reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
+                exits.Add(e);
+            }).Execute();
             return exits;
         }
 
@@ -250,7 +280,7 @@ namespace GTA_RP
         /// <returns>All house entrance-exit pairs</returns>
         private List<HouseEntranceExit> GetHouseEntranceExitPairs()
         {
-            var cmd = DBManager.SimpleQuery("SELECT * FROM house_teleport_links");
+            /*var cmd = DBManager.SimpleQuery("SELECT * FROM house_teleport_links");
             var reader = cmd.ExecuteReader();
 
             List<HouseEntranceExit> exits = new List<HouseEntranceExit>();
@@ -262,6 +292,16 @@ namespace GTA_RP
                 exits.Add(e);
             }
             reader.Close();
+            return exits;*/
+
+            List<HouseEntranceExit> exits = new List<HouseEntranceExit>();
+            DBManager.SelectQuery("SELECT * FROM house_teleport_links", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                HouseEntranceExit e;
+                e.entrance_id = reader.GetInt32(0);
+                e.exit_id = reader.GetInt32(1);
+                exits.Add(e);
+            }).Execute();
             return exits;
         }
 
@@ -543,7 +583,7 @@ namespace GTA_RP
         /// </summary>
         public void LoadHouseTemplates()
         {
-            var cmd = DBManager.SimpleQuery("SELECT * FROM house_template");
+            /*var cmd = DBManager.SimpleQuery("SELECT * FROM house_template");
             var reader = cmd.ExecuteReader();
 
             while (reader.Read())
@@ -555,7 +595,16 @@ namespace GTA_RP
                 this.buildingIdForTemplateId.Add(reader.GetInt32(0), reader.GetInt32(1));
             }
 
-            reader.Close();
+            reader.Close();*/
+
+            DBManager.SelectQuery("SELECT * FROM house_template", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                Vector3 spawn = null;//new Vector3(reader.GetFloat(16), reader.GetFloat(17), reader.GetFloat(18));
+
+                HouseTemplate h = new HouseTemplate(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2), reader.GetString(3), spawn);
+                this.houseTemplates.Add(h);
+                this.buildingIdForTemplateId.Add(reader.GetInt32(0), reader.GetInt32(1));
+            }).Execute();
 
             // Load everything else
             CreateHouseTeleports();

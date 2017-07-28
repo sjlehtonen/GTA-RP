@@ -156,6 +156,17 @@ namespace GTA_RP
         }
 
         /// <summary>
+        /// Sets character money
+        /// </summary>
+        /// <param name="amount">Amount</param>
+        /// <param name="updateDatabase">Whether the new amount will be updated to the database</param>
+        public void SetMoney(int amount, bool updateDatabase = true)
+        {
+            this.money = amount;
+            if (updateDatabase) PlayerManager.Instance().UpdateCharacterMoney(this, moneyPrivate);
+        }
+
+        /// <summary>
         /// Plays animation for character
         /// </summary>
         /// <param name="flag">Flags for animation</param>
