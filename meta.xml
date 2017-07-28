@@ -49,14 +49,15 @@
   
     <script src="IPLManager/IPLManager.cs" type="server" lang="csharp" />
   
-    <script src="Misc/DBManager.cs" type="server" lang="csharp" />
     <script src="Misc/Teleport.cs" type="server" lang="csharp" />
     <script src="Misc/ClientCheckpoint.cs" type="server" lang="csharp" />
     <script src="Misc/Checkpoint.cs" type="server" lang="csharp" />
     <script src="Misc/Singleton.cs" type="server" lang="csharp" />
-    <script src="Misc/Query.cs" type="server" lang="csharp" />
-    <script src="Misc/SelectQuery.cs" type="server" lang="csharp" />
-    <script src="Misc/UpdateQuery.cs" type="server" lang="csharp" />
+  
+    <script src="Database/DBManager.cs" type="server" lang="csharp" />
+    <script src="Database/Query.cs" type="server" lang="csharp" />
+    <script src="Database/SelectQuery.cs" type="server" lang="csharp" />
+    <script src="Database/NormalQuery.cs" type="server" lang="csharp" />
   
     <script src="Jobs/CheckpointJob.cs" type="server" lang="csharp" />
     <script src="Jobs/Job.cs" type="server" lang="csharp" />

@@ -49,7 +49,7 @@ namespace GTA_RP
             {
                 moneyPrivate = value;
                 API.shared.triggerClientEvent(owner.client, "EVENT_UPDATE_MONEY", moneyPrivate.ToString());
-                PlayerManager.Instance().UpdateCharacterMoney(this, moneyPrivate);
+                //PlayerManager.Instance().UpdateCharacterMoney(this, moneyPrivate);
             }
         }
 

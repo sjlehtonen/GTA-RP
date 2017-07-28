@@ -407,7 +407,10 @@ namespace GTA_RP
             var reader = cmd.ExecuteReader();
 
             if (!reader.HasRows)
+            {
+                reader.Close();
                 return false;
+            }
 
             reader.Read();
             string pwd = reader.GetString(0);
