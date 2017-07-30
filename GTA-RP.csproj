@@ -55,6 +55,9 @@
   <ItemGroup>
     <Compile Include="Admin\AdminCommands.cs" />
     <Compile Include="Chat\ChatManager.cs" />
+    <Compile Include="Database\NormalQuery.cs" />
+    <Compile Include="Database\Query.cs" />
+    <Compile Include="Database\SelectQuery.cs" />
     <Compile Include="Factions\Civilian.cs" />
     <Compile Include="Factions\Faction.cs" />
     <Compile Include="Factions\FactionManager.cs" />
@@ -67,7 +70,7 @@
     <Compile Include="Weather\WeatherManager.cs" />
     <Content Include="Client\AccountManager.js" />
     <Content Include="Client\CameraManager.js" />
-    <Compile Include="Misc\DBManager.cs" />
+    <Compile Include="Database\DBManager.cs" />
     <Compile Include="Events\EventHandler.cs" />
     <Compile Include="Factions\FactionCommands.cs" />
     <Compile Include="Factions\Factions.cs" />

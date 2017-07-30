@@ -325,10 +325,9 @@ class HUDManager
 
         for (var i = 0; i < this.vehicles.length; i++) {
             let item = API.createMenuItem(this.vehicles[i].licensePlate, "");
-            if (this.vehicles[i].spawned)
-                item.SetRightLabel("Active");
-            else
-                item.SetRightLabel("Inactive");
+
+            if (this.vehicles[i].spawned) item.SetRightLabel("Active");
+            else item.SetRightLabel("Inactive");
 
             menu.AddItem(item);
 
@@ -447,7 +446,7 @@ class HUDManager
         else {
             API.triggerServerEvent("EVENT_SEND_TEXT_MESSAGE", this.textMessageReceiverNumber, this.textMessage);
             //this.closePhoneMenu(menu); // Remove for debug
-            this.sendTextMessageMenu.Back(); // maybe bug
+            this.sendTextMessageMenu.GoBack(); // maybe bug
         }
     }
 
@@ -459,7 +458,6 @@ class HUDManager
 
     createSendTextMessageMenu()
     {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Player Menu", "Send text message", 0, 0, 6);
         this.sendTextMessageMenu = menu;
 
@@ -522,8 +520,9 @@ class HUDManager
 
     createAddContactMenu(parent, button)
     {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Player Menu", "Add new contact", 0, 0, 6);
+        this.menuPool.Add(menu);
+        parent.BindMenuToItem(menu, button);
         this.addContactMenu = menu;
 
         let item1 = API.createMenuItem("Phone number", "");
@@ -537,9 +536,6 @@ class HUDManager
         menu.AddItem(item1);
         menu.AddItem(item2);
         menu.AddItem(item3);
-
-        parent.BindMenuToItem(menu, button);
-        this.menuPool.Add(menu);
     }
 
     messageSelected(sender, index)
@@ -602,9 +598,13 @@ class HUDManager
         API.triggerServerEvent("EVENT_START_PHONE_CALL", number);
     }
 
-    createContactsMenu()
+    createContactsMenu(parent, button)
     {
         let menu = API.createMenu("Player Menu", "Address book", 0, 0, 6);
+        this.menuPool.Add(menu);
+        parent.BindMenuToItem(menu, button);
+
+
         this.contactsMenu = menu;
 
         menu.OnIndexChange.connect((sender, index) => this.contactSelected(sender, index));
@@ -626,7 +626,6 @@ class HUDManager
 
     createPhoneMenu()
     {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Player Menu", "Phone - " + this.phoneNumber, 0, 0, 6);
         this.phoneMenu = menu;
 
@@ -644,16 +643,15 @@ class HUDManager
         menu.AddItem(item4);
         menu.AddItem(item3);
 
-        var menu1 = this.createSendTextMessageMenu();
-        var menu2 = this.createContactsMenu();
-        var menu3 = this.createMessagesMenu();
+        let menu1 = this.createSendTextMessageMenu();
+        let menu2 = this.createContactsMenu(menu, item1);
+        let menu3 = this.createMessagesMenu();
 
-        this.menuPool.Add(menu);
         this.menuPool.Add(menu1);
         this.menuPool.Add(menu2);
         this.menuPool.Add(menu3);
 
-        menu.BindMenuToItem(menu2, item1);
+        //menu.BindMenuToItem(menu2, item1);
         menu.BindMenuToItem(menu1, item3);
         menu.BindMenuToItem(menu3, item4);
 
@@ -695,13 +693,15 @@ class HUDManager
 
         var menu1 = this.createHouseMenu();
         var menu2 = this.createActionsMenu();
-        var menu3 = this.createPhoneMenu();
         var menu4 = this.createVehicleMenu();
+        var menu3 = this.createPhoneMenu();
 
         this.menuPool.Add(this.helpMenu);
-        this.menuPool.Add(menu1);
         this.menuPool.Add(menu2);
         this.menuPool.Add(menu3);
+        this.menuPool.Add(menu4);
+        this.menuPool.Add(menu1);
+        this.menuPool.RefreshIndex();
 
         menu.BindMenuToItem(menu1, item3);
         menu.BindMenuToItem(menu2, item4);
@@ -721,7 +721,6 @@ class HUDManager
 
     createPhoneCallMenu(caller, isCaller)
     {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Phone call", "Number: " + caller, 0, 0, 3);
         menu.OnMenuClose.connect((sender) => this.menuClosed(sender));
         this.phoneCallMenu = menu;

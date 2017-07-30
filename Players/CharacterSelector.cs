@@ -262,7 +262,7 @@ namespace GTA_RP
 
                     p.client.dimension = 0;
                     p.client.freezePosition = false;
-                    p.client.position = new Vector3(-772.716, 311.984, 85.6981);
+                    p.client.position = new Vector3(-692.194, 295.9935, 82.83133);
                     p.SetActiveCharacter(c);
 
                     this.RemovePlayerFromCharacterSelector(p);

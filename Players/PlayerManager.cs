@@ -653,7 +653,7 @@ namespace GTA_RP
         /// <param name="newMoney">New money amount</param>
         public void UpdateCharacterMoney(Character character, int newMoney)
         {
-            var cmd = DBManager.SimpleQuery("UPDATE vehicles SET money=@money WHERE id=@id");
+            var cmd = DBManager.SimpleQuery("UPDATE characters SET money=@money WHERE id=@id");
             cmd.Parameters.AddWithValue("@id", character.ID);
             cmd.Parameters.AddWithValue("@money", newMoney);
             cmd.ExecuteNonQuery();

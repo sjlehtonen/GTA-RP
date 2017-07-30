@@ -38,6 +38,7 @@ namespace GTA_RP.Vehicles
         public VehicleManager()
         {
             this.InitializeVehicleInsertId();
+            this.InitializeVehicleShops();
         }
 
         /// <summary>

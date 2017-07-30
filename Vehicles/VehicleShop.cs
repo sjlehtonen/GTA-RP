@@ -195,7 +195,7 @@ namespace GTA_RP.Vehicles
                         // Add vehicle to vehicle manager
                         // Inform bueyer that he got new vehicle
 
-                        character.money -= price;
+                        character.SetMoney(character.money - price);
                         string licensePlate = VehicleManager.Instance().GenerateUnusedLicensePlate();
                         int id = VehicleManager.Instance().AddVehicleToDatabase(character.ID, Factions.FactionI.CIVILIAN, model, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, licensePlate, 0, color1, color2);
                         VehicleManager.Instance().SendUpdatedVehicleToClient(character, id, licensePlate, false);

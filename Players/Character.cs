@@ -163,7 +163,7 @@ namespace GTA_RP
         public void SetMoney(int amount, bool updateDatabase = true)
         {
             this.money = amount;
-            if (updateDatabase) PlayerManager.Instance().UpdateCharacterMoney(this, moneyPrivate);
+            if (updateDatabase) PlayerManager.Instance().UpdateCharacterMoney(this, this.money);
         }
 
         /// <summary>
