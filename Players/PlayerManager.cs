@@ -9,6 +9,8 @@ using System.Linq;
 using GTA_RP.Jobs;
 using GTA_RP.Factions;
 using GTA_RP.Misc;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace GTA_RP
 {
@@ -38,7 +40,6 @@ namespace GTA_RP
 
 
         private static Random Rnd = new Random();
-        private static PlayerManager _instance = null;
         DBManager dbCon = DBManager.Instance();
 
         // temp values
@@ -55,9 +56,10 @@ namespace GTA_RP
             textMessageId = 0;
             dbCon.DatabaseName = "gta_rp";
             InitStartCameraPositions();
+
         }
 
-        // debug
+        // For debugging items held on hand
 
         [Command("srx")]
         public void setRotX(Client c, string rot)
@@ -172,15 +174,7 @@ namespace GTA_RP
         /// <returns>True if server has accounts, otherwise false</returns>
         private Boolean HasAccounts()
         {
-            var cmd = DBManager.SimpleQuery("SELECT COUNT(*) FROM players");
-            var reader = cmd.ExecuteReader();
-            reader.Read();
-            int rows = reader.GetInt32(0);
-            reader.Close();
-            if (rows < 1)
-                return false;
-
-            return true;
+            return !DBManager.IsTableEmpty("players");
         }
 
         /// <summary>
@@ -189,15 +183,7 @@ namespace GTA_RP
         /// <returns>True if server has characters, otherwise false</returns>
         private Boolean HasCharacters()
         {
-            var cmd = DBManager.SimpleQuery("SELECT COUNT(*) FROM characters");
-            var reader = cmd.ExecuteReader();
-            reader.Read();
-            int rows = reader.GetInt32(0);
-            reader.Close();
-            if (rows < 1)
-                return false;
-
-            return true;
+            return !DBManager.IsTableEmpty("characters");
         }
 
         /// <summary>
@@ -206,15 +192,7 @@ namespace GTA_RP
         /// <returns>True if server has text messages, otherwise false</returns>
         private Boolean HasTextMessages()
         {
-            var cmd = DBManager.SimpleQuery("SELECT COUNT(*) FROM text_messages");
-            var reader = cmd.ExecuteReader();
-            reader.Read();
-            int rows = reader.GetInt32(0);
-            reader.Close();
-            if (rows < 1)
-                return false;
-
-            return true;
+            return !DBManager.IsTableEmpty("text_messages");
         }
 
         /// <summary>
@@ -226,22 +204,21 @@ namespace GTA_RP
         /// <returns>True if message was sent succesfully, otherwise false</returns>
         private Boolean DeliverOfflineTextMessage(int id, String receiver, TextMessage message)
         {
-            var cmd = DBManager.SimpleQuery("SELECT COUNT(*) FROM characters WHERE phone_number=@number");
-            cmd.Parameters.AddWithValue("@number", receiver);
-            var reader = cmd.ExecuteReader();
-            reader.Read();
-            int rows = reader.GetInt32(0);
-            reader.Close();
+            int rows = 0;
+            DBManager.SelectQuery("SELECT COUNT(*) FROM characters WHERE phone_number=@number", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                rows = reader.GetInt32(0);
+            }).AddValue("@number", receiver).Execute();
 
             if(rows > 0)
             {
-                var cmd2 = DBManager.SimpleQuery("INSERT INTO text_messages VALUES (@id, @sender_number, @receiver_number, @time, @message)");
-                cmd2.Parameters.AddWithValue("@id", id);
-                cmd2.Parameters.AddWithValue("@sender_number", message.senderNumber);
-                cmd2.Parameters.AddWithValue("@receiver_number", receiver);
-                cmd2.Parameters.AddWithValue("@time", message.time);
-                cmd2.Parameters.AddWithValue("@message", message.message);
-                cmd2.ExecuteNonQuery();
+                DBManager.InsertQuery("INSERT INTO text_messages VALUES (@id, @sender_number, @receiver_number, @time, @message)")
+                    .AddValue("@id", id)
+                    .AddValue("@sender_number", message.senderNumber)
+                    .AddValue("@receiver_number", receiver)
+                    .AddValue("@time", message.time)
+                    .AddValue("@message", message.message)
+                    .Execute();
                 return true;
             }
 
@@ -256,16 +233,13 @@ namespace GTA_RP
         /// <returns>True if character exists, otherwise false</returns>
         private Boolean DoesCharacterExistWithName(string firstName, string lastName)
         {
-            var cmd = DBManager.SimpleQuery("SELECT COUNT(*) FROM characters WHERE first_name=@firstName AND last_name=@lastName");
-            cmd.Parameters.AddWithValue("@firstName", firstName);
-            cmd.Parameters.AddWithValue("@lastName", lastName);
-            var reader = cmd.ExecuteReader();
-            reader.Read();
-            int rows = reader.GetInt32(0);
-            reader.Close();
-            if (rows < 1)
-                return false;
+            int rows = 0;
+            DBManager.SelectQuery("SELECT COUNT(*) FROM characters WHERE first_name=@firstName AND last_name=@lastName", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                rows = reader.GetInt32(0);
+            }).AddValue("@firstName", firstName).AddValue("@lastName", lastName).Execute();
 
+            if (rows < 1) return false;
             return true;
         }
 
@@ -278,6 +252,8 @@ namespace GTA_RP
             SetClientStartCameraMode(player, true);
             if (!DoesPlayerHaveAccount(player))
                 OpenCreateAccountMenu(player);
+            //else
+              //  API.shared.sendChatMessageToPlayer(player, "Welcome! Please login by using the /login [password] command");
         }
         
         /// <summary>
@@ -303,12 +279,11 @@ namespace GTA_RP
         /// <returns>The loaded player object</returns>
         private Player LoadPlayerForClient(Client client)
         {
-            var cmd = DBManager.SimpleQuery("SELECT * FROM players WHERE name = @name");
-            cmd.Parameters.AddWithValue("@name", client.name);
-            var reader = cmd.ExecuteReader();
-            reader.Read();
-            Player p = new Player(client, reader.GetInt32(0), reader.GetInt32(3));
-            reader.Close();
+            Player p = null;
+            DBManager.SelectQuery("SELECT * FROM players WHERE name = @name", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                p = new Player(client, reader.GetInt32(0), reader.GetInt32(3));
+            }).AddValue("@name", client.name).Execute();
             return p;
         }
 
@@ -320,11 +295,7 @@ namespace GTA_RP
         private List<TextMessage> LoadTextMessagesForCharacter(Character c)
         {
             List<TextMessage> messages = new List<TextMessage>();
-            var cmd = DBManager.SimpleQuery("SELECT * FROM text_messages WHERE receiver_number = @number");
-            cmd.Parameters.AddWithValue("@number", c.phone.phoneNumber);
-            var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
+            DBManager.SelectQuery("SELECT * FROM text_messages WHERE receiver_number = @number", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
                 TextMessage tm;
                 tm.id = reader.GetInt32(0);
@@ -332,9 +303,7 @@ namespace GTA_RP
                 tm.time = reader.GetString(3);
                 tm.message = reader.GetString(4);
                 messages.Add(tm);
-            }
-
-            reader.Close();
+            }).AddValue("@number", c.phone.phoneNumber).Execute();
 
             return messages;
         }
@@ -347,19 +316,14 @@ namespace GTA_RP
         private List<Address> LoadPhoneContactsForCharacter(Character c)
         {
             List<Address> contacts = new List<Address>();
-            var cmd = DBManager.SimpleQuery("SELECT * FROM phone_contacts WHERE owner = @owner");
-            cmd.Parameters.AddWithValue("@owner", c.ID);
-            var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
+            DBManager.SelectQuery("SELECT * FROM phone_contacts WHERE owner = @owner", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
                 Address address;
                 address.name = reader.GetString(1);
                 address.number = reader.GetString(2);
                 contacts.Add(address);
-            }
+            }).AddValue("@owner", c.ID).Execute();
 
-            reader.Close();
 
             return contacts;
         }
@@ -372,26 +336,38 @@ namespace GTA_RP
         private List<Character> LoadCharactersForPlayer(Player player)
         {
             List<Character> characters = new List<Character>();
-            var cmd = DBManager.SimpleQuery("SELECT * FROM characters WHERE player_id = @id");
-            cmd.Parameters.AddWithValue("@id", player.id);
-            var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
+            DBManager.SelectQuery("SELECT * FROM characters WHERE player_id = @id", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
                 Character c = new Character(player, reader.GetInt32(0), reader.GetString(2), reader.GetString(3), (Factions.FactionI)reader.GetInt32(4), reader.GetString(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetString(8));
                 characters.Add(c);
-            }
-
-            reader.Close();
+            }).AddValue("@id", player.id).Execute();
 
             // Load phone contents
-            foreach(Character c in characters)
+            foreach (Character c in characters)
             {
                 c.phone.AddReceivedMessages(LoadTextMessagesForCharacter(c));
                 c.phone.AddContacts(LoadPhoneContactsForCharacter(c));
             }
 
             return characters;
+        }
+
+        /// <summary>
+        /// Encrypts the given password
+        /// TODO: Code a better encryption method instead of using md5. For example Rijndael
+        /// </summary>
+        /// <param name="password">Password to encrypt</param>
+        /// <returns>Encrypted version of the password</returns>
+        private string EncryptPassword(string password)
+        {
+            using (MD5 hasher = MD5.Create())
+            {
+                byte[] data = hasher.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < data.Length; i++)
+                    builder.Append(data[i].ToString("x2"));
+                return builder.ToString();
+            }
         }
 
         /// <summary>
@@ -402,22 +378,17 @@ namespace GTA_RP
         /// <returns>True if authenticated, otherwise false</returns>
         private Boolean AuthenticatePlayer(Client player, String password)
         {
-            var cmd = DBManager.SimpleQuery("SELECT password FROM players WHERE name = @name");
-            cmd.Parameters.AddWithValue("@name", player.name);
-            var reader = cmd.ExecuteReader();
-
-            if (!reader.HasRows)
+            string pass = null;
+            DBManager.SelectQuery("SELECT password FROM players WHERE name = @name", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                reader.Close();
-                return false;
+                pass = reader.GetString(0);
+            }).AddValue("@name", player.name).Execute();
+
+            if (pass != null)
+            {
+                if (pass.Equals(EncryptPassword(password)))
+                    return true;
             }
-
-            reader.Read();
-            string pwd = reader.GetString(0);
-            reader.Close();
-
-            if (pwd.Equals(password))
-                return true;
 
             return false;
         }
@@ -442,12 +413,11 @@ namespace GTA_RP
         /// <returns>True if player has account, otherwise false</returns>
         private Boolean DoesPlayerHaveAccount(Client player)
         {
-            var cmd = DBManager.SimpleQuery("SELECT COUNT(*) FROM players WHERE name = @name");
-            cmd.Parameters.AddWithValue("@name", player.name);
-            var reader = cmd.ExecuteReader();
-            reader.Read();
-            int count = reader.GetInt32(0);
-            reader.Close();
+            int count = 0;
+            DBManager.SelectQuery("SELECT COUNT(*) FROM players WHERE name = @name", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                count = reader.GetInt32(0);
+            }).AddValue("@name", player.name).Execute();
 
             if (count > 0)
                 return true;
@@ -499,16 +469,16 @@ namespace GTA_RP
             // Create player object
             // Close menu for player
             // Open character creation menu
-            var cmd = DBManager.SimpleQuery("INSERT INTO players VALUES (@id, @name, @password, @admin_level)");
-            cmd.Parameters.AddWithValue("@id", this.accountCreationId);
-            cmd.Parameters.AddWithValue("@name", accountName);
-            cmd.Parameters.AddWithValue("@password", password);
-            cmd.Parameters.AddWithValue("@admin_level", 0);
-            cmd.ExecuteNonQuery();
 
-            this.accountCreationId++;
+            DBManager.InsertQuery("INSERT INTO players VALUES (@id, @name, @password, @admin_level)")
+                .AddValue("@id", this.accountCreationId)
+                .AddValue("@name", accountName)
+                .AddValue("@password", this.EncryptPassword(password))
+                .AddValue("@admin_level", 0)
+                .Execute();
 
             Player p = new Player(c, this.accountCreationId, 0);
+            this.accountCreationId++;
             this.AddNewPlayerToPool(p);
 
             API.shared.triggerClientEvent(c, "EVENT_CLOSE_CREATE_ACCOUNT_MENU");
@@ -653,10 +623,7 @@ namespace GTA_RP
         /// <param name="newMoney">New money amount</param>
         public void UpdateCharacterMoney(Character character, int newMoney)
         {
-            var cmd = DBManager.SimpleQuery("UPDATE characters SET money=@money WHERE id=@id");
-            cmd.Parameters.AddWithValue("@id", character.ID);
-            cmd.Parameters.AddWithValue("@money", newMoney);
-            cmd.ExecuteNonQuery();
+            DBManager.UpdateQuery("UPDATE characters SET money=@money WHERE id=@id").AddValue("@id", character.ID).AddValue("@money", newMoney).Execute();
         }
 
         /// <summary>
@@ -725,7 +692,6 @@ namespace GTA_RP
                 return;
             }
 
-            // Everything ok
             this.CreateAccount(c, accountName, password);
         }
 
@@ -867,15 +833,11 @@ namespace GTA_RP
         {
             if (HasAccounts())
             {
-                var cmd = DBManager.SimpleQuery("SELECT MAX(id) FROM players");
-                var reader = cmd.ExecuteReader();
-                reader.Read();
-                this.accountCreationId = reader.GetInt32(0) + 1;
-                reader.Close();
-            }
-            else
-            {
-                this.accountCreationId = 0;
+                API.shared.consoleOutput("has accounts");
+                DBManager.SelectQuery("SELECT MAX(id) FROM players", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+                {
+                    this.accountCreationId = reader.GetInt32(0) + 1;
+                }).Execute();
             }
         }
 
@@ -886,11 +848,10 @@ namespace GTA_RP
         {
             if (HasTextMessages())
             {
-                var cmd = DBManager.SimpleQuery("SELECT MAX(id) FROM text_messages");
-                var reader = cmd.ExecuteReader();
-                reader.Read();
-                this.textMessageId = reader.GetInt32(0) + 1;
-                reader.Close();
+                DBManager.SelectQuery("SELECT MAX(id) FROM text_messages", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+                {
+                    this.textMessageId = reader.GetInt32(0) + 1;
+                }).Execute();
             }
             else
             {
@@ -905,11 +866,10 @@ namespace GTA_RP
         {
             if (HasCharacters())
             {
-                var cmd = DBManager.SimpleQuery("SELECT MAX(id) FROM characters");
-                var reader = cmd.ExecuteReader();
-                reader.Read();
-                this.characterSelector.characterCreationId = reader.GetInt32(0) + 1;
-                reader.Close();
+                DBManager.SelectQuery("SELECT MAX(id) FROM characters", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+                {
+                    this.characterSelector.characterCreationId = reader.GetInt32(0) + 1;
+                }).Execute();
             }
             else
             {
@@ -934,13 +894,10 @@ namespace GTA_RP
         /// </summary>
         public void InitCharacterGenders()
         {
-            var cmd = DBManager.SimpleQuery("SELECT * FROM model_genders");
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            DBManager.SelectQuery("SELECT * FROM model_genders", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
                 characterGenderDictionary.Add(reader.GetString(0), reader.GetInt32(1));
-            }
-            reader.Close();
+            }).Execute();
         }
 
         /// <summary>

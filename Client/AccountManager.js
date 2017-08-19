@@ -98,11 +98,11 @@
         let item2 = API.createMenuItem("Last name", "Your character's last name");
         var list = new List(String);
 
-        API.sendNotification(this.characterCreationModels.Count.toString());
 
         for (var i = 0; i < this.characterCreationModels.Count; i++) {
             list.Add(this.characterCreationModels[i]);
         }
+
         let item3 = API.createListItem("Character model", "Character model", list, 0);
         let item4 = API.createColoredItem("Accept", "Finish creating character", "#009933", "#33cc33");
         this.characterModelSelectItem = item3;
@@ -182,8 +182,6 @@
     handleOpenCharacterSelectMenu(args) {
 
         this.characterCreationModels = args[4];
-        API.sendNotification("models count is: " + args[4].Count.toString());
-        API.sendNotification("models2 count is: " + this.characterCreationModels.Count.toString());
 
         this.isSelectingCharacter = true;
         this.isCreatingCharacter = false;
@@ -270,26 +268,6 @@
 
         this.menuPool.Add(menu);
         menu.Visible = true;
-    }
-
-    cycleModelRight() {
-        if (this.characterModelSelectItem.Selected && this.allowCyclingModels) {
-            if (this.currentModelSpot != this.characterCreationModels.length - 1) {
-                this.currentModelSpot++;
-                this.currentModelName = this.characterCreationModels[this.currentModelSpot];
-                API.setPlayerSkin(API.pedNameToModel(this.currentModelName));
-            }
-        }
-    }
-
-    cycleModelLeft() {
-        if (this.characterModelSelectItem.Selected && this.allowCyclingModels) {
-            if (this.currentModelSpot != 0) {
-                this.currentModelSpot--;
-                this.currentModelName = this.characterCreationModels[this.currentModelSpot];
-                API.setPlayerSkin(API.pedNameToModel(this.currentModelName));
-            }
-        }
     }
 
     selectionChanged(menu, index) {

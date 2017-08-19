@@ -9,3 +9,5 @@ C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\NLog.xml
 C:\Users\Samuli\Desktop\GTA server\GTA-RP\obj\Release\GTA-RP.csprojResolveAssemblyReference.cache
 C:\Users\Samuli\Desktop\GTA server\GTA-RP\obj\Release\GTA-RP.dll
 C:\Users\Samuli\Desktop\GTA server\GTA-RP\obj\Release\GTA-RP.pdb
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\INIFileParser.dll
+C:\Users\Samuli\Desktop\GTA server\GTA-RP\bin\Release\INIFileParser.xml

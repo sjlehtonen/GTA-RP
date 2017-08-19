@@ -66,7 +66,7 @@ namespace GTA_RP.Vehicles
             this.color2 = color2;
             this.handle = null;
 
-            if (spawn)
+            if (spawn && ownerId < 0)
             {
                 this.Spawn();
                 this.ToggleDoorLock();
@@ -89,6 +89,17 @@ namespace GTA_RP.Vehicles
                 if (vehicle == handle)
                     handle = null;
             }
+        }
+
+        /// <summary>
+        /// Updates the vehicle's parking position
+        /// </summary>
+        /// <param name="newPos">New park position</param>
+        /// <param name="newRot">New park position rotation</param>
+        public void UpdateParkPosition(Vector3 newPos, Vector3 newRot)
+        {
+            this.parkPosition = newPos;
+            this.parkRotation = newRot;
         }
 
         /// <summary>

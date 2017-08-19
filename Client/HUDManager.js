@@ -9,7 +9,7 @@
 
 class Contact {
     constructor(name, number) {
-        this.name = name
+        this.name = name;
         this.number = number;
     }
 }
@@ -46,6 +46,7 @@ class HUDManager
         this.vehicles = [];
         this.vehiclesMenu = null;
         this.vehicleMenuItems = [];
+        this.selectedVehicle = null;
         //
 
         this.addContactNumber = "";
@@ -113,7 +114,7 @@ class HUDManager
                 break;
 
             case 'EVENT_NEW_TEXT_MESSAGE_RECEIVED':
-                this.handleNewTextMessageReceivedEvent(args[0], args[1], args[2], args[3])
+                this.handleNewTextMessageReceivedEvent(args[0], args[1], args[2], args[3]);
                 break;
 
             case 'EVENT_RECEIVE_PHONE_CALL': // Other player is calling, show menu
@@ -133,8 +134,13 @@ class HUDManager
                 break;
 
             case 'EVENT_NEW_VEHICLE_ADDED':
+                this.addNewVehicle(args[0], args[1], args[2]);
                 break;
         }
+    }
+
+    addNewVehicle(id, license, spawned) {
+        this.vehicles.push(new Vehicle(id, license, spawned));
     }
 
     startPhoneCalling(number) {
@@ -247,6 +253,10 @@ class HUDManager
             let yPos = this.screenResolution.Height * 0.82;
             let increment = yPos * 0.036;
 
+            /*let xPos = 278.4;
+            let yPos = 885.6;
+            let increment = yPos * 0.036;*/
+
             API.drawText(this.characterName, xPos, yPos, 0.8, 255, 255, 255, 255, 1, 0, true, true, 1000);
             API.drawText(this.factionText, xPos, yPos + increment * 2.3, 0.65, this.factionTextColorR, this.factionTextColorG, this.factionTextColorB, 255, 6, 0, false, true, 1000);
             API.drawText(this.employmentText, xPos, yPos + increment * 3.4, 0.65, this.employmentTextColorR, this.employmentTextColorG, this.employmentTextColorB, 255, 6, 0, false, true, 1000);
@@ -293,16 +303,20 @@ class HUDManager
         return menu;
     }
 
-    spawnVehicle(id) {
-        API.triggerServerEvent("EVENT_TRY_SPAWN_VEHICLE", id);
+    spawnVehicle(menu, sender) {
+        API.triggerServerEvent("EVENT_TRY_SPAWN_VEHICLE", this.selectedVehicle);
     }
 
-    parkVehicle(id) {
-        API.triggerServerEvent("EVENT_TRY_PARK_VEHICLE", id);
+    parkVehicle(menu, sender) {
+        API.triggerServerEvent("EVENT_TRY_PARK_VEHICLE", this.selectedVehicle);
     }
 
-    lockVehicle(id) {
-        API.triggerServerEvent("EVENT_TRY_LOCK_VEHICLE", id);
+    lockVehicle(menu, sender) {
+        API.triggerServerEvent("EVENT_TRY_LOCK_VEHICLE", this.selectedVehicle);
+    }
+
+    buyParkSpot(menu, sender) {
+        API.triggerServerEvent("EVENT_TRY_BUY_PARKING_SPOT", this.selectedVehicle);
     }
 
     createVehicleDetailMenu(id, licensePlate, spawned) {
@@ -310,18 +324,30 @@ class HUDManager
         let item1 = API.createMenuItem("Park vehicle", "You have to be inside the vehicle and at the park spot in order to park the vehicle");
         let item2 = API.createMenuItem("Spawn vehicle", "Spawns the vehicle at the spot where it was parked");
         let item3 = API.createMenuItem("Lock/Unlock vehicle", "");
+        let item4 = API.createMenuItem("Purchase new parking spot ($10000)", "Updates the parking location for vehicle\nNote: You have to be inside the vehicle");
+
+        item2.Activated.connect((menu, sender) => this.spawnVehicle(menu, sender));
+        item1.Activated.connect((menu, sender) => this.parkVehicle(menu, sender));
+        item3.Activated.connect((menu, sender) => this.lockVehicle(menu, sender));
+        item4.Activated.connect((menu, sender) => this.buyParkSpot(menu, sender));
 
         menu.AddItem(item1);
         menu.AddItem(item2);
         menu.AddItem(item3);
+        menu.AddItem(item4);
         return menu;
+    }
+
+    vehicleSelected(sender, item, index)
+    {
+        this.selectedVehicle = this.vehicles[index].id;
     }
 
     createVehicleMenu()
     {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Player Menu", "Vehicles", 0, 0, 6);
         this.vehiclesMenu = menu;
+        menu.OnItemSelect.connect((sender, item, index) => this.vehicleSelected(sender, item, index));
 
         for (var i = 0; i < this.vehicles.length; i++) {
             let item = API.createMenuItem(this.vehicles[i].licensePlate, "");
@@ -332,7 +358,7 @@ class HUDManager
             menu.AddItem(item);
 
             // Create detail menus for every vehicle
-            let detailMenu = this.createVehicleDetailMenu(this.vehicles[i].id.toString(), this.vehicles[i].licensePlate, this.vehicles[i].spawned);
+            let detailMenu = this.createVehicleDetailMenu(this.vehicles[i].id, this.vehicles[i].licensePlate, this.vehicles[i].spawned);
             this.menuPool.Add(detailMenu);
             menu.BindMenuToItem(detailMenu, item);
         }
@@ -604,12 +630,11 @@ class HUDManager
         this.menuPool.Add(menu);
         parent.BindMenuToItem(menu, button);
 
-
         this.contactsMenu = menu;
 
         menu.OnIndexChange.connect((sender, index) => this.contactSelected(sender, index));
         menu.OnMenuClose.connect((sender) => this.menuClosed(sender));
-        menu.OnItemSelect.connect((sender, selectedItem, newIndex) => this.contactSelectedEvent(sender, selectedItem, newIndex))
+        menu.OnItemSelect.connect((sender, selectedItem, newIndex) => this.contactSelectedEvent(sender, selectedItem, newIndex));
 
         let item1 = API.createColoredItem("Add new contact", "Add new contact to your address book", "#009933", "#33cc33");
         menu.AddItem(item1);
@@ -639,8 +664,8 @@ class HUDManager
 
 
         menu.AddItem(item1);
-        menu.AddItem(item2);
         menu.AddItem(item4);
+        menu.AddItem(item2);
         menu.AddItem(item3);
 
         let menu1 = this.createSendTextMessageMenu();

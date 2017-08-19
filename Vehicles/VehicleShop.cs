@@ -197,7 +197,7 @@ namespace GTA_RP.Vehicles
 
                         character.SetMoney(character.money - price);
                         string licensePlate = VehicleManager.Instance().GenerateUnusedLicensePlate();
-                        int id = VehicleManager.Instance().AddVehicleToDatabase(character.ID, Factions.FactionI.CIVILIAN, model, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, licensePlate, 0, color1, color2);
+                        int id = VehicleManager.Instance().AddVehicleToDatabase(character.ID, Factions.FactionI.CIVILIAN, model, -223.2121f, -1168.157f, 22.5882f, 0.5045538f, 0.1192265f, -91.68389f, licensePlate, 0, color1, color2);
                         VehicleManager.Instance().SendUpdatedVehicleToClient(character, id, licensePlate, false);
                         API.shared.triggerClientEvent(character.owner.client, "EVENT_CHARACTER_EXIT_VEHICLE_SHOP");
                         API.shared.sendNotificationToPlayer(character.owner.client, "Vehicle purchased!\nExit the shop and access the vehicle from your F1 menu");

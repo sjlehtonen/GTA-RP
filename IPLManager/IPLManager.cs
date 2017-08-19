@@ -13,27 +13,9 @@ namespace GTA_RP.IPLManager
     /// </summary>
     class IPLManager : Singleton<IPLManager>
     {
-        private static IPLManager _instance = null;
         private List<String> loadedIpls = new List<String>();
 
-        public IPLManager()
-        {
-            /*if (_instance == null)
-            {
-                _instance = this;
-            }*/
-        }
-
-        /// <summary>
-        /// Gets the instance of the IPLmanager
-        /// </summary>
-        /// <returns>Instance of IPLManager</returns>
-        /*public static IPLManager Instance()
-        {
-            if (_instance == null)
-                _instance = new IPLManager();
-            return _instance;
-        }*/
+        public IPLManager() { }
 
         /// <summary>
         /// Checks if certain IPL is loaded

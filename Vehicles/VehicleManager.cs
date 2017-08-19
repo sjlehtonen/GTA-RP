@@ -23,15 +23,12 @@ namespace GTA_RP.Vehicles
     {
         List<RPVehicle> vehicles = new List<RPVehicle>();
         Dictionary<int, VehicleShop> vehicleShops = new Dictionary<int, VehicleShop>();
-
-        //VehicleShop vehicleShop = new VehicleShop(new Vector3(-177.2077, -1158.487, 23.8137), new Vector3(-177.0255, -1153.632, 23.11556), new Vector3(0, 0, -2.621614));
-
         private event OnVehicleDestroyedDelegate OnVehicleDestroyedEvent;
         private event OnVehicleExitedDelegate OnVehicleExitedEvent;
         private event OnVehicleEnteredDelegate OnVehicleEnterEvent;
 
-        private static VehicleManager _instance = null;
-        private const float doorLockDistance = 1.5f;
+        private const int buyParkPrice = 10000;
+        private const float doorLockDistance = 2.0f;
         private const float parkDistance = 3.0f;
         private int vehicleInsertId = 0;
 
@@ -202,14 +199,6 @@ namespace GTA_RP.Vehicles
         private Boolean HasVehicles()
         {
             return !DBManager.IsTableEmpty("vehicles");
-            /*var cmd = DBManager.SimpleQuery("SELECT COUNT(*) FROM vehicles");
-            var reader = cmd.ExecuteReader();
-            reader.Read();
-            int rows = reader.GetInt32(0);
-            reader.Close();
-            if (rows < 1)
-                return false;
-            return true;*/
         }
 
         /// <summary>
@@ -263,6 +252,18 @@ namespace GTA_RP.Vehicles
         }
 
         /// <summary>
+        /// Checks if character is in given vehicle
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <param name="veh">Vehicle</param>
+        /// <returns>True if character is in vehicle, otherwise false</returns>
+        private bool IsCharacterInVehicle(Character character, RPVehicle veh)
+        {
+            if (API.shared.getPlayerVehicle(character.owner.client) == veh.handle) return true;
+            return false;
+        }
+
+        /// <summary>
         ///  Adds a vehicle into the vehicle manager
         /// </summary>
         /// <param name="id">Vehicle id</param>
@@ -282,6 +283,25 @@ namespace GTA_RP.Vehicles
         {
             RPVehicle v = new RPVehicle(id, ownerId, faction, API.shared.vehicleNameToModel(model), parkX, parkY, parkZ, parkRotX, parkRotY, parkRotZ, color1, color2, plateText, false);
             vehicles.Add(v);
+        }
+
+        /// <summary>
+        /// Set's new parking spot for vehicle
+        /// </summary>
+        /// <param name="vehicle">Vehicle</param>
+        /// <param name="spot">New spot</param>
+        /// <param name="spotRot">New rotation</param>
+        private void SetParkingSpotForVehicle(RPVehicle vehicle, Vector3 spot, Vector3 spotRot)
+        {
+            DBManager.UpdateQuery("UPDATE vehicles SET park_x=@park_x, park_y=@park_y, park_z=@park_z, park_rot_x=@park_rot_x, park_rot_y=@park_rot_y, park_rot_z=@park_rot_z WHERE id=@id")
+                .AddValue("@park_x", spot.X)
+                .AddValue("@park_y", spot.Y)
+                .AddValue("@park_z", spot.Z)
+                .AddValue("@park_rot_x", spotRot.X)
+                .AddValue("@park_rot_y", spotRot.Y)
+                .AddValue("@park_rot_z", spotRot.Z)
+                .AddValue("@id", vehicle.id)
+                .Execute();
         }
 
         /// <summary>
@@ -352,11 +372,27 @@ namespace GTA_RP.Vehicles
             StringBuilder nameBuilder = new StringBuilder();
             do
             {
-                nameBuilder.Append("LS ");
-                nameBuilder.Append(this.GenerateRandomString(5));
+                nameBuilder.Append("LS");
+                nameBuilder.Append(this.GenerateRandomString(6));
             } while (this.DoesVehicleExistWithLicensePlate(nameBuilder.ToString()));
 
             return nameBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Return the vehicle that the character is currently using
+        /// </summary>
+        /// <param name="c">Character</param>
+        /// <returns>Vehicle that the character is using, if not using vehicle then null</returns>
+        public RPVehicle GetVehicleForCharacter(Character c)
+        {
+            NetHandle veh = API.shared.getPlayerVehicle(c.owner.client);
+            foreach (RPVehicle v in vehicles)
+            {
+                if (v.handle == veh && v.spawned)
+                    return v;
+            }
+            return null;
         }
 
         /// <summary>
@@ -384,6 +420,49 @@ namespace GTA_RP.Vehicles
             Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
             VehicleShop shop = GetVehicleShopWithId(id);
             if (shop != null) shop.PurchaseVehicle(character, model, color1, color2);
+        }
+
+        
+
+        /// <summary>
+        /// Purchases a parking spot
+        /// </summary>
+        /// <param name="character">Character who is buying</param>
+        /// <param name="vehicle">Vehicle for which the parking spot is being bought for</param>
+        public void PurchasePark(Character character, RPVehicle vehicle)
+        {
+            if (character.ID == vehicle.ownerId)
+            {
+                if (VehicleManager.Instance().IsCharacterInVehicle(character, vehicle))
+                {
+                    if (character.money >= buyParkPrice)
+                    {
+                        character.SetMoney(character.money - buyParkPrice);
+                        VehicleManager.Instance().SetParkingSpotForVehicle(vehicle, vehicle.handle.position, vehicle.handle.rotation);
+                        vehicle.UpdateParkPosition(vehicle.handle.position, vehicle.handle.rotation);
+                        API.shared.sendNotificationToPlayer(character.owner.client, "Parking spot updated!");
+                    }
+                    else
+                        API.shared.sendNotificationToPlayer(character.owner.client, "You don't have enought money to buy a parking spot!");
+                }
+                else
+                    API.shared.sendNotificationToPlayer(character.owner.client, "You have to be inside the vehicle to buy a parking spot!");
+
+            }
+            else
+                API.shared.sendNotificationToPlayer(character.owner.client, "You are not the owner of the vehicle!");
+        }
+
+        /// <summary>
+        /// Attempts to purchase a parking spot for a vehicle
+        /// </summary>
+        /// <param name="c">Client</param>
+        public void TryPurchasePark(Client c, int vehicleId)
+        {
+            Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+            RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
+            if (vehicle != null) VehicleManager.Instance().PurchasePark(character, vehicle);
+
         }
 
         /// <summary>

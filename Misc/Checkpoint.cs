@@ -40,7 +40,7 @@ namespace GTA_RP.Misc
             if (OnEnterCheckPointEvent != null)
             {
                 Player p = PlayerManager.Instance().PlayerForHandle(entity);
-                OnEnterCheckPointEvent.Invoke(this, p.activeCharacter);
+                if (p != null) OnEnterCheckPointEvent.Invoke(this, p.activeCharacter);
             }
         }
 
@@ -54,7 +54,7 @@ namespace GTA_RP.Misc
             if (OnExitCheckPointEvent != null)
             {
                 Player p = PlayerManager.Instance().PlayerForHandle(entity);
-                OnExitCheckPointEvent.Invoke(this, p.activeCharacter);
+                if (p != null) OnExitCheckPointEvent.Invoke(this, p.activeCharacter);
             }
         }
     }

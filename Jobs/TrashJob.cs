@@ -333,9 +333,6 @@ namespace GTA_RP.Jobs
         /// </summary>
         /// <param name="cp">Checkpoint exited</param>
         /// <param name="e">Handle of exited thing, for example vehicle or player</param>
-        public override void OnExitCheckpoint(ClientCheckpoint cp, NetHandle e)
-        {
-
-        }
+        public override void OnExitCheckpoint(ClientCheckpoint cp, NetHandle e) { }
     }
 }

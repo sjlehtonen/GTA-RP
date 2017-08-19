@@ -53,7 +53,6 @@ namespace GTA_RP
         private Dictionary<int, int> buildingIdForTemplateId = new Dictionary<int, int>();
         private Dictionary<int, String> buildingNames = new Dictionary<int, string>();
         private Dictionary<int, Timer> enterHouseTimers = new Dictionary<int, Timer>();
-        private static HouseManager _instance = null;
 
         /// <summary>
         /// Constructor of HouseManager

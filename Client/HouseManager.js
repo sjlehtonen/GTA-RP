@@ -46,7 +46,7 @@
         let idList = args[2];
 
         for (var i = 0; i < nameList.Count; i++) {
-            let item = API.createMenuItem(nameList[i], "Exit");
+            let item = API.createMenuItem(nameList[i], "");
             let id = idList[i];
             this.dict.set(nameList[i], id);
 

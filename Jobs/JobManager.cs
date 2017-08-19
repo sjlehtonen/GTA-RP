@@ -75,7 +75,7 @@ namespace GTA_RP.Jobs
         {
             API.shared.consoleOutput("Initialising jobs...");
             AddJob(typeof(System.Object), 0, "Unemployed", 255, 255, 255);
-            AddJob(typeof(TrashJob), 1, "Garbage man", 255, 255, 255);
+            AddJob(typeof(TrashJob), 1, "Trash collector", 255, 255, 255);
         }
 
         /// <summary>
