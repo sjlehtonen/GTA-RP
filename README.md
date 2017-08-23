@@ -23,7 +23,7 @@ This project is a roleplaying gamemode for GTA-MP multiplayer modification for G
 
 2. Set GTA-RP as the current gamemode inside the **settings.xml** which should be found inside the GTA-MP Server root
 
-3. Create a file called **Config.ini** inside the Config folder and add the following:
+3. Create a file called **Config.ini** inside the Config folder (if the folder doesn't exist, create it at the gamemode root) and add the following:
 
 ```
 [database]
