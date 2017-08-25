@@ -47,6 +47,8 @@ password="password here"
 
 4. Import the database file **gta_rp.sql** (Found at the root of this repository) provided here to initialize the database
 	- It contains a test account with name **Test** and password **Test123**
+		- **Note:** Your GTA-MP name must match the account name currently. 
+			- In the future, social club ID will be used instead.
 	- It also contains a few characters on the account, their property ownerships and vehicle ownerships
 
 5. Have **MySql.Data.dll**, **INIFileParser.dll** and **System.Data.dll** in the GTA-MP Server directory root
