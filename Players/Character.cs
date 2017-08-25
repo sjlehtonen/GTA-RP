@@ -104,6 +104,13 @@ namespace GTA_RP
         }
 
         /// <summary>
+        /// Destroys attached objects
+        /// </summary>
+        public void CleanUp()
+        {
+        }
+
+        /// <summary>
         /// Checks if two characters are the same
         /// </summary>
         /// <param name="obj">Character</param>

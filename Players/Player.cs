@@ -61,6 +61,15 @@ namespace GTA_RP
         }
 
         /// <summary>
+        /// Is ran when the player is deleted
+        /// Removes attached objects from active character
+        /// </summary>
+        public void CleanUp()
+        {
+            if (this.activeCharacter != null) this.activeCharacter.CleanUp();
+        }
+
+        /// <summary>
         /// Sets active character for player
         /// </summary>
         /// <param name="c">Character to set as active character</param>

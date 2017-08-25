@@ -89,7 +89,16 @@ namespace GTA_RP
             return new NormalQuery(query);
         }
 
+        /// <summary>
+        /// Database query wrapper for delete statement
+        /// </summary>
+        /// <param name="query">Query string</param>
+        /// <returns>Query object</returns>
+        public static Query DeleteQuery(String query)
+        {
+            return InsertQuery(query);
 
+        }
         /// <summary>
         /// Loads connection info from configuration file
         /// </summary>

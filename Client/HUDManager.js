@@ -658,7 +658,7 @@ class HUDManager
         menu.OnMenuChange.connect((sender, next, forward) => this.menuChanged(sender, next, forward));
 
         let item1 = API.createMenuItem("Address book", "");
-        let item2 = API.createMenuItem("Call", "");
+        let item2 = API.createMenuItem("Call (not implemented yet, use address book", "");
         let item4 = API.createMenuItem("Messages", "");
         let item3 = API.createMenuItem("Send text message", "");
 
@@ -692,7 +692,7 @@ class HUDManager
         menu.OnMenuChange.connect((sender, next, forward) => this.menuChanged(sender, next, forward));
         menu.OnMenuClose.connect((sender) => this.menuClosed(sender));
 
-        let item = API.createMenuItem("Inventory", "");
+        let item = API.createMenuItem("Inventory (Not yet implemented)", "");
         let item2 = API.createMenuItem("Vehicles", "");
         if (this.vehicles.length == 0) {
             item2.Enabled = false;

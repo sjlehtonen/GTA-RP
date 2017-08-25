@@ -1,6 +1,6 @@
 # GTA Roleplaying script
 
-This project is a roleplaying gamemode for GTA-MP multiplayer modification for GTA V. 
+This project is a roleplaying game mode for GTA-MP multiplayer modification for GTA V. 
 
 ## Features
 - Account system in a way that one account can have multiple characters
@@ -12,6 +12,17 @@ This project is a roleplaying gamemode for GTA-MP multiplayer modification for G
 - Faction system for factions like police and military
 - Phone system with address book and the possibility of sending text messages and making phone calls
 
+## Upcoming features
+- System where players can buy houses and sell them
+- Ability to invite other players into your house
+- Ability to share car keys to other players
+- More vehicle shops
+- Finished implementation of the phone
+- Player animations
+- Inventory system
+- General shops
+- Other fixes
+
 ## Requirements
 
 - GTA-MP Server
@@ -21,9 +32,9 @@ This project is a roleplaying gamemode for GTA-MP multiplayer modification for G
 
 1. Put all the content inside a folder called GTA-RP and place it in the resources folder of your GTA-MP Server installation
 
-2. Set GTA-RP as the current gamemode inside the **settings.xml** which should be found inside the GTA-MP Server root
+2. Set GTA-RP as the current game mode inside the **settings.xml** which should be found inside the GTA-MP Server root
 
-3. Create a file called **Config.ini** inside the Config folder (if the folder doesn't exist, create it at the gamemode root) and add the following:
+3. Create a file called **Config.ini** inside the Config folder (if the folder doesn't exist, create it at the game mode root) and add the following:
 
 ```
 [database]
@@ -34,11 +45,13 @@ username="username here"
 password="password here"
 ```
 
-4. Import the database file provided here to initialize the database (Coming soon)
+4. Import the database file **gta_rp.sql** (Found at the root of this repository) provided here to initialize the database
+	- It contains a test account with name **Test** and password **Test123**
+	- It also contains a few characters on the account, their property ownerships and vehicle ownerships
 
 5. Have **MySql.Data.dll**, **INIFileParser.dll** and **System.Data.dll** in the GTA-MP Server directory root
 
-## Pictures of the gamemode
+## Pictures of the game mode
 
 ### General pictures:
 ![UI10](Images/1.bmp)

@@ -211,13 +211,21 @@ namespace GTA_RP
         /// <param name="message">Received text message</param>
         private void AddReceivedTextMessageToDatabase(TextMessage message)
         {
-            var cmd = DBManager.SimpleQuery("INSERT INTO text_messages VALUES (@id, @sender_number, @receiver_number, @time, @message)");
+            DBManager.InsertQuery("INSERT INTO text_messages VALUES (@id, @sender_number, @receiver_number, @time, @message)")
+                .AddValue("@id", message.id)
+                .AddValue("@sender_number", message.senderNumber)
+                .AddValue("@receiver_number", this.phoneNumber)
+                .AddValue("@time", message.time)
+                .AddValue("@message", message.message)
+                .Execute();
+
+            /*var cmd = DBManager.SimpleQuery("INSERT INTO text_messages VALUES (@id, @sender_number, @receiver_number, @time, @message)");
             cmd.Parameters.AddWithValue("@id", message.id);
             cmd.Parameters.AddWithValue("@sender_number", message.senderNumber);
             cmd.Parameters.AddWithValue("@receiver_number", this.phoneNumber);
             cmd.Parameters.AddWithValue("@time", message.time);
             cmd.Parameters.AddWithValue("@message", message.message);
-            cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();*/
         }
 
         /// <summary>
@@ -226,9 +234,13 @@ namespace GTA_RP
         /// <param name="id">Text message id</param>
         private void RemoveTextMessageFromDatabase(int id)
         {
-            var cmd = DBManager.SimpleQuery("DELETE FROM text_messages WHERE id=@id");
+            DBManager.DeleteQuery("DELETE FROM text_messages WHERE id=@id")
+                .AddValue("@id", id)
+                .Execute();
+
+            /*var cmd = DBManager.SimpleQuery("DELETE FROM text_messages WHERE id=@id");
             cmd.Parameters.AddWithValue("@id", id);
-            cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();*/
         }
 
         /// <summary>
@@ -237,11 +249,17 @@ namespace GTA_RP
         /// <param name="address">Contact</param>
         private void AddContactToDatabase(Address address)
         {
-            var cmd = DBManager.SimpleQuery("INSERT INTO phone_contacts VALUES (@owner, @name, @number)");
+            /*var cmd = DBManager.SimpleQuery("INSERT INTO phone_contacts VALUES (@owner, @name, @number)");
             cmd.Parameters.AddWithValue("@owner", this.owner.ID);
             cmd.Parameters.AddWithValue("@name", address.name);
             cmd.Parameters.AddWithValue("@number", address.number);
-            cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();*/
+
+            DBManager.InsertQuery("INSERT INTO phone_contacts VALUES (@owner, @name, @number)")
+                .AddValue("@owner", this.owner.ID)
+                .AddValue("@name", address.name)
+                .AddValue("@number", address.number)
+                .Execute();
         }
 
         /// <summary>
@@ -250,10 +268,15 @@ namespace GTA_RP
         /// <param name="number">Contact's number</param>
         private void RemoveContactFromDatabase(String number)
         {
-            var cmd = DBManager.SimpleQuery("DELETE FROM phone_contacts WHERE owner=@owner AND number=@number");
+            /*var cmd = DBManager.SimpleQuery("DELETE FROM phone_contacts WHERE owner=@owner AND number=@number");
             cmd.Parameters.AddWithValue("@owner", this.owner.ID);
             cmd.Parameters.AddWithValue("@number", number);
-            cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();*/
+
+            DBManager.DeleteQuery("DELETE FROM phone_contacts WHERE owner=@owner AND number=@number")
+                .AddValue("@owner", this.owner.ID)
+                .AddValue("@number", number)
+                .Execute();
         }
 
         /// <summary>
@@ -359,6 +382,8 @@ namespace GTA_RP
             {
                 if (this.phoneCallActive || this.isCalling)
                     this.HangUpCall();
+                else if (this.phoneState == PhoneState.PHONE_READING)
+                    this.DeletePhone();
             }
             VehicleManager.Instance().UnsubscribeFromVehicleEnterEvent(this.OwnerEnteredVehicle);
             VehicleManager.Instance().UnsubscribeFromVehicleExitEvent(this.OwnerExitedVehicle);
