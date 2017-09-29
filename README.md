@@ -12,16 +12,7 @@ This project is a roleplaying game mode for GTA-MP multiplayer modification for 
 - Faction system for factions like police and military
 - Phone system with address book and the possibility of sending text messages and making phone calls
 
-## Upcoming features
-- System where players can buy houses and sell them
-- Ability to invite other players into your house
-- Ability to share car keys to other players
-- More vehicle shops
-- Finished implementation of the phone
-- Player animations
-- Inventory system
-- General shops
-- Other fixes
+
 
 ## Requirements
 
