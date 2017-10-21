@@ -13,8 +13,8 @@ using System.Text;
 namespace GTA_RP.Vehicles
 {
     public delegate void OnVehicleDestroyedDelegate(NetHandle vehicleHandle);
-    public delegate void OnVehicleExitedDelegate(Client c, NetHandle vehicleHandle);
-    public delegate void OnVehicleEnteredDelegate(Client c, NetHandle vehicleHandle);
+    public delegate void OnVehicleExitedDelegate(Client c, NetHandle vehicleHandle, int seat);
+    public delegate void OnVehicleEnteredDelegate(Client c, NetHandle vehicleHandle, int seat);
 
     /// <summary>
     /// Class responsible for handling vehicles
@@ -52,9 +52,9 @@ namespace GTA_RP.Vehicles
         /// </summary>
         /// <param name="c">Client who exited vehicle</param>
         /// <param name="vehicle">Vehicle from which client exited</param>
-        public void VehicleExitEvent(Client c, NetHandle vehicle)
+        public void VehicleExitEvent(Client c, NetHandle vehicle, int seat)
         {
-            RunVehicleExitEvents(c, vehicle);
+            RunVehicleExitEvents(c, vehicle, seat);
         }
 
         /// <summary>
@@ -62,9 +62,9 @@ namespace GTA_RP.Vehicles
         /// </summary>
         /// <param name="c">Client who entered vehicle</param>
         /// <param name="vehicle">Vehicle that client entered into</param>
-        public void VehicleEnterEvent(Client c, NetHandle vehicle)
+        public void VehicleEnterEvent(Client c, NetHandle vehicle, int seat)
         {
-            RunVehicleEnterEvents(c, vehicle);
+            RunVehicleEnterEvents(c, vehicle, seat);
         }
 
 
@@ -136,10 +136,10 @@ namespace GTA_RP.Vehicles
         /// Runs all subscriber methods for enter vehicle event
         /// </summary>
         /// <param name="vehicle">Vehicle handle</param>
-        private void RunVehicleEnterEvents(Client c, NetHandle vehicle)
+        private void RunVehicleEnterEvents(Client c, NetHandle vehicle, int seat)
         {
             if (this.OnVehicleEnterEvent != null)
-                this.OnVehicleEnterEvent.Invoke(c, vehicle);
+                this.OnVehicleEnterEvent.Invoke(c, vehicle, seat);
         }
 
         /// <summary>
@@ -222,10 +222,10 @@ namespace GTA_RP.Vehicles
         /// Runs all subscriber methods for exit vehicle event
         /// </summary>
         /// <param name="vehicle">Vehicle handle</param>
-        private void RunVehicleExitEvents(Client c, NetHandle vehicle)
+        private void RunVehicleExitEvents(Client c, NetHandle vehicle, int seat)
         {
             if (this.OnVehicleExitedEvent != null)
-                this.OnVehicleExitedEvent.Invoke(c, vehicle);
+                this.OnVehicleExitedEvent.Invoke(c, vehicle, seat);
         }
 
         /// <summary>

@@ -104,7 +104,7 @@ namespace GTA_RP
         /// </summary>
         /// <param name="c">Client</param>
         /// <param name="vehicle">Vehicle</param>
-        private void OwnerEnteredVehicle(Client c, NetHandle vehicle)
+        private void OwnerEnteredVehicle(Client c, NetHandle vehicle, int seat)
         {
             if (c == this.owner.owner.client)
             {
@@ -121,7 +121,7 @@ namespace GTA_RP
         /// </summary>
         /// <param name="c"></param>
         /// <param name="vehicle"></param>
-        private void OwnerExitedVehicle(Client c, NetHandle vehicle)
+        private void OwnerExitedVehicle(Client c, NetHandle vehicle, int seat)
         {
             if (c == this.owner.owner.client)
             {

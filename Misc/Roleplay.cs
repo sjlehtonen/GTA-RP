@@ -28,6 +28,7 @@ namespace GTA_RP
             API.onPlayerEnterVehicle += VehicleManager.Instance().VehicleEnterEvent;
             API.onPlayerExitVehicle += VehicleManager.Instance().VehicleExitEvent;
 
+
             //API.onPlayerConnected += PlayerManager.Instance().HandlePlayerConnect;
             API.onPlayerDisconnected += PlayerManager.Instance().HandlePlayerDisconnect;
             API.onPlayerFinishedDownload += PlayerManager.Instance().HandlePlayerConnect;

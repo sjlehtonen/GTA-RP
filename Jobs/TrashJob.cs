@@ -100,7 +100,7 @@ namespace GTA_RP.Jobs
         /// </summary>
         /// <param name="c">Client who exited vehicle</param>
         /// <param name="vHandle">Vehicle handle</param>
-        private void PlayerExitedVehicle(Client c, NetHandle vHandle)
+        private void PlayerExitedVehicle(Client c, NetHandle vHandle, int seat)
         {
             if (c.handle == character.owner.client.handle && vHandle == workVehicle.handle)
             {
@@ -115,7 +115,7 @@ namespace GTA_RP.Jobs
         /// </summary>
         /// <param name="c">Client who entered vehicle</param>
         /// <param name="vHandle">Vehicle handle</param>
-        private void PlayerEnteredVehicle(Client c, NetHandle vHandle)
+        private void PlayerEnteredVehicle(Client c, NetHandle vHandle, int seat)
         {
             if (c.handle == character.owner.client.handle && vHandle == workVehicle.handle)
                 exitVehicleTimer.Stop();
