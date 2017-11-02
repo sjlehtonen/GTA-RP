@@ -472,7 +472,7 @@ class HUDManager
         else {
             API.triggerServerEvent("EVENT_SEND_TEXT_MESSAGE", this.textMessageReceiverNumber, this.textMessage);
             //this.closePhoneMenu(menu); // Remove for debug
-            this.sendTextMessageMenu.GoBack(); // maybe bug
+            this.sendTextMessageMenu.GoBack(); // maybe bugged, needs testing
         }
     }
 

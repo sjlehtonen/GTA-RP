@@ -314,7 +314,15 @@ namespace GTA_RP
         /// <returns>A house with selected id</returns>
         private House GetHouseForId(int houseId)
         {
-            return ownedHouses.Single(h => h.id == houseId);
+            try
+            {
+                House house = ownedHouses.Single(h => h.id == houseId);
+                return house;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -371,6 +379,16 @@ namespace GTA_RP
                 return t.Enabled;
 
             return false;
+        }
+        
+        /// <summary>
+        /// Gets template id for a house id
+        /// </summary>
+        /// <param name="houseId">House id</param>
+        /// <returns>Template id</returns>
+        private int GetTemplateIdForId(int houseId)
+        {
+            return GetHouseForId(houseId).templateId;
         }
 
         /// <summary>
@@ -468,6 +486,31 @@ namespace GTA_RP
             Teleport t = this.GetExitTeleportForIdAndInRange(c, teleportId);
             if (t != null)
                 ExitHouse(c, t, destinationId);
+        }
+
+        /// <summary>
+        /// Gets spawn location for a house with certain id(normal id, not template id)
+        /// </summary>
+        /// <param name="houseId">House id</param>
+        /// <returns>Coordinates of spawn point</returns>
+        public Vector3 GetSpawnLocationOfHouseWithId(int houseId)
+        {
+            int templateId = GetTemplateIdForId(houseId);
+            return houseTemplates.Single(h => h.id == templateId).spawn_position;
+        }
+
+        /// TODO: Add renting option
+        /// <summary>
+        /// Checks if character is owner or renter of a house
+        /// </summary>
+        /// <param name="houseId">House id</param>
+        /// <returns>True if character is renter or owner, otherwise false</returns>
+        public Boolean IsCharacterOwnerOrRenterOfHouse(Character c, int houseId)
+        {
+            House house = GetHouseForId(houseId);
+            if (house == null) return false;
+            if (house.ownerId == c.ID) return true;
+            return false;
         }
 
         /// <summary>

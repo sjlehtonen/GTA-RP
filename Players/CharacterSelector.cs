@@ -222,13 +222,13 @@ namespace GTA_RP
         /// <param name="model">Character's model</param>
         public void CreateCharacter(Player p, string firstName, string lastName, string model)
         {
-            var cmd = DBManager.SimpleQuery("INSERT INTO characters VALUES (@id, @player_id, @first_name, @last_name, @faction_id, @player_model, @money, @job, @phone_number)");
+            //var cmd = DBManager.SimpleQuery("INSERT INTO characters VALUES (@id, @player_id, @first_name, @last_name, @faction_id, @player_model, @money, @job, @phone_number)");
             String phoneNumber = this.GenerateRandomPhoneNumber();
 
             lastName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(lastName);
             firstName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(firstName);
 
-            cmd.Parameters.AddWithValue("@id", characterCreationId);
+            /*cmd.Parameters.AddWithValue("@id", characterCreationId);
             cmd.Parameters.AddWithValue("@player_id", p.id);
             cmd.Parameters.AddWithValue("@first_name", firstName);
             cmd.Parameters.AddWithValue("@last_name", lastName);
@@ -238,9 +238,22 @@ namespace GTA_RP
             cmd.Parameters.AddWithValue("@job", 0);
             cmd.Parameters.AddWithValue("@phone_number", phoneNumber);
 
-            cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();*/
 
-            Character c = new Character(p, characterCreationId, firstName, lastName, 0, model, 200, 0, phoneNumber);
+            DBManager.InsertQuery("INSERT INTO characters VALUES (@id, @player_id, @first_name, @last_name, @faction_id, @player_model, @money, @job, @phone_number, @spawn_house_id)")
+                .AddValue("@id", characterCreationId)
+                .AddValue("@player_id", p.id)
+                .AddValue("@first_name", firstName)
+                .AddValue("@last_name", lastName)
+                .AddValue("@faction_id", 0)
+                .AddValue("@player_model", model)
+                .AddValue("@money", 200)
+                .AddValue("@job", 0)
+                .AddValue("@phone_number", phoneNumber)
+                .AddValue("@spawn_house_id", -1)
+                .Execute();
+
+            Character c = new Character(p, characterCreationId, firstName, lastName, 0, model, 200, 0, phoneNumber, -1);
             this.AddCharacterForPlayer(p, c);
             characterCreationId++;
             this.SelectCharacter(p, c.fullName);

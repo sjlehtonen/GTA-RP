@@ -338,7 +338,7 @@ namespace GTA_RP
             List<Character> characters = new List<Character>();
             DBManager.SelectQuery("SELECT * FROM characters WHERE player_id = @id", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                Character c = new Character(player, reader.GetInt32(0), reader.GetString(2), reader.GetString(3), (Factions.FactionI)reader.GetInt32(4), reader.GetString(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetString(8));
+                Character c = new Character(player, reader.GetInt32(0), reader.GetString(2), reader.GetString(3), (Factions.FactionI)reader.GetInt32(4), reader.GetString(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetString(8), reader.GetInt32(9));
                 characters.Add(c);
             }).AddValue("@id", player.id).Execute();
 
@@ -571,6 +571,37 @@ namespace GTA_RP
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Updates player spawn position to a certain house
+        /// </summary>
+        /// <param name="c">Character</param>
+        /// <param name="houseId">House id</param>
+        public void UpdateCharacterSpawnPosition(Character c, int houseId)
+        {
+            DBManager.UpdateQuery("UPDATE characters SET spawn_house_id=@house_id WHERE id=@id")
+                .AddValue("@house_id", houseId)
+                .AddValue("@id", c.ID)
+                .Execute();
+        }
+
+        /// <summary>
+        /// Sets a new spawn position for player inside a house that is owned by him/her
+        /// </summary>
+        /// <param name="c">Client</param>
+        /// <param name="houseId">ID of the owned house</param>
+        public void SetCharacterSpawnHouse(Client c, int houseId)
+        {
+            if (IsClientUsingCharacter(c))
+            {
+                Character character = GetActiveCharacterForClient(c);
+                if (HouseManager.Instance().IsCharacterOwnerOrRenterOfHouse(character, houseId))
+                {
+                    // Update spawn position for character
+                    UpdateCharacterSpawnPosition(character, houseId);
+                }
+            }
         }
 
         /// <summary>
@@ -833,7 +864,6 @@ namespace GTA_RP
         {
             if (HasAccounts())
             {
-                API.shared.consoleOutput("has accounts");
                 DBManager.SelectQuery("SELECT MAX(id) FROM players", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
                 {
                     this.accountCreationId = reader.GetInt32(0) + 1;

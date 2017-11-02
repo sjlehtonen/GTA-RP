@@ -29,6 +29,7 @@ namespace GTA_RP
         public String model { get; private set; }
         public Phone phone { get; private set; }
         public int gender { get; private set; }
+        public int spawnHouseId { get; private set; }
 
         public String fullName
         {
@@ -88,7 +89,7 @@ namespace GTA_RP
         private List<StatusEffect> statusEffects = new List<StatusEffect>();
 
 
-        public Character(Player owner, int ID, String firstName, String lastName, FactionI factionID, string model, int money, int job, String phoneNumber)
+        public Character(Player owner, int ID, String firstName, String lastName, FactionI factionID, string model, int money, int job, String phoneNumber, int spawnHouseId)
         {
             this.owner = owner;
             this.model = model;
@@ -101,6 +102,7 @@ namespace GTA_RP
             this.job = job;
             this.gender = PlayerManager.Instance().GetGenderForModel(model);
             this.phone = new Phone(this, phoneNumber);
+            this.spawnHouseId = spawnHouseId;
         }
 
         /// <summary>

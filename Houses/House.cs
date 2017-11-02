@@ -91,5 +91,29 @@ namespace GTA_RP.Houses
         {
             return occupants.Contains(c);
         }
+
+        /// <summary>
+        /// Checks if two houses are the same
+        /// </summary>
+        /// <param name="obj">House</param>
+        /// <returns>True if house ids are same, otherwise false</returns>
+        public override bool Equals(object obj)
+        {
+            var second = obj as House;
+
+            if (second == null)
+                return false;
+
+            return this.id.Equals(second.id);
+        }
+
+        /// <summary>
+        /// Gets hashcode of house id
+        /// </summary>
+        /// <returns>Hashcode of house id</returns>
+        public override int GetHashCode()
+        {
+            return this.id.GetHashCode();
+        }
     }
 }

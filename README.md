@@ -47,25 +47,25 @@ password="password here"
 ## Pictures of the game mode
 
 ### General pictures:
-![UI10](Images/1.bmp)
-![UI11](Images/3.bmp)
-![UI12](Images/4.bmp)
+![UI10](Images/1.png)
+![UI11](Images/3.png)
+![UI12](Images/4.png)
 
 ### Buying a vehicle:
-![UI1](Images/12.bmp)
+![UI1](Images/12.png)
 
 ### Login screen:
-![UI2](Images/5.bmp)
-![UI3](Images/6.bmp)
+![UI2](Images/5.png)
+![UI3](Images/6.png)
 
 ### Character selection:
-![UI4](Images/2.bmp)
+![UI4](Images/2.png)
 
 ### Working as a garbage truck driver:
-![UI5](Images/10.bmp)
-![UI6](Images/11.bmp)
+![UI5](Images/10.png)
+![UI6](Images/11.png)
 
 ### Housing pictures:
-![UI7](Images/7.bmp)
-![UI8](Images/8.bmp)
-![UI9](Images/9.bmp)
+![UI7](Images/7.png)
+![UI8](Images/8.png)
+![UI9](Images/9.png)
