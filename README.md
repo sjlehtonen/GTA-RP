@@ -1,4 +1,4 @@
-# GTA Roleplaying script
+# GTA Roleplaying Script
 
 This project is a roleplaying game mode for GTA-MP multiplayer modification for GTA V. 
 
