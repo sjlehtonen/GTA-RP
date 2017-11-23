@@ -245,7 +245,7 @@ class HUDManager
         if (this.hudActive) {
 
             if (this.screenResolution == null) {
-                this.screenResolution = API.getScreenResolution();
+                this.screenResolution = API.getScreenResolutionMaintainRatio();
             }
 
             let xPos = this.screenResolution.Width * 0.145;

@@ -17,7 +17,6 @@
         this.currentModelSpot = 0;
         this.characterModelSelectItem = null;
 
-        this.allowCyclingModels = false;
 
         this.accountName = null;
         this.accountPassword = null;
@@ -72,20 +71,9 @@
         API.triggerServerEvent("EVENT_REQUEST_CREATE_CHARACTER", this.characterFirstName, this.characterLastName, this.currentModelName);
     }
 
-    menuChangeEvent(sender, next, forward) {
-        if (sender == this.characterSelectionMenu && next == this.characterCreationMenu) {
-            this.allowCyclingModels = true;
-        }
-        else if (sender == this.characterCreationMenu && next == this.characterSelectionMenu)
-        {
-            this.allowCyclingModels = false;
-        }
-    }
-
     handleOpenCharacterCreationMenu(parentMenu, button) {
 
         let menu = API.createMenu("Character creation", "New character", 0, 0, 6);
-        menu.OnMenuChange.connect((sender, nextMenu, forward) => this.menuChangeEvent(sender, nextMenu, forward));
         menu.OnListChange.connect((sender, list, newIndex) => this.characterModelChanged(sender, list, newIndex));
         this.characterCreationMenu = menu;
         let item = API.createMenuItem("First name", "Your character's first name");
@@ -112,6 +100,7 @@
     }
 
     characterModelChanged(sender, list, newIndex) {
+        this.currentModelSpot = newIndex;
         this.currentModelName = this.characterCreationModels[newIndex];
         API.setPlayerSkin(API.pedNameToModel(this.currentModelName));
     }
@@ -180,38 +169,44 @@
         this.isCreatingCharacter = false;
 
         // Map the character names to models
-        let nameList = args[0];
-        let modelList = args[1];
-
-        this.nameList = nameList;
-        this.modelList = modelList;
+        this.nameList = args[0];
+        this.modelList = args[1];
         this.cameraPos = args[2];
         this.cameraRot = args[3];
 
-        for (var a = 0; a < nameList.Count; a++) {
-            this.characterNameToModelDict.set(nameList[a], modelList[a]);
+        for (var a = 0; a < this.nameList.Count; a++) {
+            this.characterNameToModelDict.set(this.nameList[a], this.modelList[a]);
         }
 
         // Create camera
         let newCamera = API.createCamera(args[2], args[3]);
         API.setActiveCamera(newCamera);
 
+        // Set the initial model for the player
+        if (this.nameList.Count > 0) {
+            let item = this.nameList[0];
+            API.setPlayerSkin(API.pedNameToModel(this.characterNameToModelDict.get(item)));
+        } else {
+            API.setPlayerSkin(API.pedNameToModel("Abigail"));
+        }
+
+
         let menu = API.createMenu("Characters", "Maximum characters: 3", 0, 0, 6);
         this.characterSelectionMenu = menu;
 
         menu.OnIndexChange.connect((sender, index) => this.selectionChanged(sender, index));
         menu.OnMenuClose.connect((sender) => this.characterSelectionMenuCloseEvent(sender));
-        menu.OnMenuChange.connect((sender, nextMenu, forward) => this.menuChangeEvent(sender, nextMenu, forward));
+        //menu.OnMenuChange.connect((sender, nextMenu, forward) => this.menuChangeEvent(sender, nextMenu, forward));
 
-        for (var i = 0; i < nameList.Count; i++) {
-            let item = API.createMenuItem(nameList[i], "");
+        for (var i = 0; i < this.nameList.Count; i++) {
+            let item = API.createMenuItem(this.nameList[i], "");
             item.Activated.connect(() => this.selectCharacter(menu, item));
             menu.AddItem(item);
             this.characterSelectionMenuItems.push(item);
         }
 
         let newItem = API.createColoredItem("Create new character", "", "#357df2", "#1c6def");
-        if (nameList.Count > 2)
+        if (this.nameList.Count > 2)
         {
             newItem.Enabled = false;
         }
@@ -276,7 +271,4 @@ let accountManager = new AccountManager();
 
 API.onServerEventTrigger.connect(function (eventName, args) {
     accountManager.handleAccountEvent(eventName, args);
-});
-
-API.onUpdate.connect(function () {
 });

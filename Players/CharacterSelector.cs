@@ -148,7 +148,7 @@ namespace GTA_RP
 
             API.shared.consoleOutput("Player added to character selector!");
             API.shared.consoleOutput("There are " + allowedCharacterCreatorModels.Count.ToString() + " models");
-            API.shared.triggerClientEvent(p.client, "EVENT_OPEN_CHARACTER_SELECT_MENU", characterNames, characterModels, characterSelectionCameraPosition, characterSelectionCameraRotation, allowedCharacterCreatorModels, characterSelectionPosition, characterSelectionRotation.Z);
+            API.shared.triggerClientEvent(p.client, "EVENT_OPEN_CHARACTER_SELECT_MENU", characterNames, characterModels, characterSelectionCameraPosition, characterSelectionCameraRotation, allowedCharacterCreatorModels, characterSelectionPosition, characterSelectionRotation);
         }
 
         /// <summary>
@@ -158,6 +158,7 @@ namespace GTA_RP
         public void RemovePlayerFromCharacterSelector(Player p)
         {
             playerCharacters.Remove(p.id);
+            p.client.dimension = 0;
             players.Remove(p);
         }
 
@@ -168,6 +169,7 @@ namespace GTA_RP
         public void RemovePlayerFromCharacterSelector(Client c)
         {
             Player p = PlayerManager.Instance().GetPlayerByClient(c);
+            c.dimension = 0;
             RemovePlayerFromCharacterSelector(p);
         }
 
@@ -222,23 +224,10 @@ namespace GTA_RP
         /// <param name="model">Character's model</param>
         public void CreateCharacter(Player p, string firstName, string lastName, string model)
         {
-            //var cmd = DBManager.SimpleQuery("INSERT INTO characters VALUES (@id, @player_id, @first_name, @last_name, @faction_id, @player_model, @money, @job, @phone_number)");
             String phoneNumber = this.GenerateRandomPhoneNumber();
 
             lastName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(lastName);
             firstName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(firstName);
-
-            /*cmd.Parameters.AddWithValue("@id", characterCreationId);
-            cmd.Parameters.AddWithValue("@player_id", p.id);
-            cmd.Parameters.AddWithValue("@first_name", firstName);
-            cmd.Parameters.AddWithValue("@last_name", lastName);
-            cmd.Parameters.AddWithValue("@faction_id", 0);
-            cmd.Parameters.AddWithValue("@player_model", model);
-            cmd.Parameters.AddWithValue("@money", 200);
-            cmd.Parameters.AddWithValue("@job", 0);
-            cmd.Parameters.AddWithValue("@phone_number", phoneNumber);
-
-            cmd.ExecuteNonQuery();*/
 
             DBManager.InsertQuery("INSERT INTO characters VALUES (@id, @player_id, @first_name, @last_name, @faction_id, @player_model, @money, @job, @phone_number, @spawn_house_id)")
                 .AddValue("@id", characterCreationId)

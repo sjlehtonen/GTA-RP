@@ -43,8 +43,8 @@
     <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
       <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data, Version=6.10.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.10.4\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
@@ -109,6 +109,17 @@
     <Content Include="Client\HouseManager.js" />
     <Content Include="Client\HUDManager.js" />
     <Content Include="Client\VehicleShopManager.js" />
+    <Content Include="docs\MySqlCommand.xml" />
+    <Content Include="docs\MySqlCommandBuilder.xml" />
+    <Content Include="docs\MySqlConnection.xml" />
+    <Content Include="docs\MySqlConnectionStringBuilder.xml" />
+    <Content Include="docs\MySqlDataAdapter.xml" />
+    <Content Include="docs\MySqlDataReader.xml" />
+    <Content Include="docs\MySqlException.xml" />
+    <Content Include="docs\MySqlHelper.xml" />
+    <Content Include="docs\MySqlParameter.xml" />
+    <Content Include="docs\MySqlParameterCollection.xml" />
+    <Content Include="docs\MySqlTransaction.xml" />
     <Content Include="LICENSE.txt" />
     <Content Include="meta.xml">
       <SubType>Designer</SubType>
@@ -120,6 +131,36 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="types-gt-mp\Declarations.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\Declarations.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GrandTheftMultiplayer.Client.Contracts.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GrandTheftMultiplayer.Client.GUI.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GrandTheftMultiplayer.Client.Javascript.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GrandTheftMultiplayer.Client.Javascript.ScriptContext.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GrandTheftMultiplayer.Client.Models.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GrandTheftMultiplayer.Client.Sound.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GrandTheftMultiplayer.Client.Sync.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GrandTheftMultiplayer.Shared.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GrandTheftMultiplayer.Shared.Math.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GTA.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GTA.Math.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GTA.Native.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GTA.NaturalMotion.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\GTA.UI.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\index.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\Microsoft.ClearScript.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\NativeUI.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\NativeUI.UIMenu.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\NativeUI.UIMenuDynamicListItem.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\NativeUI.UIMenuItem.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\NativeUI.UIResText.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\System.Collections.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\System.Collections.Generic.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\System.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\System.Drawing.d.ts" />
+    <TypeScriptCompile Include="types-gt-mp\Definitions\System.Windows.Forms.d.ts" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
