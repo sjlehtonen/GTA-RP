@@ -9,7 +9,6 @@ class VehicleShopManager {
     constructor() {
         this.id = null;
         this.vehicleInfos = [];
-        this.menuPool = null;
         this.vehicleMenu = null;
         this.buyVehicleMenu = null;
         this.customiseVehicleMenu = null;
@@ -17,6 +16,7 @@ class VehicleShopManager {
         this.vehicleRotation = null;
         this.currentVehicle = null;
         this.colors = [];
+
         for (var i = 0; i < 160; i++)
             this.colors.push(i);
 
@@ -87,7 +87,6 @@ class VehicleShopManager {
 
     createVehicleMenu(models, prices) {
         this.initVehicles(models, prices);
-        this.menuPool = API.getMenuPool();
 
         let menu = API.createMenu("Vehicle dealership", "Options", 0, 0, 6);
         this.vehicleMenu = menu;
@@ -100,9 +99,6 @@ class VehicleShopManager {
         item2.Activated.connect((menu, sender) => this.exitShop(menu, sender));
 
         var buyMenu = this.createBuyVehicleMenu();
-
-        this.menuPool.Add(menu);
-        this.menuPool.Add(buyMenu);
 
         menu.BindMenuToItem(buyMenu, item1);
         menu.Visible = true;
@@ -136,7 +132,6 @@ class VehicleShopManager {
     }
 
     createVehicleCustomiseMenu(parent, buttonList) {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Vehicle dealership", "Customise vehicle", 0, 0, 6);
         this.customiseVehicleMenu = menu;
         menu.OnListChange.connect((sender, list, newindex) => this.onListChange(sender, list, newindex));
@@ -161,7 +156,6 @@ class VehicleShopManager {
         for (var i = 0; i < buttonList.length; i++) {
             parent.BindMenuToItem(menu, buttonList[i]);
         }
-        this.menuPool.Add(menu);
     }
 
     createBuyVehicleMenu() {
@@ -181,15 +175,7 @@ class VehicleShopManager {
         this.createVehicleCustomiseMenu(menu, itemArray);
         return menu;
     }
-
-    processMenus() {
-        if (this.menuPool != null) {
-            this.menuPool.ProcessMenus();
-        }
-    }
 }
 
 let vehicleShopManager = new VehicleShopManager();
-
 API.onServerEventTrigger.connect((eventName, args) => vehicleShopManager.handleVehicleShopEvent(eventName, args));
-API.onUpdate.connect(() => vehicleShopManager.processMenus());

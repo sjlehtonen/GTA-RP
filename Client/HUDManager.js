@@ -33,7 +33,6 @@ class HUDManager
 {
     constructor() {
         this.hudActive = false;
-        this.menuPool = null;
         this.characterName = "Player";
         this.phoneNumber = "1234";
 
@@ -292,7 +291,6 @@ class HUDManager
 
     createHouseMenu()
     {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Player Menu", "Houses", 0, 0, 6);
         for (var i = 0; i < this.houses.length; i++)
         {
@@ -359,7 +357,6 @@ class HUDManager
 
             // Create detail menus for every vehicle
             let detailMenu = this.createVehicleDetailMenu(this.vehicles[i].id, this.vehicles[i].licensePlate, this.vehicles[i].spawned);
-            this.menuPool.Add(detailMenu);
             menu.BindMenuToItem(detailMenu, item);
         }
 
@@ -368,7 +365,6 @@ class HUDManager
 
     createActionsMenu()
     {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Player Menu", "Actions", 0, 0, 6);
         let item1 = API.createMenuItem("Play animation", "");
         let item2 = API.createMenuItem("Give money", "");
@@ -383,7 +379,6 @@ class HUDManager
     {
         let item = API.createMenuItem("test", "");
         parent.AddItem(item);
-        this.menuPool.RefreshIndex();
     }
 
     setPlayerUsingPhone(){
@@ -547,7 +542,6 @@ class HUDManager
     createAddContactMenu(parent, button)
     {
         let menu = API.createMenu("Player Menu", "Add new contact", 0, 0, 6);
-        this.menuPool.Add(menu);
         parent.BindMenuToItem(menu, button);
         this.addContactMenu = menu;
 
@@ -627,7 +621,6 @@ class HUDManager
     createContactsMenu(parent, button)
     {
         let menu = API.createMenu("Player Menu", "Address book", 0, 0, 6);
-        this.menuPool.Add(menu);
         parent.BindMenuToItem(menu, button);
 
         this.contactsMenu = menu;
@@ -672,9 +665,6 @@ class HUDManager
         let menu2 = this.createContactsMenu(menu, item1);
         let menu3 = this.createMessagesMenu();
 
-        this.menuPool.Add(menu1);
-        this.menuPool.Add(menu2);
-        this.menuPool.Add(menu3);
 
         //menu.BindMenuToItem(menu2, item1);
         menu.BindMenuToItem(menu1, item3);
@@ -685,7 +675,6 @@ class HUDManager
 
     createHelpMenu()
     {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Player Menu", "Main menu", 0, 0, 6);
         this.helpMenu = menu;
 
@@ -721,12 +710,6 @@ class HUDManager
         var menu4 = this.createVehicleMenu();
         var menu3 = this.createPhoneMenu();
 
-        this.menuPool.Add(this.helpMenu);
-        this.menuPool.Add(menu2);
-        this.menuPool.Add(menu3);
-        this.menuPool.Add(menu4);
-        this.menuPool.Add(menu1);
-        this.menuPool.RefreshIndex();
 
         menu.BindMenuToItem(menu1, item3);
         menu.BindMenuToItem(menu2, item4);
@@ -760,7 +743,6 @@ class HUDManager
         item1.Activated.connect((menu, sender) => this.endPhoneCall(menu, sender));
         menu.AddItem(item1);
 
-        this.menuPool.Add(menu);
         menu.Visible = true;
         this.helpMenuActive = false;
         this.phoneCallMenuOn = true;
@@ -774,11 +756,6 @@ class HUDManager
         }
     }
 
-    processMenus() {
-        if (this.menuPool != null) {
-            this.menuPool.ProcessMenus();
-        }
-    }
 }
 
 let hudManager = new HUDManager();
@@ -803,6 +780,4 @@ API.onKeyDown.connect(function (Player, args) {
         }
     }
 });
-
-API.onUpdate.connect(() => hudManager.processMenus());
 

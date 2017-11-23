@@ -1,13 +1,8 @@
 ﻿class HouseManager {
 
     constructor() {
-        this.menuPool = null;
         this.dict = new Map();
         this.teleId = 0;
-    }
-
-    get menupool() {
-        return this.menuPool;
     }
 
     sendEnterHouseRequest(menu, item) {
@@ -39,7 +34,6 @@
     }
 
     handleExitHouseMenu(args) {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu(args[3], "Select exit", 0, 0, 6);
         this.teleId = args[0];
         let nameList = args[1];
@@ -54,13 +48,11 @@
             menu.AddItem(item);
         }
 
-        this.menuPool.Add(menu);
         menu.Visible = true;
     }
 
 
     handleEnterHouseMenu(args) {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu(args[2], "Select apartment to enter", 0, 0, 6);
         let nameList = args[0];
         let idList = args[1];
@@ -74,14 +66,7 @@
             menu.AddItem(item);
         }
 
-        this.menuPool.Add(menu);
         menu.Visible = true;
-    }
-
-    processMenus() {
-        if (this.menuPool != null) {
-            this.menuPool.ProcessMenus();
-        }
     }
 }
 
@@ -89,8 +74,4 @@ let houseManager = new HouseManager();
 
 API.onServerEventTrigger.connect(function (eventName, args) {
     houseManager.handleHouseEvent(eventName, args);
-});
-
-API.onUpdate.connect(function () {
-    houseManager.processMenus();
 });

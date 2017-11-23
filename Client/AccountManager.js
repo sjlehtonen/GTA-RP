@@ -1,7 +1,6 @@
 ﻿class AccountManager {
 
     constructor() {
-        this.menuPool = null;
         this.characterNameToModelDict = new Map();
 
         this.lastMenu = null;
@@ -31,10 +30,6 @@
 
         this.isAllowedToCloseSelectCharacterMenu = false;
         this.isAllowedToCloseCreateAccountMenu = false;
-    }
-
-    get menupool() {
-        return this.menuPool;
     }
 
 
@@ -89,7 +84,6 @@
 
     handleOpenCharacterCreationMenu(parentMenu, button) {
 
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Character creation", "New character", 0, 0, 6);
         menu.OnMenuChange.connect((sender, nextMenu, forward) => this.menuChangeEvent(sender, nextMenu, forward));
         menu.OnListChange.connect((sender, list, newIndex) => this.characterModelChanged(sender, list, newIndex));
@@ -114,7 +108,6 @@
         menu.AddItem(item2);
         menu.AddItem(item3);
         menu.AddItem(item4);
-        this.menuPool.Add(menu);
         parentMenu.BindMenuToItem(menu, button);
     }
 
@@ -203,7 +196,6 @@
         let newCamera = API.createCamera(args[2], args[3]);
         API.setActiveCamera(newCamera);
 
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Characters", "Maximum characters: 3", 0, 0, 6);
         this.characterSelectionMenu = menu;
 
@@ -225,8 +217,6 @@
         }
         menu.AddItem(newItem);
         this.handleOpenCharacterCreationMenu(menu, newItem);
-        this.menuPool.RefreshIndex();
-        this.menuPool.Add(menu);
         menu.Visible = true;
     }
 
@@ -245,7 +235,6 @@
     }
 
     handleOpenAccountCreationMenu(args) {
-        this.menuPool = API.getMenuPool();
         let menu = API.createMenu("Account creation", "Please enter your password twice", -210, 150, 4);
         this.accountCreationMenu = menu;
         let name = args[0];
@@ -266,7 +255,6 @@
         menu.AddItem(item4);
         menu.AddItem(item3);
 
-        this.menuPool.Add(menu);
         menu.Visible = true;
     }
 
@@ -282,11 +270,6 @@
         }
     }
 
-    processMenus() {
-        if (this.menuPool != null) {
-            this.menuPool.ProcessMenus();
-        }
-    }
 }
 
 let accountManager = new AccountManager();
@@ -296,5 +279,4 @@ API.onServerEventTrigger.connect(function (eventName, args) {
 });
 
 API.onUpdate.connect(function () {
-    accountManager.processMenus();
 });
