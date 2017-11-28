@@ -11,6 +11,10 @@ When I have time I will try to document things better but for now I will focus o
 
 Because of all things, the progress might sometimes be slow.
 
+```diff
+-If you get sql errors, make sure you have used the latest gta_rp.sql file
+```
+
 ## Current features
 - Account system in a way that one account can have multiple characters
 - House ownership system
