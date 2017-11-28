@@ -264,7 +264,17 @@ namespace GTA_RP
 
                     p.client.dimension = 0;
                     p.client.freezePosition = false;
-                    p.client.position = new Vector3(-692.194, 295.9935, 82.83133);
+
+                    if (c.spawnHouseId != -1)
+                    {
+                        HouseManager.Instance().AddCharacterToHouseWithId(c.spawnHouseId, c);
+                        p.client.position = HouseManager.Instance().GetSpawnLocationOfHouseWithId(c.spawnHouseId);
+                    } else
+                    {
+                        // Default spawn
+                        p.client.position = new Vector3(-692.194, 295.9935, 82.83133);
+                    }
+                    
                     p.SetActiveCharacter(c);
 
                     this.RemovePlayerFromCharacterSelector(p);

@@ -1,3 +1,18 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : IVRP
+Source Server Version : 50611
+Source Host           : localhost:3306
+Source Database       : gta_rp
+
+Target Server Type    : MYSQL
+Target Server Version : 50611
+File Encoding         : 65001
+
+Date: 2017-11-28 22:36:32
+*/
+
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -338,14 +353,16 @@ CREATE TABLE `characters` (
   `money` int(11) DEFAULT NULL,
   `job` int(11) DEFAULT NULL,
   `phone_number` varchar(11) DEFAULT NULL,
+  `spawn_house_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of characters
 -- ----------------------------
-INSERT INTO `characters` VALUES ('0', '0', 'John', 'Thomson', '0', 'Barry', '820631', '1', '4695300');
-INSERT INTO `characters` VALUES ('1', '0', 'Jane', 'Cheng', '0', 'MovPrem01SFY', '4765100', '0', '1325993');
+INSERT INTO `characters` VALUES ('0', '0', 'John', 'Thomson', '0', 'Barry', '820631', '1', '4695300', '1');
+INSERT INTO `characters` VALUES ('1', '0', 'Jane', 'Cheng', '0', 'MovPrem01SFY', '4765100', '0', '1325993', '-1');
+INSERT INTO `characters` VALUES ('2', '0', 'Jane', 'Thomson', '0', 'Bevhills01AFY', '200', '0', '3411699', '-1');
 
 -- ----------------------------
 -- Table structure for `houses`
@@ -443,9 +460,9 @@ CREATE TABLE `house_template` (
 -- ----------------------------
 -- Records of house_template
 -- ----------------------------
-INSERT INTO `house_template` VALUES ('0', '0', 'no_ipl', 'Eclipse Towers', null, null, null);
-INSERT INTO `house_template` VALUES ('1', '0', 'no_ipl', 'Tinsel Towers', null, null, null);
-INSERT INTO `house_template` VALUES ('2', '1', 'no_ipl', 'Apartment 520', null, null, null);
+INSERT INTO `house_template` VALUES ('0', '0', 'no_ipl', 'Eclipse Towers', '-776.343', '335.784', '211.397');
+INSERT INTO `house_template` VALUES ('1', '0', 'no_ipl', 'Tinsel Towers', '0', '0', '0');
+INSERT INTO `house_template` VALUES ('2', '1', 'no_ipl', 'Apartment 520', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for `model_genders`
@@ -804,6 +821,7 @@ CREATE TABLE `text_messages` (
 -- ----------------------------
 -- Records of text_messages
 -- ----------------------------
+INSERT INTO `text_messages` VALUES ('0', '1325993', '1325993', '19:53:00', 'test');
 
 -- ----------------------------
 -- Table structure for `vehicles`

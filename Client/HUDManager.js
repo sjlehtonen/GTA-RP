@@ -64,6 +64,7 @@ class HUDManager
         this.moneyText = "$ 55002";
 
         // House menu values
+        this.selectedHouse = null;
         this.ownedHouseNames = null;
         this.ownedHouseIds = null;
         this.houses = [];
@@ -292,13 +293,44 @@ class HUDManager
     createHouseMenu()
     {
         let menu = API.createMenu("Player Menu", "Houses", 0, 0, 6);
+        menu.OnItemSelect.connect((sender, item, index) => this.houseSelected(sender, item, index));
         for (var i = 0; i < this.houses.length; i++)
         {
             let item = API.createMenuItem(this.houses[i].name, "");
             menu.AddItem(item);
+            let detailMenu = this.createHouseDetailMenu(this.houses[i].id, this.houses[i].name);
+            menu.BindMenuToItem(detailMenu, item);
         }
 
         return menu;
+    }
+
+    houseSelected(sender, item, index) {
+        this.selectedHouse = this.houses[index].id;
+    }
+
+    createHouseDetailMenu(id, name)
+    {
+        let menu = API.createMenu("Player Menu", name, 0, 0, 6);
+        let item1 = API.createMenuItem("Show route to location", "");
+        let item2 = API.createMenuItem("Set as spawn location", "");
+
+        item2.Activated.connect((menu, sender) => this.setHouseAsSpawnLocation(menu, sender));
+
+        menu.AddItem(item1);
+        menu.AddItem(item2);
+
+        return menu;
+    }
+
+    setHouseAsSpawnLocation(menu, sender)
+    {
+        API.triggerServerEvent("EVENT_TRY_SET_SPAWN_LOCATION", this.selectedHouse);
+    }
+
+    setLocationMarkerForHouse(menu, sender)
+    {
+        // TODO
     }
 
     spawnVehicle(menu, sender) {
@@ -406,6 +438,8 @@ class HUDManager
 
     menuClosed(sender)
     {
+        // Other phone submenus need to be checked?
+
         if (sender == this.phoneMenu) {
             this.setPlayerNotUsingPhone();
         }

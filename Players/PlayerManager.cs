@@ -196,6 +196,23 @@ namespace GTA_RP
         }
 
         /// <summary>
+        /// Checks if a character exists with the given phone number
+        /// </summary>
+        /// <param name="number">Phone number</param>
+        /// <returns>True if character exists, false otherwise</returns>
+        private Boolean DoesCharacterExistWithPhoneNumber(String number)
+        {
+            int rows = 0;
+            DBManager.SelectQuery("SELECT COUNT(*) FROM characters WHERE phone_number=@number", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                rows = reader.GetInt32(0);
+            }).AddValue("@number", number).Execute();
+
+            if (rows > 0) return true;
+            return false;
+        }
+
+        /// <summary>
         /// Delivers text message to character who is not currently in use
         /// </summary>
         /// <param name="id">Text message id</param>
@@ -204,13 +221,7 @@ namespace GTA_RP
         /// <returns>True if message was sent succesfully, otherwise false</returns>
         private Boolean DeliverOfflineTextMessage(int id, String receiver, TextMessage message)
         {
-            int rows = 0;
-            DBManager.SelectQuery("SELECT COUNT(*) FROM characters WHERE phone_number=@number", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
-            {
-                rows = reader.GetInt32(0);
-            }).AddValue("@number", receiver).Execute();
-
-            if(rows > 0)
+            if(DoesCharacterExistWithPhoneNumber(receiver))
             {
                 DBManager.InsertQuery("INSERT INTO text_messages VALUES (@id, @sender_number, @receiver_number, @time, @message)")
                     .AddValue("@id", id)
@@ -555,6 +566,20 @@ namespace GTA_RP
             return true;
         }
 
+        /// <summary>
+        /// Updates player spawn position to a certain house
+        /// </summary>
+        /// <param name="c">Character</param>
+        /// <param name="houseId">House id</param>
+        private void UpdateCharacterSpawnPosition(Character c, int houseId)
+        {
+            // NOTE: When selling a house that player currently lives in, the spawn position has to be reset
+            DBManager.UpdateQuery("UPDATE characters SET spawn_house_id=@house_id WHERE id=@id")
+                .AddValue("@house_id", houseId)
+                .AddValue("@id", c.ID)
+                .Execute();
+        }
+
         // Public methods
 
         /// <summary>
@@ -573,19 +598,7 @@ namespace GTA_RP
             return null;
         }
 
-        /// <summary>
-        /// Updates player spawn position to a certain house
-        /// </summary>
-        /// <param name="c">Character</param>
-        /// <param name="houseId">House id</param>
-        public void UpdateCharacterSpawnPosition(Character c, int houseId)
-        {
-            DBManager.UpdateQuery("UPDATE characters SET spawn_house_id=@house_id WHERE id=@id")
-                .AddValue("@house_id", houseId)
-                .AddValue("@id", c.ID)
-                .Execute();
-        }
-
+        
         /// <summary>
         /// Sets a new spawn position for player inside a house that is owned by him/her
         /// </summary>
@@ -851,8 +864,8 @@ namespace GTA_RP
                 return;
             }
 
-            if (this.LoadCharactersForPlayer(this.GetPlayerByClient(player)).Count > 3)
-                API.shared.sendNotificationToPlayer(player, "Only 3 characters are allowed!");
+            if (this.LoadCharactersForPlayer(this.GetPlayerByClient(player)).Count > 5)
+                API.shared.sendNotificationToPlayer(player, "Only 5 characters are allowed!");
 
             this.characterSelector.CreateCharacter(this.GetPlayerByClient(player), firstName, lastName, modelHash);
         }
@@ -1057,10 +1070,8 @@ namespace GTA_RP
         {
             Character deliverCharacter = this.GetCharacterWithPhoneNumber(receiver);
 
-            if(deliverCharacter != null)
-                deliverCharacter.phone.ReceiveMessage(this.textMessageId, message.senderNumber, message.message, message.time);
-            else
-                this.DeliverOfflineTextMessage(this.textMessageId, receiver, message);
+            if(deliverCharacter != null) deliverCharacter.phone.ReceiveMessage(this.textMessageId, message.senderNumber, message.message, message.time);
+            else this.DeliverOfflineTextMessage(this.textMessageId, receiver, message);
 
             this.IncrementTextMessageId();
         }

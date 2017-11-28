@@ -206,7 +206,7 @@
         }
 
         let newItem = API.createColoredItem("Create new character", "", "#357df2", "#1c6def");
-        if (this.nameList.Count > 2)
+        if (this.nameList.Count > 4)
         {
             newItem.Enabled = false;
         }

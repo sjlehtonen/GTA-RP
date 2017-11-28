@@ -475,6 +475,28 @@ namespace GTA_RP
         }
 
         /// <summary>
+        /// Adds character inside a house with a certain ID
+        /// </summary>
+        /// <param name="id">House id</param>
+        /// <param name="character">Character</param>
+        public void AddCharacterToHouseWithId(int id, Character character)
+        {
+            House h = GetHouseForId(id);
+            h.AddOccupant(character);
+        }
+
+        /// <summary>
+        /// Removes a character from a house with certain ID
+        /// </summary>
+        /// <param name="id">House id</param>
+        /// <param name="character">Character</param>
+        public void RemoveCharacterFromHouseWithId(int id, Character character)
+        {
+            House h = GetHouseForId(id);
+            h.RemoveOccupant(character);
+        }
+
+        /// <summary>
         /// Requests an exit from a certain place
         /// </summary>
         /// <param name="player">Sender of the request</param>
@@ -565,8 +587,7 @@ namespace GTA_RP
         {
             DBManager.SelectQuery("SELECT * FROM house_template", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                Vector3 spawn = null;//new Vector3(reader.GetFloat(16), reader.GetFloat(17), reader.GetFloat(18));
-
+                Vector3 spawn = new Vector3(reader.GetFloat(4), reader.GetFloat(5), reader.GetFloat(6));
                 HouseTemplate h = new HouseTemplate(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2), reader.GetString(3), spawn);
                 this.houseTemplates.Add(h);
                 this.buildingIdForTemplateId.Add(reader.GetInt32(0), reader.GetInt32(1));

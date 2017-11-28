@@ -118,6 +118,10 @@ namespace GTA_RP.Events
                 case "EVENT_TRY_BUY_PARKING_SPOT":
                     VehicleManager.Instance().TryPurchasePark(player, (int)arguments[0]);
                     break;
+
+                case "EVENT_TRY_SET_SPAWN_LOCATION":
+                    PlayerManager.Instance().SetCharacterSpawnHouse(player, (int)arguments[0]);
+                    break;
             }
         }
     }
