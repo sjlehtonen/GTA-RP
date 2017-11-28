@@ -31,6 +31,9 @@ Because of all things, the progress might sometimes be slow.
 - Proper faction system for police, fire department etc.
 - Insurance for vehicles, handling vehicle destruction... (Things like vehicle destruction is not really handled at all now)
 
+## Controls
+- F1: Open player menu
+
 ## Requirements
 
 - GTA-MP Server
