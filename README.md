@@ -3,7 +3,7 @@
 This project is a roleplaying game mode for GTA-MP multiplayer modification for GTA V.
 
 ## NOTE
-I am working on this game mode alone so many things are not implemented yet. However, a lot of the base systems such as having the ability to own houses and vehicles is done. Also it's possible to create new jobs easily. What needs to be done are the systems to support these, such as housing market, ability to share car keys with friends etc.
+I am working on this game mode alone so many things are not implemented yet. However, a lot of the base systems such as having the ability to own houses and vehicles are done. What needs to be done are the systems to support these, such as housing market, ability to share car keys with friends etc.
 
 There might be many bugs as not all of the systems are properly tested yet and many of them are being implemented. Try looking at the code if you wonder something.
 
