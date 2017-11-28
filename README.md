@@ -1,8 +1,17 @@
 # GTA Roleplaying Script
 
-This project is a roleplaying game mode for GTA-MP multiplayer modification for GTA V. 
+This project is a roleplaying game mode for GTA-MP multiplayer modification for GTA V.
 
-## Features
+## NOTE
+I am working on this game mode alone so many things are not implemented yet. However, a lot of the base systems such as having the ability to own houses and vehicles is done. Also it's possible to create new jobs easily. What needs to be done are the systems to support these, such as housing market, ability to share car keys with friends etc.
+
+There might be many bugs as not all of the systems are properly tested yet and many of them are being implemented. Try looking at the code if you wonder something.
+
+When I have time I will try to document things better but for now I will focus on implementing the underlying systems that can be built upon.
+
+Because of all things, the progress might sometimes be slow.
+
+## Current features
 - Account system in a way that one account can have multiple characters
 - House ownership system
 - Vehicle ownership and parking system
@@ -10,9 +19,13 @@ This project is a roleplaying game mode for GTA-MP multiplayer modification for 
 - Dynamic weather system
 - Profession system with the possibility of making new professions easily
 - Faction system for factions like police and military
-- Phone system with address book and the possibility of sending text messages and making phone calls
+- Phone system with address book and the possibility of sending text messages and making phone calls (Not properly tested yet)
 
-
+## Upcoming things
+- Housing market (Ability to buy houses and sell them, currently needs to be added to database manually)
+- Ability to put houses for rent
+- Proper faction system for police, fire department etc.
+- Insurance for vehicles, handling vehicle destruction... (Things like vehicle destruction is not really handled at all now)
 
 ## Requirements
 
@@ -37,7 +50,7 @@ password="password here"
 ```
 
 4. Import the database file **gta_rp.sql** (Found at the root of this repository) provided here to initialize the database
-	- It contains a test account with name **Test** and password **Test123**
+	- It contains a test account with name **Test** and password **test123**
 		- **Note:** Your GTA-MP name must match the account name currently. 
 			- In the future, social club ID will be used instead.
 	- It also contains a few characters on the account, their property ownerships and vehicle ownerships
