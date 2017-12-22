@@ -1,6 +1,7 @@
 ﻿using GrandTheftMultiplayer.Server.API;
 using GTA_RP.Vehicles;
 using GTA_RP.Weather;
+using GTA_RP.Jobs;
 
 namespace GTA_RP
 {
@@ -42,6 +43,8 @@ namespace GTA_RP
 
             VehicleManager.Instance().LoadVehiclesFromDB();
             HouseManager.Instance().LoadHouseTemplates();
+            JobManager.Instance().InitJobPickupPoints();
+
             API.consoleOutput("####Script load complete!####");
         }
     }

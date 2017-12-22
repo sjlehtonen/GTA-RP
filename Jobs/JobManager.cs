@@ -8,6 +8,7 @@ using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Misc;
+using GTA_RP.Map;
 
 namespace GTA_RP.Jobs
 {
@@ -29,6 +30,7 @@ namespace GTA_RP.Jobs
     class JobManager : Singleton<JobManager>
     {
         private static JobManager _instance = null;
+        private List<JobPickUpCheckpoint> jobPickupPoints = new List<JobPickUpCheckpoint>();
         private Dictionary<int, Job> jobsForCharacterId = new Dictionary<int, Job>();
         private Dictionary<int, JobInfo> jobInfo = new Dictionary<int, JobInfo>();
 
@@ -73,10 +75,10 @@ namespace GTA_RP.Jobs
         /// </summary>
         private void InitJobs()
         {
-            API.shared.consoleOutput("Initialising jobs...");
             AddJob(typeof(System.Object), 0, "Unemployed", 255, 255, 255);
             AddJob(typeof(TrashJob), 1, "Trash collector", 255, 255, 255);
         }
+
 
         /// <summary>
         /// Creates a job for character based on the id
@@ -102,6 +104,18 @@ namespace GTA_RP.Jobs
         }
 
         /// <summary>
+        /// Checks if character has a job
+        /// </summary>
+        /// <param name="c">Character to check</param>
+        /// <returns>True if character has a job, otherwise false</returns>
+        public Boolean DoesCharacterHaveJob(Character c)
+        {
+            if (c.job != 0)
+                return true;
+            return false;
+        }
+
+        /// <summary>
         /// Checks if job is set for character
         /// </summary>
         /// <param name="c">Character to check</param>
@@ -122,19 +136,19 @@ namespace GTA_RP.Jobs
         }
 
         /// <summary>
-        /// Checks if character has a job
+        /// Creates a new job pickup point
         /// </summary>
-        /// <param name="c">Character to check</param>
-        /// <returns>True if character has a job, otherwise false</returns>
-        private Boolean DoesCharacterHaveJob(Character c)
+        /// <param name="jobId">Id of job</param>
+        /// <param name="x">X</param>
+        /// <param name="y">Y</param>
+        /// <param name="z">Z</param>
+        private void CreateJobPickupPointForJob(int jobId, float x, float y, float z, int blipId = 408)
         {
-            if (c.job != 0)
-            {
-                return true;
-            }
-
-            return false;
+            this.jobPickupPoints.Add(new JobPickUpCheckpoint(jobId, x, y, z));
+            JobInfo info = this.GetInfoForJobWithId(jobId);
+            MapManager.Instance().AddBlipToMap(blipId, info.name, x, y, z);
         }
+        
 
         /// <summary>
         /// Starts a job for character
@@ -173,20 +187,12 @@ namespace GTA_RP.Jobs
         }
 
         /// <summary>
-        /// Gets instance of the JobManager
+        /// Initialize all job pickup points
+        /// Places markers on map where players can take jobs
         /// </summary>
-        /// <returns>Current instance of JobManager</returns>
-        /*public static JobManager Instance()
+        public void InitJobPickupPoints()
         {
-            return _instance;
-        }*/
-
-        /// <summary>
-        /// Loads jobs for characters
-        /// </summary>
-        public void LoadJobsForCharacters()
-        {
-
+            this.CreateJobPickupPointForJob(1, 0, 0, 0);
         }
     }
 }

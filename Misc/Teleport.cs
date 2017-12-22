@@ -93,10 +93,7 @@ namespace GTA_RP
         /// <returns>True if character is inside teleport, otherwise false</returns>
         public Boolean IsCharacterInsideTeleport(Character c)
         {
-            if (c.position.DistanceTo(shape.Center) <= range)
-                return true;
-
-            return false;
+            return IsCharacterInsideCheckpoint(c);
         }
     }
 

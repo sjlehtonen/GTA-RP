@@ -9,6 +9,7 @@ using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
+using GTA_RP.Map;
 
 namespace GTA_RP.Vehicles
 {
@@ -47,6 +48,7 @@ namespace GTA_RP.Vehicles
             this.vehiclePosition = vehiclePos;
             this.vehicleRotation = vehicleRot;
 
+            MapManager.Instance().AddBlipToMap(523, "Vehicle dealership", entrance.X, entrance.Y, entrance.Z);
             PlayerManager.Instance().SubscribeToPlayerDisconnectEvent(this.CharacterDisconnected);
         }
 

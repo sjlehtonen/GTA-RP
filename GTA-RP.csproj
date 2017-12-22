@@ -67,6 +67,8 @@
     <Compile Include="Factions\Civilian.cs" />
     <Compile Include="Factions\Faction.cs" />
     <Compile Include="Factions\FactionManager.cs" />
+    <Compile Include="Jobs\JobPickUpCheckpoint.cs" />
+    <Compile Include="Map\MapManager.cs" />
     <Compile Include="Misc\Checkpoint.cs" />
     <Compile Include="Misc\Singleton.cs" />
     <Compile Include="Players\Character.cs" />
@@ -108,6 +110,7 @@
     <Content Include="Client\HelpMenu.js" />
     <Content Include="Client\HouseManager.js" />
     <Content Include="Client\HUDManager.js" />
+    <Content Include="Client\JobManager.js" />
     <Content Include="Client\VehicleShopManager.js" />
     <Content Include="docs\MySqlCommand.xml" />
     <Content Include="docs\MySqlCommandBuilder.xml" />

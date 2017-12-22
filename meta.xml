@@ -13,6 +13,7 @@
     <script src="client/AccountManager.js" type="client" lang="javascript" />
     <script src="client/HelpMenu.js" type="client" lang="javascript" />
     <script src="client/VehicleShopManager.js" type="client" lang="javascript" />
+    <script src="client/JobManager.js" type="client" lang="javascript" />
 
     <script src="Misc/Roleplay.cs" type="server" lang="csharp" />
   
@@ -50,6 +51,8 @@
   
     <script src="IPLManager/IPLManager.cs" type="server" lang="csharp" />
   
+    <script src="Map/MapManager.cs" type="server" lang="csharp" />
+  
     <script src="Misc/Teleport.cs" type="server" lang="csharp" />
     <script src="Misc/ClientCheckpoint.cs" type="server" lang="csharp" />
     <script src="Misc/Checkpoint.cs" type="server" lang="csharp" />
@@ -65,4 +68,5 @@
     <script src="Jobs/JobCommands.cs" type="server" lang="csharp" />
     <script src="Jobs/JobManager.cs" type="server" lang="csharp" />
     <script src="Jobs/TrashJob.cs" type="server" lang="csharp" />
+    <script src="Jobs/JobPickUpCheckpoint.cs" type="server" lang="csharp" />
 </meta>

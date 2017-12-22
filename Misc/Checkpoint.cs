@@ -20,7 +20,7 @@ namespace GTA_RP.Misc
         public SphereColShape shape { get; private set; }
         private float range = 1.2f;
         private event OnEnterCheckpointDelegate OnEnterCheckPointEvent;
-        private event OnEnterCheckpointDelegate OnExitCheckPointEvent;
+        private event OnExitCheckpointDelegate OnExitCheckPointEvent;
 
         public Checkpoint(Vector3 coordinates, OnEnterCheckpointDelegate enterDelegate, int dimension = 0)
         {
@@ -28,6 +28,28 @@ namespace GTA_RP.Misc
             shape = API.shared.createSphereColShape(coordinates, range);
             shape.onEntityEnterColShape += EntityEnteredCheckpoint;
             OnEnterCheckPointEvent += enterDelegate;
+        }
+
+        public Checkpoint(Vector3 coordinates, OnEnterCheckpointDelegate enterDelegate, OnExitCheckpointDelegate exitDelegate, int dimension = 0)
+        {
+            entrance = API.shared.createMarker(0, coordinates, new Vector3(), new Vector3(), new Vector3(1, 1, 1), 255, 255, 0, 0, dimension);
+            shape = API.shared.createSphereColShape(coordinates, range);
+            shape.onEntityEnterColShape += EntityEnteredCheckpoint;
+            OnEnterCheckPointEvent += enterDelegate;
+            OnExitCheckPointEvent += exitDelegate;
+        }
+
+        /// <summary>
+        /// Checks if character is inside the checkpoint
+        /// </summary>
+        /// <param name="character"></param>
+        /// <returns></returns>
+        public Boolean IsCharacterInsideCheckpoint(Character character)
+        {
+            if (character.position.DistanceTo(shape.Center) <= range)
+                return true;
+
+            return false;
         }
 
         /// <summary>

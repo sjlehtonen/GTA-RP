@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50611
 File Encoding         : 65001
 
-Date: 2017-11-28 22:36:32
+Date: 2017-12-23 00:51:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -330,14 +330,19 @@ DROP TABLE IF EXISTS `buildings`;
 CREATE TABLE `buildings` (
   `id` int(10) NOT NULL DEFAULT '0',
   `name` varchar(100) DEFAULT NULL,
+  `use_blip` int(10) NOT NULL,
+  `blip_id` int(100) DEFAULT NULL,
+  `blip_x` float DEFAULT NULL,
+  `blip_y` float DEFAULT NULL,
+  `blip_z` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of buildings
 -- ----------------------------
-INSERT INTO `buildings` VALUES ('0', 'Eclipse Towers');
-INSERT INTO `buildings` VALUES ('1', 'Middle Road');
+INSERT INTO `buildings` VALUES ('0', 'Eclipse Towers', '1', '475', '-773.48', '309.5', '85.6981');
+INSERT INTO `buildings` VALUES ('1', 'Middle Road', '0', null, null, null, null);
 
 -- ----------------------------
 -- Table structure for `characters`

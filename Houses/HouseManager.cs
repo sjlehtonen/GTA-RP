@@ -8,6 +8,7 @@ using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Houses;
 using GTA_RP.Misc;
+using GTA_RP.Map;
 
 namespace GTA_RP
 {
@@ -78,11 +79,14 @@ namespace GTA_RP
         /// Initializes names of the buildings from database
         /// Is ran on script startup
         /// </summary>
-        private void InitBuildingNames()
+        private void InitBuildings()
         {
             DBManager.SelectQuery("SELECT * FROM buildings", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
                 this.buildingNames.Add(reader.GetInt32(0), reader.GetString(1));
+                if (reader.GetInt32(2) == 1) { // Use blip = true 
+                    MapManager.Instance().AddBlipToMap(reader.GetInt32(3), reader.GetString(1), reader.GetFloat(4), reader.GetFloat(4), reader.GetFloat(4));
+                }
             }).Execute();
         }
 
@@ -535,6 +539,7 @@ namespace GTA_RP
             return false;
         }
 
+
         /// <summary>
         /// Is triggered when character walks into teleport
         /// </summary>
@@ -597,7 +602,7 @@ namespace GTA_RP
             CreateHouseTeleports();
             CreateHouseExitTeleports();
             LoadHousesFromDB();
-            InitBuildingNames();
+            InitBuildings();
         }
 
         /// <summary>
