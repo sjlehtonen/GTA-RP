@@ -1,17 +1,129 @@
 ﻿using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GTA_RP.Vehicles;
+using GTA_RP.Jobs;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace GTA_RP.Events
 {
+    struct RPEvent
+    {
+        public RPEvent(object classInstance, string method, bool usesCharacter = false)
+        {
+            this.classInstance = classInstance;
+            this.method = method;
+            this.usesCharacter = usesCharacter;
+        }
+
+        public object classInstance;
+        public string method;
+        public bool usesCharacter;
+    }
+
     /// <summary>
     /// A class responsible for handling events that are sent by the client
     /// </summary>
     class EventHandler : Script
     {
+        private Dictionary<string, RPEvent> events = new Dictionary<string, RPEvent>();
+
         public EventHandler()
         {
             API.onClientEventTrigger += HandleEvent;
+            InitEvents();
+        }
+
+        /// <summary>
+        /// Initializes all event handlers
+        /// Add all event handlers here
+        /// </summary>
+        private void InitEvents()
+        {
+            RegisterEvent("EVENT_REQUEST_ENTER_HOUSE", HouseManager.Instance(), "RequestEnterHouse");
+            RegisterEvent("EVENT_REQUEST_EXIT_HOUSE", HouseManager.Instance(), "RequestExitHouse");
+            RegisterEvent("EVENT_REQUEST_CREATE_ACCOUNT", PlayerManager.Instance(), "RequestCreateAccount");
+            RegisterEvent("EVENT_REQUEST_SELECT_CHARACTER", PlayerManager.Instance(), "RequestSelectCharacter");
+            RegisterEvent("EVENT_REQUEST_CREATE_CHARACTER_MENU", PlayerManager.Instance(), "RequestCreateCharacterMenu");
+            RegisterEvent("EVENT_REQUEST_CREATE_CHARACTER", PlayerManager.Instance(), "RequestCreateCharacter");
+            RegisterEvent("EVENT_REQUEST_OWNED_HOUSES", HouseManager.Instance(), "SendListOfOwnedHousesToClient");
+            RegisterEvent("EVENT_SET_PLAYER_USING_PHONE", PlayerManager.Instance(), "SetPlayerUsingPhone");
+            RegisterEvent("EVENT_SET_PLAYER_NOT_USING_PHONE", PlayerManager.Instance(), "SetPlayerPhoneOut");
+            RegisterEvent("EVENT_SEND_TEXT_MESSAGE", PlayerManager.Instance(), "TrySendTextMessage");
+            RegisterEvent("EVENT_ADD_PHONE_CONTACT", PlayerManager.Instance(), "TryAddNewContact");
+            RegisterEvent("EVENT_REMOVE_PHONE_CONTACT", PlayerManager.Instance(), "TryDeleteContact");
+            RegisterEvent("EVENT_REMOVE_TEXT_MESSAGE", PlayerManager.Instance(), "TryDeleteTextMessage");
+            RegisterEvent("EVENT_START_PHONE_CALL", PlayerManager.Instance(), "TryStartPhoneCall");
+            RegisterEvent("EVENT_ACCEPT_PHONE_CALL", PlayerManager.Instance(), "TryAcceptPhoneCall");
+            RegisterEvent("EVENT_END_PHONE_CALL", PlayerManager.Instance(), "TryHangupPhoneCall");
+            RegisterEvent("EVENT_EXIT_VEHICLE_SHOP", VehicleManager.Instance(), "TryExitVehicleShop");
+            RegisterEvent("EVENT_BUY_VEHICLE", VehicleManager.Instance(), "TryPurchaseVehicle");
+            RegisterEvent("EVENT_TRY_SPAWN_VEHICLE", VehicleManager.Instance(), "SpawnVehicleForCharacter");
+            RegisterEvent("EVENT_TRY_PARK_VEHICLE", VehicleManager.Instance(), "ParkVehicle");
+            RegisterEvent("EVENT_TRY_LOCK_VEHICLE", VehicleManager.Instance(), "LockVehicleWithId");
+            RegisterEvent("EVENT_TRY_BUY_PARKING_SPOT", VehicleManager.Instance(), "TryPurchasePark");
+            RegisterEvent("EVENT_TRY_SET_SPAWN_LOCATION", PlayerManager.Instance(), "SetCharacterSpawnHouse");
+            RegisterEvent("EVENT_ACCEPT_JOB", JobManager.Instance(), "TakeJobForClient", true);
+        }
+
+        /// <summary>
+        /// Registers an event with name
+        /// </summary>
+        /// <param name="name">Name of the event</param>
+        /// <param name="instance">Singleton handler of the event</param>
+        /// <param name="methodName">Method that is delegated to handling the event</param>
+        /// <param name="needsCharacter">Flag if character is passed to the method instead of the client</param>
+        private void RegisterEvent(string name, object instance, string methodName, bool needsCharacter = false)
+        {
+            events.Add(name, new RPEvent(instance, methodName, needsCharacter));
+        }
+
+        /// <summary>
+        /// Creates the function parameter list for the method that is delegated to some event
+        /// </summary>
+        /// <param name="e">Event</param>
+        /// <param name="c">Client</param>
+        /// <param name="arguments">Arguments</param>
+        /// <returns>Argument list for some event</returns>
+        private object[] GetArgumentParametersForEvent(RPEvent e, Client c, params object[] arguments)
+        {
+            List<object> paramList = new List<object>();
+            if (e.usesCharacter)
+            {
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+                paramList.Add(character);
+            }
+            else
+            {
+                paramList.Add(c);
+            }
+            
+            for(int i = 0; i < arguments.Length; i++)
+            {
+                paramList.Add(arguments[i]);
+            }
+            return paramList.ToArray();
+        }
+
+        /// <summary>
+        /// Handles a server event
+        /// </summary>
+        /// <param name="player">Client who sent the event</param>
+        /// <param name="eventName">Event name</param>
+        /// <param name="arguments">Arguments that client sent</param>
+        private void HandleEventWithName(Client player, string eventName, params object[] arguments)
+        {
+            if (events.ContainsKey(eventName))
+            {
+                RPEvent eventToInvoke = events[eventName];
+
+                if (eventToInvoke.usesCharacter && !PlayerManager.Instance().IsClientUsingCharacter(player)) return;
+
+                Type type = eventToInvoke.classInstance.GetType();
+                MethodInfo method = type.GetMethod(eventToInvoke.method, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                method.Invoke(eventToInvoke.classInstance, GetArgumentParametersForEvent(eventToInvoke, player, arguments));
+            }
         }
 
         /// <summary>
@@ -22,11 +134,13 @@ namespace GTA_RP.Events
         /// <param name="arguments">Arguments that are sent with the event</param>
         private void HandleEvent(Client player, string eventName, params object[] arguments)
         {
-            switch(eventName)
+            HandleEventWithName(player, eventName, arguments);
+            /*switch(eventName)
             {
-                case "EVENT_REQUEST_ENTER_HOUSE":
+                case "EVENT_REQUEST_ENTER_HOUSE": // *
                     int houseId = (int)arguments[0];
                     HouseManager.Instance().RequestEnterHouse(player, houseId);
+                    HandleEventWithName(player, "EVENT_REQUEST_ENTER_HOUSE", arguments);
                     break;
 
                 case "EVENT_REQUEST_EXIT_HOUSE":
@@ -122,7 +236,7 @@ namespace GTA_RP.Events
                 case "EVENT_TRY_SET_SPAWN_LOCATION":
                     PlayerManager.Instance().SetCharacterSpawnHouse(player, (int)arguments[0]);
                     break;
-            }
+            }*/
         }
     }
 }

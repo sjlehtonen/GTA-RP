@@ -259,7 +259,10 @@ namespace GTA_RP.Vehicles
         /// <returns>True if character is in vehicle, otherwise false</returns>
         private bool IsCharacterInVehicle(Character character, RPVehicle veh)
         {
-            if (API.shared.getPlayerVehicle(character.owner.client) == veh.handle) return true;
+            if (API.shared.isPlayerInAnyVehicle(character.owner.client))
+            {
+                if (API.shared.getPlayerVehicle(character.owner.client) == veh.handle) return true;
+            }
             return false;
         }
 

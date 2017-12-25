@@ -63,17 +63,7 @@ namespace GTA_RP
 
         }
 
-        /// <summary>
-        /// Gets a name for building with certain id
-        /// </summary>
-        /// <param name="buildingId">id of the building that's name is wanted</param>
-        /// <returns>Name of the building</returns>
-        private String GetBuildingName(int buildingId)
-        {
-            if (buildingNames.ContainsKey(buildingId))
-                return buildingNames.Get(buildingId);
-            return "Building";
-        }
+        
 
         /// <summary>
         /// Initializes names of the buildings from database
@@ -85,7 +75,7 @@ namespace GTA_RP
             {
                 this.buildingNames.Add(reader.GetInt32(0), reader.GetString(1));
                 if (reader.GetInt32(2) == 1) { // Use blip = true 
-                    MapManager.Instance().AddBlipToMap(reader.GetInt32(3), reader.GetString(1), reader.GetFloat(4), reader.GetFloat(4), reader.GetFloat(4));
+                    MapManager.Instance().AddBlipToMap(reader.GetInt32(3), reader.GetString(1), reader.GetFloat(4), reader.GetFloat(5), reader.GetFloat(6));
                 }
             }).Execute();
         }
@@ -417,6 +407,7 @@ namespace GTA_RP
             // Add dimension change!
             SetTimerForCharacter(c);
             t.UseTeleport(c, h.templateId);
+            c.owner.client.dimension = h.id;
             h.AddOccupant(c);
         }
 
@@ -430,9 +421,9 @@ namespace GTA_RP
         {
             SetTimerForCharacter(c);
             t.UseTeleport(c, destinationId);
+            c.owner.client.dimension = 0;
             House h = GetHouseWithCharacterAsOccupant(c);
-            if (h != null)
-                h.RemoveOccupant(c);
+            if (h != null) h.RemoveOccupant(c);
         }
 
         /// <summary>
@@ -479,6 +470,28 @@ namespace GTA_RP
         }
 
         /// <summary>
+        /// Gets a name for building with certain id
+        /// </summary>
+        /// <param name="buildingId">id of the building that's name is wanted</param>
+        /// <returns>Name of the building</returns>
+        public String GetBuildingName(int buildingId)
+        {
+            if (buildingNames.ContainsKey(buildingId))
+                return buildingNames.Get(buildingId);
+            return "Building";
+        }
+
+        /// <summary>
+        /// Gets a name for building where certain house template is
+        /// </summary>
+        /// <param name="templateId">House template id</param>
+        /// <returns>Building name</returns>
+        public String GetBuildingNameForHouseTemplateId(int templateId)
+        {
+            return GetBuildingName(GetBuildingIdForTemplateId(templateId));
+        }
+
+        /// <summary>
         /// Adds character inside a house with a certain ID
         /// </summary>
         /// <param name="id">House id</param>
@@ -498,6 +511,16 @@ namespace GTA_RP
         {
             House h = GetHouseForId(id);
             h.RemoveOccupant(character);
+        }
+
+        /// <summary>
+        /// Gets a name of house template
+        /// </summary>
+        /// <param name="templateId"></param>
+        /// <returns></returns>
+        public string GetHouseNameForTemplateId(int templateId)
+        {
+            return houseTemplates.Single(x => x.id == templateId).house_name;
         }
 
         /// <summary>

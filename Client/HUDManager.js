@@ -136,6 +136,10 @@ class HUDManager
             case 'EVENT_NEW_VEHICLE_ADDED':
                 this.addNewVehicle(args[0], args[1], args[2]);
                 break;
+
+            case 'EVENT_UPDATE_JOB':
+                this.setEmployment(args[0], args[1], args[2], args[3]);
+                break;
         }
     }
 

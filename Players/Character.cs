@@ -175,6 +175,11 @@ namespace GTA_RP
             if (updateDatabase) PlayerManager.Instance().UpdateCharacterMoney(this, this.money);
         }
 
+        public void SetJob(int jobId)
+        {
+            this.job = jobId;
+        }
+
         /// <summary>
         /// Plays animation for character
         /// </summary>
