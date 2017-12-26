@@ -67,6 +67,7 @@
     <Compile Include="Factions\Civilian.cs" />
     <Compile Include="Factions\Faction.cs" />
     <Compile Include="Factions\FactionManager.cs" />
+    <Compile Include="Houses\HouseMarket.cs" />
     <Compile Include="Jobs\JobPickUpCheckpoint.cs" />
     <Compile Include="Map\MapManager.cs" />
     <Compile Include="Misc\Checkpoint.cs" />
