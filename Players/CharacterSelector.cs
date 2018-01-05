@@ -146,8 +146,6 @@ namespace GTA_RP
             characters.ForEach(x => characterNames.Add(x.fullName));
             characters.ForEach(x => characterModels.Add(x.model));
 
-            API.shared.consoleOutput("Player added to character selector!");
-            API.shared.consoleOutput("There are " + allowedCharacterCreatorModels.Count.ToString() + " models");
             API.shared.triggerClientEvent(p.client, "EVENT_OPEN_CHARACTER_SELECT_MENU", characterNames, characterModels, characterSelectionCameraPosition, characterSelectionCameraRotation, allowedCharacterCreatorModels, characterSelectionPosition, characterSelectionRotation);
         }
 

@@ -9,6 +9,7 @@ using GTA_RP.Jobs;
 using GTA_RP.Factions;
 using GTA_RP.Vehicles;
 using System.Linq;
+using GTA_RP.Items;
 
 namespace GTA_RP
 {
@@ -85,8 +86,9 @@ namespace GTA_RP
 
             // Add vehicles
             List<RPVehicle> vehicles = VehicleManager.Instance().GetVehiclesForCharacter(c);
+            List<Item> items = c.GetAllItemsFromInventory();
 
-            API.shared.triggerClientEvent(c.owner.client, "EVENT_INIT_HUD", i.name, i.colorR, i.colorG, i.colorB, f.name, f.colorR, f.colorG, f.colorB, c.money.ToString(), c.fullName, c.phone.phoneNumber, c.phone.GetTextMessageIds(), c.phone.GetTextMessageSenders(), c.phone.GetTextMessageTimes(), c.phone.GetTextMessageTexts(), c.phone.GetContactNames(), c.phone.GetContactNumbers(), vehicles.Select(x => x.id).ToList(), vehicles.Select(x => x.licensePlateText).ToList(), vehicles.Select(x => x.spawned).ToList());
+            API.shared.triggerClientEvent(c.owner.client, "EVENT_INIT_HUD", i.name, i.colorR, i.colorG, i.colorB, f.name, f.colorR, f.colorG, f.colorB, c.money.ToString(), c.fullName, c.phone.phoneNumber, c.phone.GetTextMessageIds(), c.phone.GetTextMessageSenders(), c.phone.GetTextMessageTimes(), c.phone.GetTextMessageTexts(), c.phone.GetContactNames(), c.phone.GetContactNumbers(), vehicles.Select(x => x.id).ToList(), vehicles.Select(x => x.licensePlateText).ToList(), vehicles.Select(x => x.spawned).ToList(), items.Select(x => x.id).ToList(), items.Select(x => x.name).ToList(), items.Select(x => x.count).ToList(), items.Select(x => x.description).ToList());
             API.shared.triggerClientEvent(c.owner.client, "EVENT_CLOSE_CHARACTER_SELECT_MENU");
 
             HouseManager.Instance().SendListOfOwnedHousesToClient(c.owner.client);

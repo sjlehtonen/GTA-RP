@@ -34,23 +34,23 @@ namespace GTA_RP.Jobs
         /// </summary>
         private Vector3[] positions =
         {
-            new Vector3(-162.9298, -1668.545, 32.64808),
-            new Vector3(-189.5532, -1375.702, 30.77444),
-            new Vector3(-560.0544, -707.5613, 32.50684),
-            new Vector3(-1159.908, -1457.231, 3.861255),
-            new Vector3(599.4404, 147.7233, 97.55682),
-            new Vector3(-1185.603, -1088.889, 1.813894),
-            new Vector3(-1236.442, -1404.753, 3.790302),
-            new Vector3(-708.5078, -725.743, 28.21856),
-            new Vector3(-1500.967, -887.9347, 9.626642),
-            new Vector3(1079.971, -1968.367, 30.556),
-            new Vector3(-468.9455, -1729.26, 18.16786),
-            new Vector3(-705.4124, -2537.478, 13.51044),
-            new Vector3(-1232.402, -692.3838, 23.14487),
-            new Vector3(-1296.669, -619.4992, 26.61686),
-            new Vector3(-1520.694, -411.7015, 35.027),
-            new Vector3(-553.3751, 307.9679, 82.742),
-            new Vector3(-277.0289, 204.4182, 85.25507)
+            new Vector3(-162.9298, -1668.545, 31.64808),
+            new Vector3(-189.5532, -1375.702, 29.77444),
+            new Vector3(-560.0544, -707.5613, 31.50684),
+            new Vector3(-1159.908, -1457.231, 2.861255),
+            new Vector3(599.4404, 147.7233, 96.55682),
+            new Vector3(-1185.603, -1088.889, 0.813894),
+            new Vector3(-1236.442, -1404.753, 2.790302),
+            new Vector3(-708.5078, -725.743, 27.21856),
+            new Vector3(-1500.967, -887.9347, 8.626642),
+            new Vector3(1079.971, -1968.367, 29.556),
+            new Vector3(-468.9455, -1729.26, 17.16786),
+            new Vector3(-705.4124, -2537.478, 12.51044),
+            new Vector3(-1232.402, -692.3838, 22.14487),
+            new Vector3(-1296.669, -619.4992, 25.61686),
+            new Vector3(-1520.694, -411.7015, 34.027),
+            new Vector3(-553.3751, 307.9679, 81.742),
+            new Vector3(-277.0289, 204.4182, 84.25507)
         };
 
         /// <summary>
@@ -59,9 +59,9 @@ namespace GTA_RP.Jobs
         /// </summary>
         private Vector3[] endPoints =
         {
-            new Vector3(453.981, -1965.712, 22.97292),
-            new Vector3(-53.35933, -1317.924, 28.98088),
-            new Vector3(-451.8873, -1696.857, 22.967725)
+            new Vector3(453.981, -1965.712, 21.97292),
+            new Vector3(-53.35933, -1317.924, 27.98088),
+            new Vector3(-451.8873, -1696.857, 21.967725)
         };
 
         public TrashJob(Character c) : base(c)
@@ -216,6 +216,7 @@ namespace GTA_RP.Jobs
             trashLoadTimer.Enabled = true;
             currentCheckPoint = cp;
             API.shared.sendNotificationToPlayer(character.owner.client, "Loading trash...", true);
+            //API.shared.triggerClientEvent(character.client, "EVENT_CREATE_TIMER_BAR", "Test", 5.0f);
         }
 
         /// <summary>
@@ -239,6 +240,7 @@ namespace GTA_RP.Jobs
             Timer t = (Timer)source;
             t.Enabled = false;
             workVehicle.freezePosition = false;
+            API.shared.playSoundFrontEnd(character.client, "FLIGHT_SCHOOL_LESSON_PASSED", "HUD_AWARDS");
             FinishJob();
         }
 
@@ -287,7 +289,8 @@ namespace GTA_RP.Jobs
         /// </summary>
         public override void FinishJob()
         {
-            API.shared.sendNotificationToPlayer(character.owner.client, "Job complete! You earned 5500!");
+            API.shared.sendNotificationToPlayer(character.owner.client, "Job complete! You earned $5500!");
+            character.SetMoney(character.money + 5500);
             CleanUp();
         }
 
@@ -305,6 +308,8 @@ namespace GTA_RP.Jobs
             currentCheckPoint = null;
 
             workVehicle.freezePosition = false;
+            
+            API.shared.playSoundFrontEnd(character.client, "SELECT", "HUD_LIQUOR_STORE_SOUNDSET");
 
             CheckMissionComplete();
         }

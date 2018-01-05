@@ -29,6 +29,15 @@ class House {
     }
 }
 
+class Item {
+    constructor(id, name, amount, description) {
+        this.id = id;
+        this.name = name;
+        this.amount = amount;
+        this.description = description;
+    }
+}
+
 class HUDManager
 {
     constructor() {
@@ -69,6 +78,9 @@ class HUDManager
         this.ownedHouseIds = null;
         this.houses = [];
 
+        // Item menu values
+        this.items = [];
+
         // help values
         this.screenResolution = null;
         this.selectedTextMessageIndex = null;
@@ -94,7 +106,7 @@ class HUDManager
         switch (eventName)
         {
             case 'EVENT_INIT_HUD':
-                this.initHUD(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15], args[16], args[17], args[18], args[19]);
+                this.initHUD(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15], args[16], args[17], args[18], args[19], args[20], args[21], args[22], args[23]);
                 break;
 
             case 'EVENT_UPDATE_MONEY':
@@ -140,6 +152,10 @@ class HUDManager
             case 'EVENT_UPDATE_JOB':
                 this.setEmployment(args[0], args[1], args[2], args[3]);
                 break;
+
+            case 'EVENT_CREATE_TIMER_BAR':
+                this.createTimerBar(args[0], args[1]);
+                break;
         }
     }
 
@@ -158,6 +174,10 @@ class HUDManager
 
     endPhoneCalling() {
 
+    }
+
+    createTimerBar(text, time) {
+        var myBar = API.createBarTimerBar("test");
     }
 
     receivePhoneCall(number) {
@@ -218,6 +238,12 @@ class HUDManager
         }
     }
 
+    initItems(ids, names, counts, descriptions) {
+        for (var i = 0; i < names.Count; i++) {
+            this.items.push(new Item(ids[i], names[i], counts[i], descriptions[i]));
+        }
+    }
+
     initVehicles(ids, licensePlates, spawneds)
     {
         for (var i = 0; i < ids.Count; i++) {
@@ -227,12 +253,13 @@ class HUDManager
 
     initHouses(ids, names)
     {
+        this.houses = [];
         for (var i = 0; i < ids.Count; i++) {
             this.houses.push(new House(ids[i], names[i]));
         }
     }
 
-    initHUD(employment, r1, g1, b1, faction, r2, g2, b2, money, name, phoneNumber, textMessageIds, textMessageSenders, textMessageTimes, textMessages, contactNames, contactNumbers, vehicleIds, licensePlates, vehicleSpawneds)
+    initHUD(employment, r1, g1, b1, faction, r2, g2, b2, money, name, phoneNumber, textMessageIds, textMessageSenders, textMessageTimes, textMessages, contactNames, contactNumbers, vehicleIds, licensePlates, vehicleSpawneds, itemIds, itemNames, itemCounts, itemDescriptions)
     {
         this.hudActive = true;
         this.characterName = name;
@@ -243,6 +270,7 @@ class HUDManager
         this.initTextMessages(textMessageIds, textMessageSenders, textMessageTimes, textMessages);
         this.initContacts(contactNames, contactNumbers);
         this.initVehicles(vehicleIds, licensePlates, vehicleSpawneds);
+        this.initItems(itemIds, itemNames, itemCounts, itemDescriptions);
     }
 
     draw()
@@ -253,13 +281,9 @@ class HUDManager
                 this.screenResolution = API.getScreenResolutionMaintainRatio();
             }
 
-            let xPos = this.screenResolution.Width * 0.145;
-            let yPos = this.screenResolution.Height * 0.82;
+            let xPos = this.screenResolution.Width * 0.164;
+            let yPos = this.screenResolution.Height * 0.809;
             let increment = yPos * 0.036;
-
-            /*let xPos = 278.4;
-            let yPos = 885.6;
-            let increment = yPos * 0.036;*/
 
             API.drawText(this.characterName, xPos, yPos, 0.8, 255, 255, 255, 255, 1, 0, true, true, 1000);
             API.drawText(this.factionText, xPos, yPos + increment * 2.3, 0.65, this.factionTextColorR, this.factionTextColorG, this.factionTextColorB, 255, 6, 0, false, true, 1000);
@@ -293,6 +317,24 @@ class HUDManager
             this.textMessagesNeedUpdate = true;
         }
     }
+
+    useItem(id) {
+        API.triggerServerEvent("EVENT_TRY_USE_ITEM", id);
+    }
+
+    createItemsMenu() {
+        let menu = API.createMenu("Player Menu", "Inventory", 0, 0, 6);
+        for (var i = 0; i < this.items.length; i++) {
+            let item = API.createMenuItem(this.items[i].name, this.items[i].description);
+            item.SetRightLabel(this.items[i].amount.toString());
+            let val = this.items[i].id;
+            item.Activated.connect(() => this.useItem(val));
+            menu.AddItem(item);
+        }
+        return menu;
+    }
+
+    
 
     createHouseMenu()
     {
@@ -365,8 +407,8 @@ class HUDManager
         item3.Activated.connect((menu, sender) => this.lockVehicle(menu, sender));
         item4.Activated.connect((menu, sender) => this.buyParkSpot(menu, sender));
 
-        menu.AddItem(item1);
         menu.AddItem(item2);
+        menu.AddItem(item1);
         menu.AddItem(item3);
         menu.AddItem(item4);
         return menu;
@@ -719,7 +761,7 @@ class HUDManager
         menu.OnMenuChange.connect((sender, next, forward) => this.menuChanged(sender, next, forward));
         menu.OnMenuClose.connect((sender) => this.menuClosed(sender));
 
-        let item = API.createMenuItem("Inventory (Not yet implemented)", "");
+        let item = API.createMenuItem("Inventory", "");
         let item2 = API.createMenuItem("Vehicles", "");
         if (this.vehicles.length == 0) {
             item2.Enabled = false;
@@ -747,12 +789,14 @@ class HUDManager
         var menu2 = this.createActionsMenu();
         var menu4 = this.createVehicleMenu();
         var menu3 = this.createPhoneMenu();
+        var inventoryMenu = this.createItemsMenu();
 
 
         menu.BindMenuToItem(menu1, item3);
         menu.BindMenuToItem(menu2, item4);
         menu.BindMenuToItem(menu3, item5);
         menu.BindMenuToItem(menu4, item2);
+        menu.BindMenuToItem(inventoryMenu, item);
 
         menu.Visible = true;
     }

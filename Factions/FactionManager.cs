@@ -18,6 +18,14 @@ namespace GTA_RP.Factions
              RegisterFaction(new LawEnforcement(FactionI.LAW_ENFORCEMENT, "Law enforcement", 0, 102, 204));
         }
 
+        /// <summary>
+        /// Initializes all factions
+        /// </summary>
+        public void InitializeFactions()
+        {
+            foreach (Faction faction in factions.Values)
+                faction.Initialize();
+        }
 
         /// <summary>
         /// Registers a new faction on the server
@@ -38,6 +46,8 @@ namespace GTA_RP.Factions
         {
             return factions.Get(id);
         }
+
+        public LawEnforcement LawEnforcement() { return factions.Get(FactionI.LAW_ENFORCEMENT) as LawEnforcement; }
 
         /// <summary>
         /// Handles the on duty command for character's faction

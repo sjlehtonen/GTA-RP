@@ -14,6 +14,8 @@
     <script src="client/HelpMenu.js" type="client" lang="javascript" />
     <script src="client/VehicleShopManager.js" type="client" lang="javascript" />
     <script src="client/JobManager.js" type="client" lang="javascript" />
+    <script src="client/HouseMarketManager.js" type="client" lang="javascript" />
+    <script src="client/ItemShopManager.js" type="client" lang="javascript" />
 
     <script src="Misc/Roleplay.cs" type="server" lang="csharp" />
   
@@ -32,6 +34,15 @@
     <script src="Factions/FactionCommands.cs" type="server" lang="csharp" />
     <script src="Factions/LawEnforcement.cs" type="server" lang="csharp" />
     <script src="Factions/LawEnforcementCommands.cs" type="server" lang="csharp" />
+
+    <script src="Inventory/Ammo.cs" type="server" lang="csharp" />
+    <script src="Inventory/Inventory.cs" type="server" lang="csharp" />
+    <script src="Inventory/Item.cs" type="server" lang="csharp" />
+    <script src="Inventory/ItemManager.cs" type="server" lang="csharp" />
+    <script src="Inventory/ItemsFactory.cs" type="server" lang="csharp" />
+    <script src="Inventory/ItemTemplate.cs" type="server" lang="csharp" />
+    <script src="Inventory/Weapon.cs" type="server" lang="csharp" />
+    <script src="Inventory/ItemShop.cs" type="server" lang="csharp" />
   
     <script src="Admin/AdminCommands.cs" type="server" lang="csharp" />
     <script src="PedManager/PedManager.cs" type="server" lang="csharp" />
@@ -44,6 +55,7 @@
     <script src="Houses/House.cs" type="server" lang="csharp" />
     <script src="Houses/HouseManager.cs" type="server" lang="csharp" />
     <script src="Houses/HouseTemplate.cs" type="server" lang="csharp" />
+    <script src="Houses/HouseMarket.cs" type="server" lang="csharp" />
   
     <script src="Weather/WeatherManager.cs" type="server" lang="csharp" />
   

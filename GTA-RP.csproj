@@ -68,6 +68,14 @@
     <Compile Include="Factions\Faction.cs" />
     <Compile Include="Factions\FactionManager.cs" />
     <Compile Include="Houses\HouseMarket.cs" />
+    <Compile Include="Inventory\Ammo.cs" />
+    <Compile Include="Inventory\Inventory.cs" />
+    <Compile Include="Inventory\Item.cs" />
+    <Compile Include="Inventory\ItemManager.cs" />
+    <Compile Include="Inventory\ItemsFactory.cs" />
+    <Compile Include="Inventory\ItemShop.cs" />
+    <Compile Include="Inventory\ItemTemplate.cs" />
+    <Compile Include="Inventory\Weapon.cs" />
     <Compile Include="Jobs\JobPickUpCheckpoint.cs" />
     <Compile Include="Map\MapManager.cs" />
     <Compile Include="Misc\Checkpoint.cs" />
@@ -110,7 +118,9 @@
     <Content Include="Client\EventResponder.js" />
     <Content Include="Client\HelpMenu.js" />
     <Content Include="Client\HouseManager.js" />
+    <Content Include="Client\HouseMarketManager.js" />
     <Content Include="Client\HUDManager.js" />
+    <Content Include="Client\ItemShopManager.js" />
     <Content Include="Client\JobManager.js" />
     <Content Include="Client\VehicleShopManager.js" />
     <Content Include="docs\MySqlCommand.xml" />

@@ -235,6 +235,7 @@ namespace GTA_RP.Jobs
             RemoveJobFromCharacter(character);
             CreateJobForCharacter(character);
             UpdateClientJobHUD(character);
+            API.shared.sendChatMessageToPlayer(character.owner.client, "Your new job is: " + GetInfoForJobWithId(jobId).name);
         }
 
         /// <summary>

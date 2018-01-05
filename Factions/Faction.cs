@@ -6,9 +6,22 @@ using System.Threading.Tasks;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
+using System.Reflection;
 
 namespace GTA_RP.Factions
 {
+    struct FactionCommand
+    {
+        public FactionCommand(string handlerMethod, params Type[] arguments)
+        {
+            this.arguments = new List<Type>(arguments);
+            this.handlerMethod = handlerMethod;
+        }
+
+        public List<Type> arguments;
+        public string handlerMethod;
+    }
+
     /// <summary>
     /// Base class for faction
     /// </summary>
@@ -30,6 +43,12 @@ namespace GTA_RP.Factions
                 return "#" + colorR.ToString("X2") + colorG.ToString("X2") + colorB.ToString("X2");
             }
         }
+
+        /// <summary>
+        /// Initializes data needed for the faction
+        /// </summary>
+        public abstract void Initialize();
+
 
         /// <summary>
         /// A method that defines what to do when player uses /duty command

@@ -1,12 +1,19 @@
 ﻿using System;
 using GrandTheftMultiplayer.Server.Constant;
+using GrandTheftMultiplayer.Server.API;
+using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Shared;
+using GrandTheftMultiplayer.Shared.Math;
 
 namespace GTA_RP.Factions
 {
     class LawEnforcement : Faction
     {
         public LawEnforcement(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB)
+        {
+        }
+
+        public override void Initialize()
         {
 
         }
@@ -18,6 +25,11 @@ namespace GTA_RP.Factions
         public override string GetChatColor()
         {
             return "~b~";
+        }
+
+        public void ArrestCharacter(Character arrester, int CharacterToArrest)
+        {
+            API.shared.sendChatMessageToPlayer(arrester.owner.client, "adsda");
         }
 
         /// <summary>

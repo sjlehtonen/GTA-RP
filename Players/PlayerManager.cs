@@ -11,6 +11,7 @@ using GTA_RP.Factions;
 using GTA_RP.Misc;
 using System.Security.Cryptography;
 using System.Text;
+using GTA_RP.Items;
 
 namespace GTA_RP
 {
@@ -353,9 +354,10 @@ namespace GTA_RP
                 characters.Add(c);
             }).AddValue("@id", player.id).Execute();
 
-            // Load phone contents
+            // Load phone contents and init inventory
             foreach (Character c in characters)
             {
+                ItemManager.Instance().LoadInventoryForCharacter(c);
                 c.phone.AddReceivedMessages(LoadTextMessagesForCharacter(c));
                 c.phone.AddContacts(LoadPhoneContactsForCharacter(c));
             }
@@ -580,7 +582,30 @@ namespace GTA_RP
                 .Execute();
         }
 
+
+        private Character GetCharacterWithId(int id)
+        {
+            return GetActiveCharacters().SingleOrDefault(x => x.ID == id);
+        }
+
+
+
         // Public methods
+
+        public bool IsCharacterWithIdOnline(int id)
+        {
+            if (GetCharacterWithId(id) == null) return false;
+            return true;
+        }
+
+        public void SendNotificationToCharacterWithid(int id, string notification)
+        {
+            if (IsCharacterWithIdOnline(id))
+            {
+                Character character = GetCharacterWithId(id);
+                API.shared.sendNotificationToPlayer(character.owner.client, notification);
+            }
+        }
 
         /// <summary>
         /// Gets character with given phone number
@@ -665,7 +690,7 @@ namespace GTA_RP
         /// </summary>
         /// <param name="character">Character</param>
         /// <param name="newMoney">New money amount</param>
-        public void UpdateCharacterMoney(Character character, int newMoney)
+        public void UpdateCharacterMoneyToDatabase(Character character, int newMoney)
         {
             DBManager.UpdateQuery("UPDATE characters SET money=@money WHERE id=@id").AddValue("@id", character.ID).AddValue("@money", newMoney).Execute();
         }
@@ -706,6 +731,51 @@ namespace GTA_RP
         }
 
         /// <summary>
+        /// Sets money for character with id
+        /// </summary>
+        /// <param name="id">ID of character</param>
+        /// <param name="newMoney">Amount of money to set</param>
+        public void UpdateMoneyForCharacterWithId(int id, int newMoney)
+        {
+            if (IsCharacterWithIdOnline(id))
+            {
+                Character character = GetCharacterWithId(id);
+                character.SetMoney(newMoney);
+            }
+            else
+            {
+                DBManager.UpdateQuery("UPDATE characters SET money=@money WHERE id=@id").AddValue("@id", id).AddValue("@money", newMoney).Execute();
+            }
+        }
+
+        /// <summary>
+        /// Adds money for character with certain id
+        /// </summary>
+        /// <param name="id">Character id</param>
+        /// <param name="addMount">Amount of money to add</param>
+        public void AddMoneyForCharacterWithId(int id, int addAmount)
+        {
+            if (IsCharacterWithIdOnline(id))
+            {
+                Character character = GetCharacterWithId(id);
+                character.SetMoney(character.money+addAmount);
+            }
+            else
+            {
+                int money = 0;
+
+                DBManager.SelectQuery("SELECT money FROM characters WHERE id=@id", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+                {
+                    money = reader.GetInt32(0);
+                })
+                .AddValue("@id", id)
+                .Execute();
+
+                DBManager.UpdateQuery("UPDATE characters SET money=@money WHERE id=@id").AddValue("@id", id).AddValue("@money", money+addAmount).Execute();
+            }
+        }
+
+        /// <summary>
         /// Request creating an account
         /// </summary>
         /// <param name="c">Client for which to create the account</param>
@@ -737,6 +807,17 @@ namespace GTA_RP
             }
 
             this.CreateAccount(c, accountName, password);
+        }
+
+        /// <summary>
+        /// Gets all characters in a certain radius from other character
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <param name="radius">Radius</param>
+        /// <returns>List of characters</returns>
+        public List<Character> GetCharactersInRadiusOfCharacter(Character character, float radius)
+        {
+            return GetCharactersInDistance(character.position, radius);
         }
 
         /// <summary>

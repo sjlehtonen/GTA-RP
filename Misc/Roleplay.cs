@@ -2,6 +2,8 @@
 using GTA_RP.Vehicles;
 using GTA_RP.Weather;
 using GTA_RP.Jobs;
+using GTA_RP.Factions;
+using GTA_RP.Items;
 
 namespace GTA_RP
 {
@@ -44,6 +46,7 @@ namespace GTA_RP
             VehicleManager.Instance().LoadVehiclesFromDB();
             HouseManager.Instance().LoadHouseTemplates();
             JobManager.Instance().InitJobPickupPoints();
+            ItemManager.Instance().InitializeItems();
 
             API.consoleOutput("####Script load complete!####");
         }

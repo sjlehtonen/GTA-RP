@@ -54,6 +54,8 @@ namespace GTA_RP
         private Dictionary<int, int> buildingIdForTemplateId = new Dictionary<int, int>();
         private Dictionary<int, String> buildingNames = new Dictionary<int, string>();
         private Dictionary<int, Timer> enterHouseTimers = new Dictionary<int, Timer>();
+        private HouseMarket houseMarket;
+        private int entryId = 0;
 
         /// <summary>
         /// Constructor of HouseManager
@@ -63,6 +65,10 @@ namespace GTA_RP
 
         }
 
+        private void InitHouseMarket()
+        {
+            houseMarket = new HouseMarket();
+        }
         
 
         /// <summary>
@@ -80,6 +86,13 @@ namespace GTA_RP
             }).Execute();
         }
 
+        private void AddHouse(int id, int ownerId, int templateId, string name)
+        {
+            if (id > this.entryId) this.entryId = id;
+            House h = new House(id, ownerId, templateId, name);
+            ownedHouses.Add(h);
+        }
+
         /// <summary>
         /// Loads all buildings from the database and initializes them
         /// Is ran on script startup
@@ -88,8 +101,7 @@ namespace GTA_RP
         {
             DBManager.SelectQuery("SELECT * FROM houses", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                House h = new House(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetString(3));
-                ownedHouses.Add(h);
+                this.AddHouse(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetString(3));
             }).Execute();
         }
 
@@ -327,7 +339,7 @@ namespace GTA_RP
         /// <returns>A teleport in certain distance of player and with certain id</returns>
         private Teleport GetExitTeleportForIdAndInRange(Character character, int teleportId)
         {
-            return houseExitTeleports.Single(t => t.id == teleportId && t.IsCharacterInsideTeleport(character));
+            return houseExitTeleports.SingleOrDefault(t => t.id == teleportId && t.IsCharacterInsideTeleport(character));
         }
 
         /// <summary>
@@ -533,8 +545,7 @@ namespace GTA_RP
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
             Teleport t = this.GetExitTeleportForIdAndInRange(c, teleportId);
-            if (t != null)
-                ExitHouse(c, t, destinationId);
+            if (t != null) ExitHouse(c, t, destinationId);
         }
 
         /// <summary>
@@ -560,6 +571,28 @@ namespace GTA_RP
             if (house == null) return false;
             if (house.ownerId == c.ID) return true;
             return false;
+        }
+
+        public void TryBuyMarketHouseForCharacter(Character character, int houseSellId, string nameOfHouse)
+        {
+            this.houseMarket.TryBuyHouseForCharacter(character, houseSellId, nameOfHouse);
+        }
+
+        /// <summary>
+        /// Adds a new house for player with selected template
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <param name="templateId"></param>
+        public void AddHouseOwnershipForCharacter(Character character, int templateId, string nameOfHouse)
+        {
+            DBManager.InsertQuery("INSERT INTO houses VALUES (@id, @ownerId, @templateId, @name)")
+                .AddValue("@id", this.entryId + 1)
+                .AddValue("@ownerId", character.ID)
+                .AddValue("@templateId", templateId)
+                .AddValue("@name", nameOfHouse)
+                .Execute();
+            this.AddHouse(this.entryId + 1, character.ID, templateId, nameOfHouse);
+            this.SendListOfOwnedHousesToClient(character.owner.client);
         }
 
 
@@ -626,6 +659,7 @@ namespace GTA_RP
             CreateHouseExitTeleports();
             LoadHousesFromDB();
             InitBuildings();
+            InitHouseMarket();
         }
 
         /// <summary>

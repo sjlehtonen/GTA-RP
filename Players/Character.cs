@@ -7,6 +7,7 @@ using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using System.Collections.Generic;
+using GTA_RP.Items;
 
 namespace GTA_RP
 {
@@ -31,9 +32,16 @@ namespace GTA_RP
         public int gender { get; private set; }
         public int spawnHouseId { get; private set; }
 
+        public Inventory inventory { get; private set; }
+
         public String fullName
         {
             get { return firstName + " " + lastName; }
+        }
+
+        public Client client
+        {
+            get { return this.owner.client; }
         }
 
         public Vector3 position
@@ -50,7 +58,6 @@ namespace GTA_RP
             {
                 moneyPrivate = value;
                 API.shared.triggerClientEvent(owner.client, "EVENT_UPDATE_MONEY", moneyPrivate.ToString());
-                //PlayerManager.Instance().UpdateCharacterMoney(this, moneyPrivate);
             }
         }
 
@@ -103,6 +110,7 @@ namespace GTA_RP
             this.gender = PlayerManager.Instance().GetGenderForModel(model);
             this.phone = new Phone(this, phoneNumber);
             this.spawnHouseId = spawnHouseId;
+            this.inventory = new Inventory(this);
         }
 
         /// <summary>
@@ -146,6 +154,11 @@ namespace GTA_RP
             return statusEffects.Contains(e);
         }
 
+        public void UseItemInInventory(int itemId)
+        {
+            this.inventory.UseItemWithId(itemId);
+        }
+
         /// <summary>
         /// Adds status effect to player
         /// </summary>
@@ -172,12 +185,36 @@ namespace GTA_RP
         public void SetMoney(int amount, bool updateDatabase = true)
         {
             this.money = amount;
-            if (updateDatabase) PlayerManager.Instance().UpdateCharacterMoney(this, this.money);
+            if (updateDatabase) PlayerManager.Instance().UpdateCharacterMoneyToDatabase(this, this.money);
         }
 
+        /// <summary>
+        /// Sets the job for character
+        /// </summary>
+        /// <param name="jobId">ID of the job</param>
         public void SetJob(int jobId)
         {
             this.job = jobId;
+        }
+
+        /// <summary>
+        /// Adds item to the character's inventory
+        /// </summary>
+        /// <param name="item">Item to add</param>
+        public void AddItemToInventory(Item item)
+        {
+            this.inventory.AddItem(item);
+        }
+
+        
+        public void RemoveItemFromInventory(int itemId, int count)
+        {
+            this.inventory.RemoveItemWithId(itemId, count);
+        }
+
+        public List<Item> GetAllItemsFromInventory()
+        {
+            return this.inventory.GetAllItems();
         }
 
         /// <summary>

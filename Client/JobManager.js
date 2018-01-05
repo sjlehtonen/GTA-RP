@@ -9,7 +9,7 @@
             this.createTakeJobMenu(args[0], args[1], args[2], args[3]);
         }
         else if (eventName == "EVENT_CLOSE_TAKE_JOB_MENU") {
-            if (this.jobMenu != null) this.jobMenu.Visible = false;
+            if (this.jobMenu != null) this.closeJobMenu();
         }
     }
 
@@ -24,7 +24,7 @@
         let item3 = API.createMenuItem("Salary: " + salary, description);
 
         item2.Activated.connect((menu, sender) => this.closeJobMenu());
-        item3.Activated.connect((menu, sender) => this.acceptJob());
+        item1.Activated.connect((menu, sender) => this.acceptJob());
 
         menu.AddItem(item3);
         menu.AddItem(item1);

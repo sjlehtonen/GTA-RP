@@ -2,24 +2,34 @@
 using GrandTheftMultiplayer.Server.Elements;
 using GTA_RP.Vehicles;
 using GTA_RP.Jobs;
+using GTA_RP.Factions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GTA_RP.Items;
 
 namespace GTA_RP.Events
 {
     struct RPEvent
     {
-        public RPEvent(object classInstance, string method, bool usesCharacter = false)
+        public RPEvent(object classInstance, string eventName, string method, params Option[] options)
         {
             this.classInstance = classInstance;
             this.method = method;
-            this.usesCharacter = usesCharacter;
+            this.options = new List<Option>(options);
+            this.eventName = eventName;
         }
 
+        public string eventName;
         public object classInstance;
         public string method;
-        public bool usesCharacter;
+        public List<Option> options;
+    }
+
+    enum Option
+    {
+        OPTION_USES_CHARACTER = 0,
+        OPTION_INCLUDE_EVENT = 1
     }
 
     /// <summary>
@@ -64,7 +74,12 @@ namespace GTA_RP.Events
             RegisterEvent("EVENT_TRY_LOCK_VEHICLE", VehicleManager.Instance(), "LockVehicleWithId");
             RegisterEvent("EVENT_TRY_BUY_PARKING_SPOT", VehicleManager.Instance(), "TryPurchasePark");
             RegisterEvent("EVENT_TRY_SET_SPAWN_LOCATION", PlayerManager.Instance(), "SetCharacterSpawnHouse");
-            RegisterEvent("EVENT_ACCEPT_JOB", JobManager.Instance(), "TakeJobForClient", true);
+            RegisterEvent("EVENT_ACCEPT_JOB", JobManager.Instance(), "TakeJobForClient", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_TRY_BUY_PROPERTY", HouseManager.Instance(), "TryBuyMarketHouseForCharacter", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_TRY_USE_ITEM", ItemManager.Instance(), "TryUseItemForCharacter", Option.OPTION_USES_CHARACTER);
+
+            /// Faction events
+            RegisterEvent("EVENT_ARREST_CHARACTER", FactionManager.Instance().LawEnforcement(), "ArrestCharacter", Option.OPTION_USES_CHARACTER);
         }
 
         /// <summary>
@@ -74,9 +89,9 @@ namespace GTA_RP.Events
         /// <param name="instance">Singleton handler of the event</param>
         /// <param name="methodName">Method that is delegated to handling the event</param>
         /// <param name="needsCharacter">Flag if character is passed to the method instead of the client</param>
-        private void RegisterEvent(string name, object instance, string methodName, bool needsCharacter = false)
+        private void RegisterEvent(string name, object instance, string methodName, params Option[] options)
         {
-            events.Add(name, new RPEvent(instance, methodName, needsCharacter));
+            events.Add(name, new RPEvent(instance, name, methodName, options));
         }
 
         /// <summary>
@@ -89,7 +104,11 @@ namespace GTA_RP.Events
         private object[] GetArgumentParametersForEvent(RPEvent e, Client c, params object[] arguments)
         {
             List<object> paramList = new List<object>();
-            if (e.usesCharacter)
+
+            if (e.options.Contains(Option.OPTION_INCLUDE_EVENT))
+                paramList.Add(e.eventName);
+
+            if (e.options.Contains(Option.OPTION_USES_CHARACTER))
             {
                 Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
                 paramList.Add(character);
@@ -103,6 +122,8 @@ namespace GTA_RP.Events
             {
                 paramList.Add(arguments[i]);
             }
+
+
             return paramList.ToArray();
         }
 
@@ -118,11 +139,11 @@ namespace GTA_RP.Events
             {
                 RPEvent eventToInvoke = events[eventName];
 
-                if (eventToInvoke.usesCharacter && !PlayerManager.Instance().IsClientUsingCharacter(player)) return;
-
+                if (eventToInvoke.options.Contains(Option.OPTION_USES_CHARACTER) && !PlayerManager.Instance().IsClientUsingCharacter(player)) return;
                 Type type = eventToInvoke.classInstance.GetType();
                 MethodInfo method = type.GetMethod(eventToInvoke.method, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                method.Invoke(eventToInvoke.classInstance, GetArgumentParametersForEvent(eventToInvoke, player, arguments));
+                object[] prs = GetArgumentParametersForEvent(eventToInvoke, player, arguments);
+                method.Invoke(eventToInvoke.classInstance, prs);
             }
         }
 
@@ -135,108 +156,6 @@ namespace GTA_RP.Events
         private void HandleEvent(Client player, string eventName, params object[] arguments)
         {
             HandleEventWithName(player, eventName, arguments);
-            /*switch(eventName)
-            {
-                case "EVENT_REQUEST_ENTER_HOUSE": // *
-                    int houseId = (int)arguments[0];
-                    HouseManager.Instance().RequestEnterHouse(player, houseId);
-                    HandleEventWithName(player, "EVENT_REQUEST_ENTER_HOUSE", arguments);
-                    break;
-
-                case "EVENT_REQUEST_EXIT_HOUSE":
-                    int teleId = (int)arguments[0];
-                    int destinationId = (int)arguments[1];
-                    HouseManager.Instance().RequestExitHouse(player, teleId, destinationId);
-                    break;
-
-                case "EVENT_REQUEST_CREATE_ACCOUNT":
-                    PlayerManager.Instance().RequestCreateAccount(player, (string)arguments[0], (string)arguments[1]);
-                    break;
-
-                case "EVENT_REQUEST_SELECT_CHARACTER":
-                    PlayerManager.Instance().RequestSelectCharacter(player, (string)arguments[0]);
-                    break;
-
-                case "EVENT_REQUEST_CREATE_CHARACTER_MENU":
-                    PlayerManager.Instance().RequestCreateCharacterMenu(player);
-                    break;
-
-                case "EVENT_REQUEST_CREATE_CHARACTER":
-                    PlayerManager.Instance().RequestCreateCharacter(player, (string)arguments[0], (string)arguments[1], (string)arguments[2]);
-                    break;
-
-                case "EVENT_REQUEST_OWNED_HOUSES":
-                    HouseManager.Instance().SendListOfOwnedHousesToClient(player);
-                    break;
-
-                case "EVENT_SET_PLAYER_USING_PHONE":
-                    PlayerManager.Instance().SetPlayerUsingPhone(player);
-                    break;
-
-                case "EVENT_SET_PLAYER_CALLING":
-                    PlayerManager.Instance().SetPlayerPhoneCalling(player);
-                    break;
-
-                case "EVENT_SET_PLAYER_NOT_USING_PHONE":
-                    PlayerManager.Instance().SetPlayerPhoneOut(player);
-                    break;
-
-                case "EVENT_SEND_TEXT_MESSAGE":
-                    PlayerManager.Instance().TrySendTextMessage(player, (string)arguments[0], (string)arguments[1]);
-                    break;
-
-                case "EVENT_ADD_PHONE_CONTACT":
-                    PlayerManager.Instance().TryAddNewContact(player, (string)arguments[0], (string)arguments[1]);
-                    break;
-
-                case "EVENT_REMOVE_PHONE_CONTACT":
-                    PlayerManager.Instance().TryDeleteContact(player, (string)arguments[0]);
-                    break;
-
-                case "EVENT_REMOVE_TEXT_MESSAGE":
-                    PlayerManager.Instance().TryDeleteTextMessage(player, (int)arguments[0]);
-                    break;
-
-                case "EVENT_START_PHONE_CALL":
-                    PlayerManager.Instance().TryStartPhoneCall(player, (string)arguments[0]);
-                    break;
-
-                case "EVENT_ACCEPT_PHONE_CALL":
-                    PlayerManager.Instance().TryAcceptPhoneCall(player);
-                    break;
-
-                case "EVENT_END_PHONE_CALL":
-                    PlayerManager.Instance().TryHangupPhoneCall(player);
-                    break;
-
-                case "EVENT_EXIT_VEHICLE_SHOP":
-                    VehicleManager.Instance().TryExitVehicleShop(player, (int)arguments[0]);
-                    break;
-
-                case "EVENT_BUY_VEHICLE":
-                    VehicleManager.Instance().TryPurchaseVehicle(player, (int)arguments[0], (string)arguments[1], (int)arguments[2], (int)arguments[3]);
-                    break;
-
-                case "EVENT_TRY_SPAWN_VEHICLE":
-                    VehicleManager.Instance().SpawnVehicleForCharacter(player, (int)arguments[0]);
-                    break;
-
-                case "EVENT_TRY_PARK_VEHICLE":
-                    VehicleManager.Instance().ParkVehicle(player, (int)arguments[0]);
-                    break;
-
-                case "EVENT_TRY_LOCK_VEHICLE":
-                    VehicleManager.Instance().LockVehicleWithId(player, (int)arguments[0]);
-                    break;
-
-                case "EVENT_TRY_BUY_PARKING_SPOT":
-                    VehicleManager.Instance().TryPurchasePark(player, (int)arguments[0]);
-                    break;
-
-                case "EVENT_TRY_SET_SPAWN_LOCATION":
-                    PlayerManager.Instance().SetCharacterSpawnHouse(player, (int)arguments[0]);
-                    break;
-            }*/
         }
     }
 }
