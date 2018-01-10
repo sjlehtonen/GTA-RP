@@ -26,7 +26,9 @@ Because of all things, the progress might sometimes be slow.
 - Phone system with address book and the possibility of sending text messages and making phone calls (Not properly tested yet)
 
 ## Upcoming things
-- Housing market (Ability to buy houses and sell them, currently needs to be added to database manually)
+- Improved phone system
+- More jobs
+- Fishing
 - Ability to put houses for rent
 - Proper faction system for police, fire department etc.
 - Insurance for vehicles, handling vehicle destruction... (Things like vehicle destruction is not really handled at all now)
@@ -62,7 +64,7 @@ password="password here"
 			- In the future, social club ID will be used instead.
 	- It also contains a few characters on the account, their property ownerships and vehicle ownerships
 
-5. Have **MySql.Data.dll**, **INIFileParser.dll** and **System.Data.dll** in the GTA-MP Server directory root
+5. Have **MySql.Data.dll**, **INIFileParser.dll** and **System.Data.dll** in the GTA-MP Server directory root (If you don't have them, move them from the dll folder)
 
 ## Pictures of the game mode
 

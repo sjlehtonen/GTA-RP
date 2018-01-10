@@ -9,13 +9,21 @@ using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
+using System.Timers;
 
 namespace GTA_RP.Map
 {
+    public delegate void OnTimeMinuteChangedEvent(TimeSpan time);
+
     class MapManager : Singleton<MapManager>
     {
         public MapManager() { }
         private List<Blip> staticBlips = new List<Blip>();
+        private TimeSpan lastTime;
+        private bool hasLastTime = false;
+        private Timer minuteTimer = new Timer();
+        
+        private event OnTimeMinuteChangedEvent OnMinuteChangeEvent;
 
 
         /// <summary>
@@ -32,6 +40,27 @@ namespace GTA_RP.Map
             blip.sprite = id;
             blip.name = name;
             staticBlips.Add(blip);
+        }
+
+        public void InitializeMinuteTimer()
+        {
+            minuteTimer.Interval = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
+            minuteTimer.Elapsed += MinuteChanged;
+            minuteTimer.Enabled = true;
+        }
+
+        /// <summary>
+        /// Onupdate handler for time events
+        /// </summary>
+        public void MinuteChanged(System.Object source, ElapsedEventArgs args)
+        {
+            OnMinuteChangeEvent.Invoke(DateTime.Now.TimeOfDay);
+            minuteTimer.Enabled = true;
+        }
+
+        public void SubscribeToOnMinuteChange(OnTimeMinuteChangedEvent e)
+        {
+            OnMinuteChangeEvent += e;
         }
     }
 }

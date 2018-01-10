@@ -19,9 +19,25 @@ namespace GTA_RP.Items
 
         public Item(int id, string name, string description, int count = 1)
         {
+            this.id = id;
             this.description = description;
             this.name = name;
             this.count = count;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var second = obj as Item;
+
+            if (second == null)
+                return false;
+
+            return this.id.Equals(second.id);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.id;
         }
 
         /// <summary>

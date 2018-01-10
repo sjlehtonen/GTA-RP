@@ -201,15 +201,33 @@ namespace GTA_RP
         /// Adds item to the character's inventory
         /// </summary>
         /// <param name="item">Item to add</param>
-        public void AddItemToInventory(Item item)
+        public void AddItemToInventory(Item item, bool updateDB, bool updateUI = true)
         {
-            this.inventory.AddItem(item);
+            this.inventory.AddItem(item, updateDB);
+            if (updateUI) API.shared.triggerClientEvent(this.client, "EVENT_ADD_ITEM_TO_INVENTORY", item.id, item.name, item.count, item.description);
+
+        }
+
+        public bool HasItemWithid(int id, int count)
+        {
+            return inventory.DoesContainItemWithIdAndCount(id, count);
+        }
+
+        public void TriggerEvent(string name, params object[] args)
+        {
+            this.client.triggerEvent(name, args);
         }
 
         
-        public void RemoveItemFromInventory(int itemId, int count)
+        public void RemoveItemFromInventory(int itemId, int count, bool updateDB, bool updateUI = true)
         {
             this.inventory.RemoveItemWithId(itemId, count);
+            if (updateUI) this.client.triggerEvent("EVENT_REMOVE_ITEM_FROM_INVENTORY", itemId, count); // check
+        }
+
+        public int GetAmountOfItems(int itemId)
+        {
+            return inventory.GetItemCount(itemId);
         }
 
         public List<Item> GetAllItemsFromInventory()
@@ -229,6 +247,28 @@ namespace GTA_RP
                 API.shared.playPlayerAnimation(this.owner.client, flag, animDict, animName);
         }
 
+        public void StopAnimation()
+        {
+            API.shared.stopPlayerAnimation(this.client);
+        }
+
+        public void PlayFrontendSound(string name, string set)
+        {
+            API.shared.playSoundFrontEnd(this.client, name, set);
+        }
+
+        public void SendNotification(string message)
+        {
+            API.shared.sendNotificationToPlayer(this.client, message);
+        }
+
+        public bool IsAvailable()
+        {
+            if (!client.isAiming && !client.inFreefall && !client.isInCover && !client.isParachuting && !client.isReloading && !client.isShooting && !client.dead)
+                return true;
+            return false;
+        }
+
         /// <summary>
         /// Attaches object to character
         /// </summary>
@@ -242,6 +282,11 @@ namespace GTA_RP
                 API.shared.attachEntityToEntity(entity, owner.client.handle, bone, posOffset, rotOffset);
         }
 
+        public bool IsUsingPhone()
+        {
+            return phone.IsUsingPhone();
+        }
+
         /// <summary>
         /// Detaches object from the character
         /// </summary>
@@ -249,17 +294,6 @@ namespace GTA_RP
         public void DetachObject(NetHandle entity)
         {
             API.shared.detachEntity(entity);
-        }
-
-        public void TestPlayAnimationSequence()
-        {
-                int i = 0;
-                API.shared.sendNativeToAllPlayers(0xABA6923E, i); // start sequence
-                API.shared.sendNativeToAllPlayers(0xEA47FE3719165B94, this.owner.client.handle, "cellphone@", "cellphone_call_in", 8.0f, 1.0, -1, (int)(AnimationFlags.AllowPlayerControl | AnimationFlags.OnlyAnimateUpperBody), 0.0, 0, 0, 0);
-                API.shared.sendNativeToAllPlayers(0xEA47FE3719165B94, this.owner.client.handle, "cellphone@", "cellphone_call_listen_base", 8.0f, 1.0, -1, (int)(AnimationFlags.AllowPlayerControl | AnimationFlags.OnlyAnimateUpperBody | AnimationFlags.Loop), 0.0, 0, 0, 0);
-                API.shared.sendNativeToAllPlayers(0x1A7CEBD0, i);
-                API.shared.sendNativeToAllPlayers(0x4D9FBD11, this.owner.client.handle, i);
-                API.shared.sendNativeToAllPlayers(0x47ED03CE, i);
         }
     }
 }

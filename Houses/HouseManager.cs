@@ -124,6 +124,12 @@ namespace GTA_RP
             return entrances;
         }
 
+        // Check if character is in any house and if it is, then remove it upon disconnect
+        private void OnPlayerDisconnect()
+        {
+
+        }
+
         /// <summary>
         /// Gets all the exits for buildings
         /// </summary>
@@ -327,6 +333,7 @@ namespace GTA_RP
             }
             catch (Exception ex)
             {
+                API.shared.consoleOutput("Error: " + ex.Message);
                 return null;
             }
         }
@@ -370,6 +377,7 @@ namespace GTA_RP
         /// <returns>A place with selected character as occupant</returns>
         private House GetHouseWithCharacterAsOccupant(Character c)
         {
+            API.shared.consoleOutput(ownedHouses.Count(x => x.HasOccupant(c)).ToString());
             return ownedHouses.Single(h => h.HasOccupant(c));
         }
 

@@ -11,6 +11,9 @@ using GrandTheftMultiplayer.Shared.Math;
 
 namespace GTA_RP.Items
 {
+    /// <summary>
+    /// Class that is responsible for dealing with items
+    /// </summary>
     class ItemManager : Singleton<ItemManager>
     {
         private List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
@@ -40,31 +43,95 @@ namespace GTA_RP.Items
             InitializeItemShops();
         }
 
+        /// <summary>
+        /// Initializes all item shops
+        /// </summary>
         private void InitializeItemShops()
         {
-            ItemShop shop = new ItemShop(0, new Vector3(-3039.459f, 586.1381f, 6.97893f));
-            shop.AddItemForSale(0, 10230);
-            itemShops.Add(shop);
+            itemShops.Add(new ItemShop(0, "247 Supermarket", new Vector3(-3039.459f, 586.1381f, 6.97893f)));
+            itemShops.Add(new ItemShop(1, "Rob's Liquor", new Vector3(-1487.462f, -379.331f, 39.18343f)));
+            itemShops.Add(new ItemShop(2, "LTD Gasoline", new Vector3(-48.61258f, -1757.845f, 28.52101f)));
+            itemShops.Add(new ItemShop(3, "Rob's Liquor", new Vector3(1136.012f, -982.1758f, 45.43584f)));
+            itemShops.Add(new ItemShop(4, "LTD Gasoline", new Vector3(1163.478f, -324.059f, 69.20506f)));
+            itemShops.Add(new ItemShop(5, "247 Supermarket", new Vector3(2557.196f, 382.482f, 107.7229f)));
+            itemShops.Add(new ItemShop(6, "247 Supermarket", new Vector3(374.0887f, 325.9345f, 102.5664f)));
+            itemShops.Add(new ItemShop(7, "LTD Gasoline", new Vector3(-707.8062f, -914.7662f, 18.31559f)));
+            itemShops.Add(new ItemShop(8, "Rob's Liquor", new Vector3(-1223.017f, -906.9675f, 11.34636f)));
+            itemShops.Add(new ItemShop(9, "LTD Gasoline", new Vector3(-1820.645f, 792.2414f, 137.1385f)));
+
+            foreach (ItemShop shop in itemShops)
+            {
+                shop.AddItemForSale(0, 10230);
+                shop.AddItemForSale(1, 450);
+            }
         }
 
+        /// <summary>
+        /// Gets an item shop with certain id
+        /// </summary>
+        /// <param name="shopId">Id of the shop</param>
+        /// <returns>Item shop if found or else null</returns>
+        private ItemShop GetItemShopForId(int shopId)
+        {
+            return itemShops.SingleOrDefault(x => x.id == shopId);
+        }
+
+        /// <summary>
+        /// Loads inventure for character
+        /// </summary>
+        /// <param name="character">Character</param>
         public void LoadInventoryForCharacter(Character character)
         {
-            // Fill inventory from database
             DBManager.SelectQuery("SELECT * FROM items WHERE owner_id=@id", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                character.AddItemToInventory(ItemsFactory.CreateItemForId(reader.GetInt32(1), reader.GetInt32(2)));
-            }).AddValue("@id", character.ID)
-            .Execute();
+                character.AddItemToInventory(ItemsFactory.CreateItemForId(reader.GetInt32(1), reader.GetInt32(2)), false, false);
+            }).AddValue("@id", character.ID).Execute();
         }
 
+        /// <summary>
+        /// Gets item template of item with certain id
+        /// </summary>
+        /// <param name="id">Id of the item</param>
+        /// <returns>Item</returns>
         public ItemTemplate GetItemTemplateForId(int id)
         {
             return itemTemplates.SingleOrDefault(x => x.id == id);
         }
 
+        /// <summary>
+        /// Uses an item for character (character has to have the item in inventory)
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <param name="itemId">Item id</param>
         public void TryUseItemForCharacter(Character character, int itemId)
         {
             character.UseItemInInventory(itemId);
+        }
+
+        /// <summary>
+        /// Tries to buy an item for character
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <param name="shopId">Id of shop</param>
+        /// <param name="itemId">Id of item</param>
+        /// <param name="count">Amount of item</param>
+        public void TryBuyItemForCharacter(Character character, int shopId, int itemId, int count)
+        {
+            ItemShop shop = GetItemShopForId(shopId);
+            if (shop != null)
+            {
+                shop.BuyItem(character, itemId, count);
+            }
+        }
+
+        public void TrySellItemForCharacter(Character character, int shopId, int itemId, int count)
+        {
+            API.shared.consoleOutput("try sell");
+            ItemShop shop = GetItemShopForId(shopId);
+            if (shop != null)
+            {
+                shop.SellItem(character, itemId, count);
+            }
         }
     }
 }

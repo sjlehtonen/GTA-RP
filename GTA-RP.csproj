@@ -75,6 +75,7 @@
     <Compile Include="Inventory\ItemsFactory.cs" />
     <Compile Include="Inventory\ItemShop.cs" />
     <Compile Include="Inventory\ItemTemplate.cs" />
+    <Compile Include="Inventory\UseAnimationItem.cs" />
     <Compile Include="Inventory\Weapon.cs" />
     <Compile Include="Jobs\JobPickUpCheckpoint.cs" />
     <Compile Include="Map\MapManager.cs" />

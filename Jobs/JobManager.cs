@@ -9,6 +9,7 @@ using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Misc;
 using GTA_RP.Map;
+using System.Timers;
 
 namespace GTA_RP.Jobs
 {
@@ -35,6 +36,14 @@ namespace GTA_RP.Jobs
         private List<JobPickUpCheckpoint> jobPickupPoints = new List<JobPickUpCheckpoint>();
         private Dictionary<int, Job> jobsForCharacterId = new Dictionary<int, Job>();
         private Dictionary<int, JobInfo> jobInfo = new Dictionary<int, JobInfo>();
+
+        /// <summary>
+        /// Setups the payday timer
+        /// </summary>
+        private void SetupPaydayTimer()
+        {
+            MapManager.Instance().SubscribeToOnMinuteChange(this.PayPaydaySalaries);
+        }
 
         /// <summary>
         /// Creates and returns a JobInfo object
@@ -79,6 +88,7 @@ namespace GTA_RP.Jobs
         /// </summary>
         private void InitJobs()
         {
+            SetupPaydayTimer();
             AddJob(typeof(System.Object), 0, "Unemployed", 255, 255, 255, 0, "Unemployed");
             AddJob(typeof(TrashJob), 1, "Trash Collector", 255, 255, 255, 2500, "A job where you drive a garbage truck around and pick up trash");
         }
@@ -157,6 +167,27 @@ namespace GTA_RP.Jobs
         {
             if (IsJobSetForCharacter(c))
                 jobsForCharacterId.Remove(c.ID);
+        }
+
+        /// <summary>
+        /// Gives the payday money at times like 12:00, 13:00 etc
+        /// </summary>
+        /// <param name="time">Current time</param>
+        private void PayPaydaySalaries(TimeSpan time)
+        {
+            if (time.Minutes == 0)
+            {
+                API.shared.consoleOutput("Paying salaries...");
+                foreach (Character character in PlayerManager.Instance().GetActiveCharacters())
+                {
+                    if (character.job != 0)
+                    {
+                        JobInfo job = GetInfoForJobWithId(character.job);
+                        character.SetMoney(character.money + job.salary);
+                        API.shared.sendNotificationToPlayer(character.client, "You earned $" + job.salary.ToString() + " from your payday!");
+                    }
+                }
+            }
         }
 
         /// <summary>

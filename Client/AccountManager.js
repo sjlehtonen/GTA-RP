@@ -162,7 +162,6 @@
     }
 
     handleOpenCharacterSelectMenu(args) {
-
         this.characterCreationModels = args[4];
 
         this.isSelectingCharacter = true;
@@ -190,13 +189,11 @@
             API.setPlayerSkin(API.pedNameToModel("Abigail"));
         }
 
-
-        let menu = API.createMenu("Characters", "Maximum characters: 3", 0, 0, 6);
+        let menu = API.createMenu("Characters", "Maximum characters: 4", 0, 0, 6);
         this.characterSelectionMenu = menu;
 
         menu.OnIndexChange.connect((sender, index) => this.selectionChanged(sender, index));
         menu.OnMenuClose.connect((sender) => this.characterSelectionMenuCloseEvent(sender));
-        //menu.OnMenuChange.connect((sender, nextMenu, forward) => this.menuChangeEvent(sender, nextMenu, forward));
 
         for (var i = 0; i < this.nameList.Count; i++) {
             let item = API.createMenuItem(this.nameList[i], "");

@@ -314,12 +314,12 @@ namespace GTA_RP.Vehicles
         /// <returns>The vehicle</returns>
         public RPVehicle GetNearestVehicle(Vector3 position)
         {
-            RPVehicle nearest = vehicles.First(); // fix
+            RPVehicle nearest = vehicles.First(x => x.spawned); // fix
             float nearestDist = position.DistanceTo(nearest.position);
-
+            
             foreach(RPVehicle v in vehicles)
             {
-                if(position.DistanceTo(v.position) < nearestDist)
+                if(v.spawned && position.DistanceTo(v.position) < nearestDist)
                     nearest = v;
             }
 
@@ -616,7 +616,6 @@ namespace GTA_RP.Vehicles
         {
             DBManager.SelectQuery("SELECT * FROM vehicles", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                API.shared.consoleOutput("Vehicle loaded!");
                 RPVehicle v = new RPVehicle(reader.GetInt32(0), reader.GetInt32(1), (FactionI)reader.GetInt32(2), (VehicleHash)reader.GetInt32(3), reader.GetFloat(4), reader.GetFloat(5), reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9), reader.GetInt32(12), reader.GetInt32(13), reader.GetString(10), true);
                 vehicles.Add(v);
             }).Execute();

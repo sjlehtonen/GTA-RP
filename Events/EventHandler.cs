@@ -77,6 +77,8 @@ namespace GTA_RP.Events
             RegisterEvent("EVENT_ACCEPT_JOB", JobManager.Instance(), "TakeJobForClient", Option.OPTION_USES_CHARACTER);
             RegisterEvent("EVENT_TRY_BUY_PROPERTY", HouseManager.Instance(), "TryBuyMarketHouseForCharacter", Option.OPTION_USES_CHARACTER);
             RegisterEvent("EVENT_TRY_USE_ITEM", ItemManager.Instance(), "TryUseItemForCharacter", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_TRY_BUY_ITEM", ItemManager.Instance(), "TryBuyItemForCharacter", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_TRY_SELL_ITEM", ItemManager.Instance(), "TrySellItemForCharacter", Option.OPTION_USES_CHARACTER);
 
             /// Faction events
             RegisterEvent("EVENT_ARREST_CHARACTER", FactionManager.Instance().LawEnforcement(), "ArrestCharacter", Option.OPTION_USES_CHARACTER);

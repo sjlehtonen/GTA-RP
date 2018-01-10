@@ -60,51 +60,6 @@ namespace GTA_RP
 
         }
 
-        // For debugging items held on hand
-
-        [Command("srx")]
-        public void setRotX(Client c, string rot)
-        {
-            this.rotX = int.Parse(rot);
-            SetPlayerUsingPhone(c);
-        }
-
-        [Command("sry")]
-        public void setRotY(Client c, string rot)
-        {
-            this.rotY = int.Parse(rot);
-            SetPlayerUsingPhone(c);
-        }
-
-        [Command("srz")]
-        public void setRotZ(Client c, string rot)
-        {
-            this.rotZ = int.Parse(rot);
-            SetPlayerUsingPhone(c);
-        }
-
-        [Command("spx")]
-        public void setPosX(Client c, string rot)
-        {
-            this.posX = float.Parse(rot);
-            SetPlayerUsingPhone(c);
-        }
-
-        [Command("spy")]
-        public void setPosY(Client c, string rot)
-        {
-            this.posY = float.Parse(rot);
-            SetPlayerUsingPhone(c);
-        }
-
-        [Command("spz")]
-        public void setPosZ(Client c, string rot)
-        {
-            this.posZ = float.Parse(rot);
-            SetPlayerUsingPhone(c);
-        }
-
-        //
 
         /// <summary>
         /// Sets camera to starting screen for client who connects

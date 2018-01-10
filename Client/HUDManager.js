@@ -156,6 +156,10 @@ class HUDManager
             case 'EVENT_CREATE_TIMER_BAR':
                 this.createTimerBar(args[0], args[1]);
                 break;
+
+            case 'EVENT_ADD_ITEM_TO_INVENTORY':
+                this.addItemToInventory(args[0], args[1], args[2], args[3]);
+                break;
         }
     }
 
@@ -334,7 +338,15 @@ class HUDManager
         return menu;
     }
 
-    
+    addItemToInventory(id, name, count, description) {
+        for (var i = 0; i < this.items.length; i++) {
+            if (this.items[i].id == id) {
+                this.items[i].amount += count;
+                return;
+            }
+        }
+        this.items.push(new Item(id, name, count, description));
+    }
 
     createHouseMenu()
     {

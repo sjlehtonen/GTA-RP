@@ -81,7 +81,7 @@ namespace GTA_RP.Houses
     class HouseMarket
     {
         private int currentEntryId = 1;
-        private const int maxNonPlayerHousesForSale = 3;
+        private const int maxNonPlayerHousesForSale = 6;
         private Random random = new Random();
         private List<HouseForSale> housesForSale = new List<HouseForSale>();
         private List<RandomHouseTemplate> randomHouseTemplates = new List<RandomHouseTemplate>();

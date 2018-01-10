@@ -4,6 +4,7 @@ using GTA_RP.Weather;
 using GTA_RP.Jobs;
 using GTA_RP.Factions;
 using GTA_RP.Items;
+using GTA_RP.Map;
 
 namespace GTA_RP
 {
@@ -36,6 +37,7 @@ namespace GTA_RP
             API.onPlayerDisconnected += PlayerManager.Instance().HandlePlayerDisconnect;
             API.onPlayerFinishedDownload += PlayerManager.Instance().HandlePlayerConnect;
 
+
             PlayerManager.Instance().InitAccountCreationId();
             PlayerManager.Instance().InitTextMessagesId();
             PlayerManager.Instance().InitCharacterCreationId();
@@ -47,6 +49,7 @@ namespace GTA_RP
             HouseManager.Instance().LoadHouseTemplates();
             JobManager.Instance().InitJobPickupPoints();
             ItemManager.Instance().InitializeItems();
+            MapManager.Instance().InitializeMinuteTimer();
 
             API.consoleOutput("####Script load complete!####");
         }

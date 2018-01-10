@@ -43,6 +43,7 @@
     <script src="Inventory/ItemTemplate.cs" type="server" lang="csharp" />
     <script src="Inventory/Weapon.cs" type="server" lang="csharp" />
     <script src="Inventory/ItemShop.cs" type="server" lang="csharp" />
+    <script src="Inventory/UseAnimationItem.cs" type="server" lang="csharp" />
   
     <script src="Admin/AdminCommands.cs" type="server" lang="csharp" />
     <script src="PedManager/PedManager.cs" type="server" lang="csharp" />

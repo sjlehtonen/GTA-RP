@@ -400,6 +400,12 @@ namespace GTA_RP
             addressBook.AddRange(contacts);
         }
 
+        public bool IsUsingPhone()
+        {
+            if (phoneState != PhoneState.PHONE_NOT_USING) return true;
+            return false;
+        }
+
         /// <summary>
         /// Checks if contact with number exists
         /// </summary>
