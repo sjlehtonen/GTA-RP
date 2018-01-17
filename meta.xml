@@ -28,6 +28,7 @@
     <script src="Players/CharacterSelector.cs" type="server" lang="csharp" />
   
     <script src="Factions/Faction.cs" type="server" lang="csharp" />
+    <script src="Factions/RankedFaction.cs" type="server" lang="csharp" />
     <script src="Factions/Civilian.cs" type="server" lang="csharp" />
     <script src="Factions/FactionManager.cs" type="server" lang="csharp" />
     <script src="Factions/Factions.cs" type="server" lang="csharp" />

@@ -47,6 +47,11 @@ namespace GTA_RP.Factions
             return factions.Get(id);
         }
 
+        public string GetRankTextForCharacter(Character c)
+        {
+            return factions[c.factionID].GetRankText(c);
+        }
+
         public LawEnforcement LawEnforcement() { return factions.Get(FactionI.LAW_ENFORCEMENT) as LawEnforcement; }
 
         /// <summary>

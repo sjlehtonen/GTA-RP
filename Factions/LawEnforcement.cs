@@ -4,18 +4,51 @@ using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
+using System.Collections.Generic;
 
 namespace GTA_RP.Factions
 {
-    class LawEnforcement : Faction
+
+    class LawEnforcement : RankedFaction
     {
+
         public LawEnforcement(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB)
         {
         }
 
+        private void InitializeRanks()
+        {
+            AddRank(0, "Police Officer I");
+            AddRank(1, "Police Officer II");
+            AddRank(2, "Traffic Police");
+            AddRank(3, "Detective");
+            AddRank(4, "Chief of Police");
+        }
+
+        private void LoadCharacterInfoFromDB()
+        {
+            DBManager.SelectQuery("SELECT * FROM police_ranks", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                AddCharacterToFaction(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2));
+            }).Execute();
+        }
+
         public override void Initialize()
         {
+            API.shared.consoleOutput("Init police faction");
+            InitializeRanks();
+            LoadCharacterInfoFromDB();
+        }
 
+        public override string GetRankText(Character character)
+        {
+            if (IsCharacterPartOfFaction(character))
+            {
+                Rank rank = GetRankForCharacter(character);
+                return rank.name;
+            }
+
+            return "Police Officer";
         }
 
         /// <summary>
@@ -38,13 +71,26 @@ namespace GTA_RP.Factions
         /// <param name="c">Character object</param>
         override public void HandleOnDutyCommand(Character c)
         {
-            c.onDuty = true;
-            c.owner.client.setSkin(PedHash.Sheriff01SMY);
+            if (IsCharacterPartOfFaction(c))
+            {
+                if (!c.onDuty)
+                {
+                    CharacterInfo info = GetInfoForCharacter(c);
+                    Rank rank = GetRank(info.rank);
 
-            // Determine what to do based on rank
-            c.owner.client.giveWeapon(WeaponHash.Nightstick, 100, true, true);
-            c.owner.client.giveWeapon(WeaponHash.StunGun, 100, true, true);
-            c.owner.client.giveWeapon(WeaponHash.Pistol, 100, true, true);
+                    c.onDuty = true;
+                    c.SetModel(info.onDutyModel);
+
+                    // Determine what to do based on rank
+                    // Add weapons, items etc
+
+                    //c.UpdateFactionRankText(rank.name, 255, 255, 255);
+                } else
+                {
+                    c.onDuty = false;
+                    c.SetModel(c.model);
+                }
+            }
         }
     }
 }

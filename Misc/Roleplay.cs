@@ -51,6 +51,8 @@ namespace GTA_RP
             ItemManager.Instance().InitializeItems();
             MapManager.Instance().InitializeMinuteTimer();
 
+            FactionManager.Instance().InitializeFactions();
+
             API.consoleOutput("####Script load complete!####");
         }
     }

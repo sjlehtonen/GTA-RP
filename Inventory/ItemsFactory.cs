@@ -17,7 +17,7 @@ namespace GTA_RP.Items
     {
         static private Item CreateWeapon(int id, int hash, string name, string description, int amount = 1)
         {
-            return new Weapon(id, name, description, hash, amount);
+            return new Weapon(id, name, description, hash, 100, amount);
         }
 
         static private Item CreateUseAnimateItem(int id, string name, string description, int entityId, int bone, string other, int amount = 1)

@@ -49,6 +49,8 @@ namespace GTA_RP.Factions
         /// </summary>
         public abstract void Initialize();
 
+        public abstract string GetRankText(Character character);
+
 
         /// <summary>
         /// A method that defines what to do when player uses /duty command

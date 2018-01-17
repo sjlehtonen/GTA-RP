@@ -18,6 +18,11 @@ namespace GTA_RP.Factions
 
         }
 
+        public override string GetRankText(Character character)
+        {
+            return "Unemployed";
+        }
+
         public override string GetChatColor()
         {
             return "~g~";

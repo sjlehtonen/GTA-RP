@@ -84,7 +84,6 @@ namespace GTA_RP
             JobInfo i = JobManager.Instance().GetInfoForJobWithId(c.job);
             Faction f = FactionManager.Instance().GetFactionWithId(c.factionID);
 
-            // Add vehicles
             List<RPVehicle> vehicles = VehicleManager.Instance().GetVehiclesForCharacter(c);
             List<Item> items = c.GetAllItemsFromInventory();
 
@@ -93,6 +92,8 @@ namespace GTA_RP
 
             HouseManager.Instance().SendListOfOwnedHousesToClient(c.owner.client);
 
+            // Check faction, if is part of faction, then get text
+            if (c.factionID != FactionI.CIVILIAN) c.UpdateFactionRankText(FactionManager.Instance().GetRankTextForCharacter(c), 255, 255, 255);
 
             API.shared.triggerClientEvent(c.owner.client, "EVENT_TOGGLE_HUD_ON");
         }

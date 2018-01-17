@@ -160,6 +160,10 @@ class HUDManager
             case 'EVENT_ADD_ITEM_TO_INVENTORY':
                 this.addItemToInventory(args[0], args[1], args[2], args[3]);
                 break;
+
+            case 'EVENT_REMOVE_ITEM_FROM_INVENTORY':
+                this.removeItemFromInventory(args[0], args[1]);
+                break;
         }
     }
 
@@ -346,6 +350,20 @@ class HUDManager
             }
         }
         this.items.push(new Item(id, name, count, description));
+    }
+
+    removeItemFromInventory(id, count) {
+        for (var i = 0; i < this.items.length; i++) {
+            if (this.items[i].id == id) {
+                if (count >= this.items[i].amount) {
+                    this.items.splice(i, 1);
+                    return;
+                } else {
+                    this.items[i].amount -= count;
+                    return;
+                }
+            }
+        }
     }
 
     createHouseMenu()

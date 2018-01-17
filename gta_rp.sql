@@ -354,7 +354,7 @@ CREATE TABLE IF NOT EXISTS `characters` (
 -- Dumping data for table gta_rp.characters: ~3 rows (approximately)
 /*!40000 ALTER TABLE `characters` DISABLE KEYS */;
 INSERT INTO `characters` (`id`, `player_id`, `first_name`, `last_name`, `faction_id`, `player_model`, `money`, `job`, `phone_number`, `spawn_house_id`) VALUES
-	(0, 0, 'John', 'Thomson', 0, 'Barry', 266241, 1, '4695300', 4),
+	(0, 0, 'John', 'Thomson', 1, 'Barry', 260565, 0, '4695300', 4),
 	(1, 0, 'Jane', 'Cheng', 0, 'MovPrem01SFY', 1293274, 1, '1325993', -1),
 	(2, 0, 'Jane', 'Thomson', 1, 'Bevhills01AFY', 50, 1, '3411699', -1);
 /*!40000 ALTER TABLE `characters` ENABLE KEYS */;
@@ -463,7 +463,7 @@ CREATE TABLE IF NOT EXISTS `items` (
 -- Dumping data for table gta_rp.items: ~5 rows (approximately)
 /*!40000 ALTER TABLE `items` DISABLE KEYS */;
 INSERT INTO `items` (`owner_id`, `item_id`, `amount`) VALUES
-	(0, 0, 1),
+	(0, 0, 2),
 	(0, 1, 1),
 	(1, 0, 1),
 	(1, 1, 1),
@@ -806,7 +806,7 @@ CREATE TABLE IF NOT EXISTS `phone_contacts` (
   PRIMARY KEY (`owner`,`number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.phone_contacts: ~1 rows (approximately)
+-- Dumping data for table gta_rp.phone_contacts: ~0 rows (approximately)
 /*!40000 ALTER TABLE `phone_contacts` DISABLE KEYS */;
 INSERT INTO `phone_contacts` (`owner`, `name`, `number`) VALUES
 	(2, 'asd', '3411699');
@@ -821,11 +821,25 @@ CREATE TABLE IF NOT EXISTS `players` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.players: ~1 rows (approximately)
+-- Dumping data for table gta_rp.players: ~0 rows (approximately)
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
 INSERT INTO `players` (`id`, `name`, `password`, `admin_level`) VALUES
 	(0, 'Test', 'cc03e747a6afbbcbf8be7668acfebee5', 0);
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
+
+-- Dumping structure for table gta_rp.police_ranks
+CREATE TABLE IF NOT EXISTS `police_ranks` (
+  `character_id` int(100) NOT NULL,
+  `rank_id` int(100) NOT NULL,
+  `modelHash` varchar(100) NOT NULL,
+  PRIMARY KEY (`character_id`,`rank_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table gta_rp.police_ranks: ~0 rows (approximately)
+/*!40000 ALTER TABLE `police_ranks` DISABLE KEYS */;
+INSERT INTO `police_ranks` (`character_id`, `rank_id`, `modelHash`) VALUES
+	(0, 3, 'CIASec01SMM');
+/*!40000 ALTER TABLE `police_ranks` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.random_house_sell_templates
 CREATE TABLE IF NOT EXISTS `random_house_sell_templates` (
@@ -836,7 +850,7 @@ CREATE TABLE IF NOT EXISTS `random_house_sell_templates` (
   UNIQUE KEY `templateId` (`templateId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.random_house_sell_templates: ~3 rows (approximately)
+-- Dumping data for table gta_rp.random_house_sell_templates: ~2 rows (approximately)
 /*!40000 ALTER TABLE `random_house_sell_templates` DISABLE KEYS */;
 INSERT INTO `random_house_sell_templates` (`templateId`, `minPrice`, `maxPrice`) VALUES
 	(0, 100000, 250000),
@@ -854,7 +868,7 @@ CREATE TABLE IF NOT EXISTS `text_messages` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.text_messages: ~3 rows (approximately)
+-- Dumping data for table gta_rp.text_messages: ~2 rows (approximately)
 /*!40000 ALTER TABLE `text_messages` DISABLE KEYS */;
 INSERT INTO `text_messages` (`id`, `sender_number`, `receiver_number`, `time`, `message`) VALUES
 	(0, '1325993', '1325993', '19:53:00', 'test'),

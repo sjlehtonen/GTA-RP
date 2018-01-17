@@ -18,12 +18,19 @@ class BuyableItem {
     }
 }
 
+
 class ItemShopManager {
     constructor() {
         this.itemsForSale = [];
         this.canSellItems = [];
         this.shopId = null;
         this.shopName = null;
+        this.sellItemsMenu = null;
+        this.sellItemsMenuItems = [];
+
+        this.mainShopMenu = null;
+        this.sellMenuButton = null;
+        this.modifiers = [];
     }
 
     handleItemShopEvent(eventName, args) {
@@ -33,10 +40,8 @@ class ItemShopManager {
             this.shopId = args[0];
             this.shopName = args[1];
             this.createShopMenu();
-        } else if (eventName = "EVENT_CLOSE_ITEM_SHOP_MENU") {
-            this.closeShopMenu();
-        } else if (eventName == "EVENT_UPDATE_ITEM_SHOP_ITEM_AMOUNT") {
-
+        } else if (eventName == "EVENT_UPDATE_SELL_ITEM_COUNT") {
+            this.updateSellItemCount(args[0], args[1]);
         }
     }
 
@@ -49,15 +54,39 @@ class ItemShopManager {
 
     initializeCanSellItems(ids, names, descriptions, amounts, prices) {
         this.canSellItems = [];
+        this.sellItemsMenuItems = [];
         for (var i = 0; i < ids.Count; i++) {
             this.canSellItems.push(new BuyableItem(ids[i], names[i], descriptions[i], amounts[i], prices[i]));
         }
     }
 
+
+    updateSellItemCount(itemId, count) {
+        for (var i = 0; i < this.canSellItems.length; i++) {
+            let item = this.canSellItems[i];
+            if (item.id == itemId) {
+                this.canSellItems[i].amount = count;
+                this.updateSellMenu();
+                return;
+            }
+        }
+
+        for (var i = 0; i < this.itemsForSale.length; i++) {
+            let item = this.itemsForSale[i];
+            if (itemId == item.id) {
+                this.canSellItems.push(new BuyableItem(itemId, item.name, item.description, count, item.price / 2));
+                this.updateSellMenu();
+                return;
+            }
+        }
+    }
+
     createShopMenu() {
         let menu = API.createMenu(this.shopName, "Options", 0, 0, 6);
+        this.mainShopMenu = menu;
         let item1 = API.createMenuItem("Buy items", "");
         let item2 = API.createMenuItem("Sell items", "");
+        this.sellMenuButton = item2;
 
         menu.BindMenuToItem(this.createShopBuyMenu(), item1);
         menu.BindMenuToItem(this.createShopSellMenu(), item2);
@@ -65,6 +94,11 @@ class ItemShopManager {
         menu.AddItem(item1);
         menu.AddItem(item2);
         menu.Visible = true;
+    }
+
+    updateSellMenu() {
+        this.mainShopMenu.ReleaseMenuFromItem(this.sellMenuButton);
+        this.mainShopMenu.BindMenuToItem(this.createShopSellMenu(), this.sellMenuButton);
     }
 
     closeShopMenu() {
@@ -88,19 +122,34 @@ class ItemShopManager {
     }
 
     sellItem(shopId, itemId, count, name, description, position, menu, item) {
+
+        var modifier = 0;
+        for (var i = 0; i < this.modifiers.length; i++) {
+            let mod = this.modifiers[i];
+            if (mod < position) {
+                modifier -= 1;
+            }
+        }
+
         API.triggerServerEvent("EVENT_TRY_SELL_ITEM", shopId, itemId, count);
-        var oldCount = this.canSellItems[position].amount;
+        var oldCount = this.canSellItems[position+modifier].amount;
         var newCount = oldCount - count;
+
+
         if (newCount > 0) {
             item.Text = name + " (" + newCount.toString() + ")";
-            this.canSellItems[position].amount = newCount;
+            this.canSellItems[position+modifier].amount = newCount;
         } else {
-            menu.RemoveItemAt(position);
+            menu.RemoveItemAt(position+modifier);
+            this.canSellItems.splice(position+modifier, 1);
+            this.modifiers.push(position);
         }
     }
 
     createShopSellMenu() {
         let menu = API.createMenu(this.shopName, "Sell items", 0, 0, 6);
+        this.modifiers = [];
+        this.sellItemsMenu = menu;
         for (var i = 0; i < this.canSellItems.length; i++) {
             let item = API.createMenuItem(this.canSellItems[i].name + " (" + this.canSellItems[i].amount.toString() + ")", this.canSellItems[i].description);
             item.SetRightLabel("$" + this.canSellItems[i].price.toString());

@@ -198,6 +198,18 @@ namespace GTA_RP
         }
 
         /// <summary>
+        /// Updates "job text" for the clientside of this character
+        /// </summary>
+        /// <param name="text">Text</param>
+        /// <param name="colorR">R color</param>
+        /// <param name="colorG">G color</param>
+        /// <param name="colorB">B color</param>
+        public void UpdateFactionRankText(string text, int colorR, int colorG, int colorB)
+        {
+            this.TriggerEvent("EVENT_UPDATE_JOB", text, colorR, colorG, colorB);
+        }
+
+        /// <summary>
         /// Adds item to the character's inventory
         /// </summary>
         /// <param name="item">Item to add</param>
@@ -233,6 +245,11 @@ namespace GTA_RP
         public List<Item> GetAllItemsFromInventory()
         {
             return this.inventory.GetAllItems();
+        }
+
+        public void SetModel(string modelName)
+        {
+            this.client.setSkin(API.shared.pedNameToModel(modelName));
         }
 
         /// <summary>

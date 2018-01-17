@@ -62,7 +62,10 @@ namespace GTA_RP.Items
             foreach(BuyableItem item in sellableItems)
             {
                 if (items.Count(x => x.id == item.id) > 0)
+                {
                     both.Add(items.Single(x => x.id == item.id));
+                }
+                    
             }
             return both;
         }
@@ -153,6 +156,7 @@ namespace GTA_RP.Items
                     character.SetMoney(character.money - sellPrice);
                     character.SendNotification("Item purchased!");
                     character.PlayFrontendSound("PURCHASE", "HUD_LIQUOR_STORE_SOUNDSET");
+                    character.TriggerEvent("EVENT_UPDATE_SELL_ITEM_COUNT", itemId, character.GetAmountOfItems(itemId));
                 }
                 else
                 {
@@ -176,7 +180,7 @@ namespace GTA_RP.Items
 
             character.RemoveItemFromInventory(id, count, true);
             character.SetMoney(character.money + GetItemBuyPrice(id) * count);
-            character.TriggerEvent("EVENT_UPDATE_SELL_ITEM_COUNT", id, character.GetAmountOfItems(id));
+            //character.TriggerEvent("EVENT_UPDATE_SELL_ITEM_COUNT", id, character.GetAmountOfItems(id));
             character.PlayFrontendSound("PURCHASE", "HUD_LIQUOR_STORE_SOUNDSET");
         }
 
