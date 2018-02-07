@@ -70,6 +70,7 @@
     <Compile Include="Factions\RankedFaction.cs" />
     <Compile Include="Houses\HouseMarket.cs" />
     <Compile Include="Inventory\Ammo.cs" />
+    <Compile Include="Inventory\FoodItem.cs" />
     <Compile Include="Inventory\Inventory.cs" />
     <Compile Include="Inventory\Item.cs" />
     <Compile Include="Inventory\ItemManager.cs" />

@@ -240,28 +240,28 @@ namespace GTA_RP.Jobs
         {
             if (IsJobActiveForCharacter(character))
             {
-                character.SendNotification("You have to stop your currrent job first!");
+                character.SendErrorNotification("You have to stop your currrent job first!");
                 character.PlayFrontendSound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                 return;
             }
 
             if (!IsJobValid(jobId))
             {
-                character.SendNotification("Invalid job id!");
+                character.SendErrorNotification("Invalid job id!");
                 character.PlayFrontendSound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                 return;
             }
 
             if (!IsCharacterInJobPickUpPointForJob(character, jobId))
             {
-                character.SendNotification("You have to be at the job pickup point!");
+                character.SendErrorNotification("You have to be at the job pickup point!");
                 character.PlayFrontendSound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                 return;
             }
 
             if (character.factionID != Factions.FactionI.CIVILIAN)
             {
-                character.SendNotification("Only civilians can take up jobs!");
+                character.SendErrorNotification("Only civilians can take up jobs!");
                 character.PlayFrontendSound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                 return;
             }
