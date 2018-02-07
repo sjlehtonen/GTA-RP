@@ -16,5 +16,12 @@ namespace GTA_RP.Factions
 
     class LawEnforcementCommands : Script
     {
+        [Command("arrest")]
+        public void ArrestCharacter(Client client, int characterId, int time, string reason)
+        {
+            Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
+            if (character != null && character.factionID == FactionI.LAW_ENFORCEMENT)
+                FactionManager.Instance().LawEnforcement().ArrestCharacter(character, characterId, time, reason);
+        }
     }
 }

@@ -67,6 +67,7 @@
     <Compile Include="Factions\Civilian.cs" />
     <Compile Include="Factions\Faction.cs" />
     <Compile Include="Factions\FactionManager.cs" />
+    <Compile Include="Factions\RankedFaction.cs" />
     <Compile Include="Houses\HouseMarket.cs" />
     <Compile Include="Inventory\Ammo.cs" />
     <Compile Include="Inventory\Inventory.cs" />

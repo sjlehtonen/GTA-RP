@@ -77,7 +77,7 @@ namespace GTA_RP
         public void SetActiveCharacter(Character c)
         {
             activeCharacter = c;
-            client.nametag = activeCharacter.fullName;
+            client.nametag = activeCharacter.ID.ToString() + " " + activeCharacter.fullName;
             client.nametagColor = new Color(c.faction.colorR, c.faction.colorG, c.faction.colorB);
             client.setSkin(API.shared.pedNameToModel(c.model));
 

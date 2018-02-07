@@ -99,6 +99,8 @@ class HUDManager
         this.contactsMenu = null;
         this.textMessagesNeedUpdate = false;
         this.helpMenuActive = false;
+
+        // Faction menus
     }
 
     handleHUDEvent(eventName, args)
@@ -868,6 +870,39 @@ class HUDManager
         }
     }
 
+    openFactionMenu() {
+        if (this.hudActive) {
+            this.createFactionMenu();
+        }
+    }
+
+    // Faction menus
+
+    createFactionMenu() {
+        if (this.factionText == "Law Enforcement") {
+            this.createPoliceMenu();
+        }
+    }
+
+    createPoliceMenu() {
+        let menu = API.createMenu("Faction Menu", "Options", 0, 0, 5);
+        let item1 = API.createMenuItem("Jail a person", "");
+        let item2 = API.createMenuItem("Write a ticket", "");
+        menu.AddItem(item1);
+        menu.AddItem(item2);
+
+        menu.BindMenuToItem(item1, this.createNearbyPlayersMenu(0));
+        menu.BindMenuToItem(item2, this.createNearbyPlayersMenu(1));
+
+        menu.Visible = true;
+    }
+
+    createNearbyPlayersMenu(actionType) {
+        let menu = API.createMenu("Faction Menu", "Nearby players (Updating)", 0, 0, 5);
+        // Load nearby characters dynamically
+        return menu;
+    }
+
 }
 
 let hudManager = new HUDManager();
@@ -879,6 +914,10 @@ API.onKeyDown.connect(function (Player, args) {
     if (args.KeyCode == Keys.F1 && !API.isChatOpen() && hudManager.hudActive && !hudManager.helpMenuActive && !hudManager.phoneCallMenuOn) {
         hudManager.openHelpMenu();
     }
+
+    /*if (args.KeyCode == Keys.F2 && !API.isChatOpen() && hudManager.hudActive && !hudManager.helpMenuActive && !hudManager.phoneCallMenuO) {
+        hudManager.openFactionMenu();
+    }*/
 
     if (args.KeyCode == Keys.Delete && !API.isChatOpen() && hudManager.hudActive && hudManager.textMessagesMenu != null) {
         if (hudManager.textMessagesMenu.Visible) {

@@ -538,14 +538,27 @@ namespace GTA_RP
         }
 
 
-        private Character GetCharacterWithId(int id)
-        {
-            return GetActiveCharacters().SingleOrDefault(x => x.ID == id);
-        }
+
 
 
 
         // Public methods
+
+        public Character GetCharacterWithId(int id)
+        {
+            return GetActiveCharacters().SingleOrDefault(x => x.ID == id);
+        }
+
+        public bool TeleportPlayerToJailIfTimeLeft(Character character)
+        {
+            return FactionManager.Instance().LawEnforcement().MoveCharacterToJailIfJailTimeLeft(character);
+        }
+
+        public int GetTimeLeftInJailForCharacter(Character character)
+        {
+            return FactionManager.Instance().LawEnforcement().GetJailTimeLeftForCharacter(character);
+        }
+
 
         public bool IsCharacterWithIdOnline(int id)
         {
@@ -1193,6 +1206,23 @@ namespace GTA_RP
                 Character character = GetActiveCharacterForClient(c);
                 character.phone.SetPhoneNotUsing();
             }
+        }
+
+        /// <summary>
+        /// Gets characters nearby
+        /// </summary>
+        /// <param name="character">Character from which to take the distance</param>
+        /// <param name="distance">Distance</param>
+        /// <returns>List of characters in this distance</returns>
+        public List<Character> GetNearbyCharacters(Character character, float distance)
+        {
+            List<Character> charactersNearby = new List<Character>();
+            foreach(Character c in GetActiveCharacters())
+            {
+                if (c.position.DistanceTo(character.position) <= distance)
+                    charactersNearby.Add(c);
+            }
+            return charactersNearby;
         }
 
     }

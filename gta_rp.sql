@@ -329,11 +329,14 @@ CREATE TABLE IF NOT EXISTS `buildings` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.buildings: ~2 rows (approximately)
+-- Dumping data for table gta_rp.buildings: ~5 rows (approximately)
 /*!40000 ALTER TABLE `buildings` DISABLE KEYS */;
 INSERT INTO `buildings` (`id`, `name`, `use_blip`, `blip_id`, `blip_x`, `blip_y`, `blip_z`) VALUES
 	(0, 'Eclipse Towers', 1, 475, -773.48, 309.5, 85.6981),
-	(1, 'Middle Road', 0, NULL, NULL, NULL, NULL);
+	(1, 'Weazel Plaza', 1, 475, -906.753, -451.933, 39.605),
+	(2, 'Richards Majestic', 1, 475, -906, -375, 85),
+	(3, '3 Alta Street', 1, 475, -268.073, -962.601, 31.223),
+	(4, 'Apartement Medium End', 1, 475, 347, 999, 99);
 /*!40000 ALTER TABLE `buildings` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.characters
@@ -354,10 +357,25 @@ CREATE TABLE IF NOT EXISTS `characters` (
 -- Dumping data for table gta_rp.characters: ~3 rows (approximately)
 /*!40000 ALTER TABLE `characters` DISABLE KEYS */;
 INSERT INTO `characters` (`id`, `player_id`, `first_name`, `last_name`, `faction_id`, `player_model`, `money`, `job`, `phone_number`, `spawn_house_id`) VALUES
-	(0, 0, 'John', 'Thomson', 1, 'Barry', 260565, 0, '4695300', 4),
+	(0, 0, 'John', 'Thomson', 1, 'Barry', 804359, 0, '4695300', 6),
 	(1, 0, 'Jane', 'Cheng', 0, 'MovPrem01SFY', 1293274, 1, '1325993', -1),
 	(2, 0, 'Jane', 'Thomson', 1, 'Bevhills01AFY', 50, 1, '3411699', -1);
 /*!40000 ALTER TABLE `characters` ENABLE KEYS */;
+
+-- Dumping structure for table gta_rp.character_tickets
+CREATE TABLE IF NOT EXISTS `character_tickets` (
+  `id` int(11) NOT NULL,
+  `issuer_name` varchar(100) NOT NULL,
+  `character_id` int(11) NOT NULL,
+  `fine` int(11) NOT NULL,
+  `reason` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table gta_rp.character_tickets: ~0 rows (approximately)
+/*!40000 ALTER TABLE `character_tickets` DISABLE KEYS */;
+/*!40000 ALTER TABLE `character_tickets` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.houses
 CREATE TABLE IF NOT EXISTS `houses` (
@@ -368,14 +386,17 @@ CREATE TABLE IF NOT EXISTS `houses` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.houses: ~5 rows (approximately)
+-- Dumping data for table gta_rp.houses: ~8 rows (approximately)
 /*!40000 ALTER TABLE `houses` DISABLE KEYS */;
 INSERT INTO `houses` (`id`, `owner_id`, `template_id`, `name`) VALUES
 	(1, 1, 1, 'Jane\'s apartment'),
 	(2, 1, 0, 'Jane\'s second house'),
 	(3, 0, 0, 'John\'s home'),
 	(4, 0, 0, 'Apartment 2'),
-	(5, 0, 0, 'test1');
+	(5, 0, 0, 'test1'),
+	(6, 0, 1, 'Weazel Plaza Apt. 101'),
+	(7, 0, 2, 'Richards Majestic, Apt. 4'),
+	(8, 0, 3, '3 Alta Street, Apt. 10');
 /*!40000 ALTER TABLE `houses` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.house_exits
@@ -388,12 +409,14 @@ CREATE TABLE IF NOT EXISTS `house_exits` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.house_exits: ~3 rows (approximately)
+-- Dumping data for table gta_rp.house_exits: ~5 rows (approximately)
 /*!40000 ALTER TABLE `house_exits` DISABLE KEYS */;
 INSERT INTO `house_exits` (`id`, `house_template_id`, `exitX`, `exitY`, `exitZ`) VALUES
 	(0, 0, -785.143, 323.671, 211.997),
-	(1, 1, -614.86, 40.6783, 97.6001),
-	(2, 2, 261.459, -998.82, -99.0086);
+	(1, 1, -907.656, -453.586, 126.534),
+	(2, 2, -923.127, -378.328, 85.48),
+	(3, 3, -273.355, -967.162, 77.231),
+	(4, 4, 347, -999, -99);
 /*!40000 ALTER TABLE `house_exits` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.house_teleports
@@ -407,13 +430,19 @@ CREATE TABLE IF NOT EXISTS `house_teleports` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.house_teleports: ~4 rows (approximately)
+-- Dumping data for table gta_rp.house_teleports: ~10 rows (approximately)
 /*!40000 ALTER TABLE `house_teleports` DISABLE KEYS */;
 INSERT INTO `house_teleports` (`id`, `building_id`, `entranceX`, `entranceY`, `entranceZ`, `name`) VALUES
 	(0, 0, -772.716, 311.984, 85.6981, 'Main entrance'),
-	(1, 1, 419.016, -1735.89, 29.6077, 'Exit'),
-	(2, 1, 285.554, -1011.85, 86.7462, 'Rooftop'),
-	(3, 0, -755.102, 334.561, 230.637, 'Rooftop');
+	(1, 1, -906.753, -451.933, 39.605, 'Main entrance'),
+	(2, 0, -755.102, 334.561, 230.637, 'Rooftop'),
+	(3, 1, -889.739, -443.918, 168.118, 'Rooftop'),
+	(4, 2, -908.651, -381.682, 38.961, 'Main entrance'),
+	(5, 2, -903.209, -370.087, 136.282, 'Rooftop'),
+	(6, 3, -268.725, -962.216, 31.223, 'Main entrance'),
+	(7, 3, -269.073, -948.3, 130.617, 'Rooftop'),
+	(8, 4, 344.075, -999.726, 29.322, 'Main entrance'),
+	(9, 4, 359.053, -1009.09, 57.536, 'Rooftop');
 /*!40000 ALTER TABLE `house_teleports` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.house_teleport_links
@@ -423,13 +452,19 @@ CREATE TABLE IF NOT EXISTS `house_teleport_links` (
   PRIMARY KEY (`entrance_id`,`exit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.house_teleport_links: ~4 rows (approximately)
+-- Dumping data for table gta_rp.house_teleport_links: ~10 rows (approximately)
 /*!40000 ALTER TABLE `house_teleport_links` DISABLE KEYS */;
 INSERT INTO `house_teleport_links` (`entrance_id`, `exit_id`) VALUES
 	(0, 0),
-	(1, 2),
-	(2, 2),
-	(3, 0);
+	(1, 1),
+	(2, 0),
+	(3, 1),
+	(4, 2),
+	(5, 2),
+	(6, 3),
+	(7, 3),
+	(8, 4),
+	(9, 4);
 /*!40000 ALTER TABLE `house_teleport_links` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.house_template
@@ -444,12 +479,14 @@ CREATE TABLE IF NOT EXISTS `house_template` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.house_template: ~3 rows (approximately)
+-- Dumping data for table gta_rp.house_template: ~5 rows (approximately)
 /*!40000 ALTER TABLE `house_template` DISABLE KEYS */;
 INSERT INTO `house_template` (`id`, `building_id`, `ipl`, `house_name`, `spawn_positionX`, `spawn_positionY`, `spawn_positionZ`) VALUES
 	(0, 0, 'no_ipl', 'Eclipse Towers 32', -776.343, 335.784, 211.397),
-	(1, 0, 'no_ipl', 'Tinsel Towers 12', 0, 0, 0),
-	(2, 1, 'no_ipl', 'Apartment 520', 0, 0, 0);
+	(1, 1, 'no_ipl', 'Weazel Plaza Apt. 101', -891, -450, 125),
+	(2, 2, 'no_ipl', 'Richards Majestic, Apt. 4', -906.003, -375.01, 84.074),
+	(3, 3, 'no_ipl', '3 Alta Street, Apt. 10', -262.822, -952.601, 75.828),
+	(4, 4, 'no_ipl', 'Apartement Medium End', 347, -999, -99);
 /*!40000 ALTER TABLE `house_template` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.items
@@ -465,6 +502,7 @@ CREATE TABLE IF NOT EXISTS `items` (
 INSERT INTO `items` (`owner_id`, `item_id`, `amount`) VALUES
 	(0, 0, 2),
 	(0, 1, 1),
+	(0, 2, 1),
 	(1, 0, 1),
 	(1, 1, 1),
 	(2, 1, 2);
@@ -488,8 +526,22 @@ CREATE TABLE IF NOT EXISTS `item_templates` (
 /*!40000 ALTER TABLE `item_templates` DISABLE KEYS */;
 INSERT INTO `item_templates` (`id`, `type`, `name`, `description`, `field1`, `field2`, `field3`, `field4`) VALUES
 	(0, 1, 'SMG', 'SMG weapon', 736523883, NULL, NULL, 'asd'),
-	(1, 2, 'Fishing rod', 'You can catch fish with this', 1338703913, 57005, NULL, 'amb@world_human_stand_fishing@base;base;0.225,-0.045,-0.1;-23,-33,-120;0.17,-0.07,-0.06;-24,-33,-130');
+	(1, 2, 'Fishing rod', 'You can catch fish with this', 1338703913, 57005, NULL, 'amb@world_human_stand_fishing@base;null;base;0.225,-0.045,-0.1;-23,-33,-120;0.17,-0.07,-0.06;-24,-33,-130'),
+	(2, 3, 'Donut', 'A large donut', 874345115, 57005, 50, 'amb@code_human_wander_eating_donut@male@base;amb@code_human_wander_eating_donut@female@base;static;0.225,-0.045,-0.1;-23,-33,-120;0.17,-0.07,-0.06;-24,-33,-130');
 /*!40000 ALTER TABLE `item_templates` ENABLE KEYS */;
+
+-- Dumping structure for table gta_rp.jailed_characters
+CREATE TABLE IF NOT EXISTS `jailed_characters` (
+  `id` int(100) NOT NULL,
+  `time` int(100) NOT NULL,
+  `reason` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table gta_rp.jailed_characters: ~0 rows (approximately)
+/*!40000 ALTER TABLE `jailed_characters` DISABLE KEYS */;
+/*!40000 ALTER TABLE `jailed_characters` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.model_genders
 CREATE TABLE IF NOT EXISTS `model_genders` (
@@ -835,7 +887,7 @@ CREATE TABLE IF NOT EXISTS `police_ranks` (
   PRIMARY KEY (`character_id`,`rank_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.police_ranks: ~0 rows (approximately)
+-- Dumping data for table gta_rp.police_ranks: ~1 rows (approximately)
 /*!40000 ALTER TABLE `police_ranks` DISABLE KEYS */;
 INSERT INTO `police_ranks` (`character_id`, `rank_id`, `modelHash`) VALUES
 	(0, 3, 'CIASec01SMM');
@@ -850,12 +902,14 @@ CREATE TABLE IF NOT EXISTS `random_house_sell_templates` (
   UNIQUE KEY `templateId` (`templateId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.random_house_sell_templates: ~2 rows (approximately)
+-- Dumping data for table gta_rp.random_house_sell_templates: ~5 rows (approximately)
 /*!40000 ALTER TABLE `random_house_sell_templates` DISABLE KEYS */;
 INSERT INTO `random_house_sell_templates` (`templateId`, `minPrice`, `maxPrice`) VALUES
 	(0, 100000, 250000),
-	(1, 150000, 180000),
-	(2, 100000, 120000);
+	(1, 100000, 250000),
+	(2, 100000, 250000),
+	(3, 100000, 250000),
+	(4, 100000, 250000);
 /*!40000 ALTER TABLE `random_house_sell_templates` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.text_messages

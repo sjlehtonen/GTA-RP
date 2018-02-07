@@ -15,17 +15,18 @@ namespace GTA_RP.Items
 {
     class UseAnimationItem : Item
     {
-        private Vector3 usePosMan;
-        private Vector3 useRotMan;
-        private Vector3 usePosFemale;
-        private Vector3 useRotFemale;
+        protected Vector3 usePosMan;
+        protected Vector3 useRotMan;
+        protected Vector3 usePosFemale;
+        protected Vector3 useRotFemale;
 
-        private string animDict;
-        private string animName;
-        private int entityId;
-        private int bone;
-        private NetHandle entity;
-        private bool equipped = false;
+        protected string animDict;
+        protected string animDictFemale;
+        protected string animName;
+        protected int entityId;
+        protected int bone;
+        protected NetHandle entity;
+        protected bool equipped = false;
 
         public UseAnimationItem(int id, string name, string description, int entityId, int bone, string other, int count = 1) : base(id, name, description, count)
         {
@@ -34,13 +35,17 @@ namespace GTA_RP.Items
 
             string[] splitString = other.Split(';');
             this.animDict = splitString[0];
-            this.animName = splitString[1];
 
-            string[] posSplit = splitString[2].Split(',');
-            string[] rotSplit = splitString[3].Split(',');
+            if (splitString[1] == "null") animDictFemale = null;
+            else animDictFemale = splitString[1];
 
-            string[] posSplit2 = splitString[4].Split(',');
-            string[] rotSplit2 = splitString[5].Split(',');
+            this.animName = splitString[2];
+
+            string[] posSplit = splitString[3].Split(',');
+            string[] rotSplit = splitString[4].Split(',');
+
+            string[] posSplit2 = splitString[5].Split(',');
+            string[] rotSplit2 = splitString[6].Split(',');
 
             this.usePosMan = new Vector3(float.Parse(posSplit[0], CultureInfo.InvariantCulture), float.Parse(posSplit[1], CultureInfo.InvariantCulture), float.Parse(posSplit[2], CultureInfo.InvariantCulture));
             this.useRotMan = new Vector3(float.Parse(rotSplit[0], CultureInfo.InvariantCulture), float.Parse(rotSplit[1], CultureInfo.InvariantCulture), float.Parse(rotSplit[2], CultureInfo.InvariantCulture));

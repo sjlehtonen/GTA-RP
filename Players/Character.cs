@@ -230,6 +230,22 @@ namespace GTA_RP
             this.client.triggerEvent(name, args);
         }
 
+        public void SendChatMessage(string message)
+        {
+            API.shared.sendChatMessageToPlayer(client, message);
+        }
+
+        public void SendErrorNotification(string message)
+        {
+            this.SendNotification(message);
+            this.PlayFrontendSound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+        }
+
+        public void SendSuccessNotification(string message)
+        {
+            this.SendNotification(message);
+            this.PlayFrontendSound("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+        }
         
         public void RemoveItemFromInventory(int itemId, int count, bool updateDB, bool updateUI = true)
         {

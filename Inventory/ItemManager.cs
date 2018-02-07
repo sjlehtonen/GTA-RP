@@ -63,6 +63,7 @@ namespace GTA_RP.Items
             {
                 shop.AddItemForSale(0, 10230);
                 shop.AddItemForSale(1, 450);
+                shop.AddItemForSale(2, 100);
             }
         }
 
@@ -124,6 +125,13 @@ namespace GTA_RP.Items
             }
         }
 
+        /// <summary>
+        /// Attempts to sell an item
+        /// </summary>
+        /// <param name="character">Sekller</param>
+        /// <param name="shopId">Shop id</param>
+        /// <param name="itemId">Item id</param>
+        /// <param name="count">Amount to sell</param>
         public void TrySellItemForCharacter(Character character, int shopId, int itemId, int count)
         {
             API.shared.consoleOutput("try sell");

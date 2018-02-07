@@ -263,7 +263,10 @@ namespace GTA_RP
                     p.client.dimension = 0;
                     p.client.freezePosition = false;
 
-                    if (c.spawnHouseId != -1)
+                    if (PlayerManager.Instance().TeleportPlayerToJailIfTimeLeft(c)) {
+                        c.SendNotification("You have " + PlayerManager.Instance().GetTimeLeftInJailForCharacter(c) + " minutes of jail time left");
+                    }
+                    else if (c.spawnHouseId != -1)
                     {
                         HouseManager.Instance().AddCharacterToHouseWithId(c.spawnHouseId, c);
                         p.client.position = HouseManager.Instance().GetSpawnLocationOfHouseWithId(c.spawnHouseId);

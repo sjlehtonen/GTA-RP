@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GTA_RP.Jobs;
 
 namespace GTA_RP.Factions
 {
@@ -20,7 +21,8 @@ namespace GTA_RP.Factions
 
         public override string GetRankText(Character character)
         {
-            return "Unemployed";
+            JobInfo info = JobManager.Instance().GetInfoForJobWithId(character.job);
+            return info.name;
         }
 
         public override string GetChatColor()
