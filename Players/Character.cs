@@ -32,6 +32,8 @@ namespace GTA_RP
         public int gender { get; private set; }
         public int spawnHouseId { get; private set; }
 
+        public Item equippedItem { get; private set; }
+
         public Inventory inventory { get; private set; }
 
         public String fullName
@@ -111,6 +113,7 @@ namespace GTA_RP
             this.phone = new Phone(this, phoneNumber);
             this.spawnHouseId = spawnHouseId;
             this.inventory = new Inventory(this);
+            this.equippedItem = null;
         }
 
         /// <summary>
@@ -118,6 +121,16 @@ namespace GTA_RP
         /// </summary>
         public void CleanUp()
         {
+        }
+
+        public void SetEquippedItem(Item item)
+        {
+            this.equippedItem = item;
+        }
+
+        public Item GetEquippedItem(Item item)
+        {
+            return this.equippedItem;
         }
 
         /// <summary>
@@ -213,11 +226,14 @@ namespace GTA_RP
         /// Adds item to the character's inventory
         /// </summary>
         /// <param name="item">Item to add</param>
-        public void AddItemToInventory(Item item, bool updateDB, bool updateUI = true)
+        public bool AddItemToInventory(Item item, bool updateDB, bool updateUI = true)
         {
-            this.inventory.AddItem(item, updateDB);
-            if (updateUI) API.shared.triggerClientEvent(this.client, "EVENT_ADD_ITEM_TO_INVENTORY", item.id, item.name, item.count, item.description);
-
+            bool ret = this.inventory.AddItem(item, updateDB);
+            if (ret)
+            {
+                if (updateUI) API.shared.triggerClientEvent(this.client, "EVENT_ADD_ITEM_TO_INVENTORY", item.id, item.name, item.count, item.description);
+            }
+            return ret;
         }
 
         public bool HasItemWithid(int id, int count)
@@ -253,6 +269,21 @@ namespace GTA_RP
             if (updateUI) this.client.triggerEvent("EVENT_REMOVE_ITEM_FROM_INVENTORY", itemId, count); // check
         }
 
+        public void UnequipItemWithName(string name)
+        {
+            foreach(Item item in inventory.GetAlItems())
+            {
+                if (item.name == name)
+                {
+                    if (item.GetType() == typeof(UseAnimationItem))
+                    {
+                        UseAnimationItem useItem = item as UseAnimationItem;
+                        useItem.ForceUnequip(this);
+                    }
+                }
+            }
+        }
+
         public int GetAmountOfItems(int itemId)
         {
             return inventory.GetItemCount(itemId);
@@ -260,7 +291,7 @@ namespace GTA_RP
 
         public List<Item> GetAllItemsFromInventory()
         {
-            return this.inventory.GetAllItems();
+            return this.inventory.GetAlItems();
         }
 
         public void SetModel(string modelName)

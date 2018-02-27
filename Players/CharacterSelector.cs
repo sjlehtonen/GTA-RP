@@ -31,12 +31,9 @@ namespace GTA_RP
         /// Is ran when player disconnects
         /// </summary>
         /// <param name="c">Client who disconnected</param>
-        private void PlayerDisconnected(Client c)
+        private void PlayerDisconnected(Character c)
         {
-            if (IsPlayerInCharacterSelection(c))
-            {
-                RemovePlayerFromCharacterSelector(c);
-            }
+            RemovePlayerFromCharacterSelector(c);
         }
 
         /// <summary>
@@ -169,6 +166,11 @@ namespace GTA_RP
             Player p = PlayerManager.Instance().GetPlayerByClient(c);
             c.dimension = 0;
             RemovePlayerFromCharacterSelector(p);
+        }
+
+        public void RemovePlayerFromCharacterSelector(Character c)
+        {
+            RemovePlayerFromCharacterSelector(c.owner);
         }
 
         /// <summary>

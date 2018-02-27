@@ -13,18 +13,29 @@ namespace GTA_RP.Items
     {
         private Character owner;
         private List<Item> items = new List<Item>();
+        private int maxInventorySize = 30;
 
         public Inventory(Character owner)
         {
             this.owner = owner;
         }
 
+        private int GetInventorySize()
+        {
+            int len = 0;
+            this.items.ForEach(x => len += x.count);
+            return len;
+        }
+
+
         /// <summary>
         /// Adds an item to the inventory
         /// </summary>
         /// <param name="item">Item to add</param>
-        public void AddItem(Item item, bool updateDB = true)
+        public bool AddItem(Item item, bool updateDB = true)
         {
+            if (GetInventorySize() + 1 >= this.maxInventorySize) return false;
+
             foreach (Item i in items)
             {
                 if (i.id == item.id)
@@ -38,7 +49,7 @@ namespace GTA_RP.Items
                             .AddValue("@item_id", i.id)
                             .Execute();
                     }
-                    return;
+                    return true;
                 }
             }
 
@@ -52,6 +63,7 @@ namespace GTA_RP.Items
                     .AddValue("@amount", item.count)
                     .Execute();
             }
+            return true;
         }
 
         public bool DoesContainItemWithIdAndCount(int id, int count)
@@ -115,7 +127,7 @@ namespace GTA_RP.Items
         /// Return all items sorted in alphabetical order
         /// </summary>
         /// <returns>All items in inventory</returns>
-        public List<Item> GetAllItems()
+        public List<Item> GetAlItems()
         {
             List<Item> items = new List<Item>();
             items.AddRange(this.items);

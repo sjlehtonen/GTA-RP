@@ -21,6 +21,8 @@ namespace GTA_RP.Items
         {
             user.client.health += this.healthToRestore;
             user.PlayFrontendSound("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+            this.ConsumeItem(user);
+            // Implement animation
         }
     }
 }

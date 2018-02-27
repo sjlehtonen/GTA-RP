@@ -10,6 +10,7 @@ using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using System.Timers;
+using GTA_RP.Items;
 
 namespace GTA_RP.Map
 {
@@ -22,6 +23,7 @@ namespace GTA_RP.Map
         private TimeSpan lastTime;
         private bool hasLastTime = false;
         private Timer minuteTimer = new Timer();
+        private FishingHandler fishingHandler = new FishingHandler();
         
         private event OnTimeMinuteChangedEvent OnMinuteChangeEvent;
 
@@ -42,11 +44,38 @@ namespace GTA_RP.Map
             staticBlips.Add(blip);
         }
 
+        public void Initialize()
+        {
+            this.InitializeMinuteTimer();
+            this.fishingHandler.InitializeFishingSpots();
+        }
+
+        /// <summary>
+        /// Initializes the minute timer
+        /// </summary>
         public void InitializeMinuteTimer()
         {
             minuteTimer.Interval = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
             minuteTimer.Elapsed += MinuteChanged;
             minuteTimer.Enabled = true;
+        }
+
+        /// <summary>
+        /// Starts fishing for character
+        /// </summary>
+        /// <param name="fisher">Character who is fishing</param>
+        public bool StartFishing(Character fisher)
+        {
+            return this.fishingHandler.StartFishing(fisher);
+        }
+
+        /// <summary>
+        /// Stops fishing for character
+        /// </summary>
+        /// <param name="fisher">Character</param>
+        public void StopFishing(Character fisher)
+        {
+            this.fishingHandler.StopFishing(fisher);
         }
 
         /// <summary>

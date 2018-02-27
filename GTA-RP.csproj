@@ -70,6 +70,7 @@
     <Compile Include="Factions\RankedFaction.cs" />
     <Compile Include="Houses\HouseMarket.cs" />
     <Compile Include="Inventory\Ammo.cs" />
+    <Compile Include="Inventory\FishingRodItem.cs" />
     <Compile Include="Inventory\FoodItem.cs" />
     <Compile Include="Inventory\Inventory.cs" />
     <Compile Include="Inventory\Item.cs" />
@@ -77,11 +78,16 @@
     <Compile Include="Inventory\ItemsFactory.cs" />
     <Compile Include="Inventory\ItemShop.cs" />
     <Compile Include="Inventory\ItemTemplate.cs" />
+    <Compile Include="Inventory\NoUseItem.cs" />
+    <Compile Include="Inventory\ShovelItem.cs" />
     <Compile Include="Inventory\UseAnimationItem.cs" />
     <Compile Include="Inventory\Weapon.cs" />
     <Compile Include="Jobs\JobPickUpCheckpoint.cs" />
+    <Compile Include="Map\FishingHandler.cs" />
+    <Compile Include="Map\FishingZone.cs" />
     <Compile Include="Map\MapManager.cs" />
     <Compile Include="Misc\Checkpoint.cs" />
+    <Compile Include="Misc\LootTable.cs" />
     <Compile Include="Misc\Singleton.cs" />
     <Compile Include="Players\Character.cs" />
     <Compile Include="Misc\ClientCheckpoint.cs" />

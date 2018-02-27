@@ -56,10 +56,9 @@ namespace GTA_RP.Vehicles
         /// Is ran when player disconnects
         /// </summary>
         /// <param name="c"></param>
-        private void CharacterDisconnected(Client c)
+        private void CharacterDisconnected(Character c)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(c))
-                ExitShop(PlayerManager.Instance().GetActiveCharacterForClient(c));
+             ExitShop(c);
         }
 
        

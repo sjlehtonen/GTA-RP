@@ -51,10 +51,15 @@ namespace GTA_RP.Items
         {
             this.id = id;
             this.name = name;
-            this.storeCheckPoint = new Checkpoint(position, OnEnterShop, OnExitShop, 25, 1.6f, 0);
+            this.storeCheckPoint = new Checkpoint(position, OnEnterShop, OnExitShop, 25, 1.6f, 40, 186, 82);
             if (addBlip) MapManager.Instance().AddBlipToMap(52, name, position.X, position.Y, position.Z);
         }
 
+        /// <summary>
+        /// Returns a list of items that character has and the shop will buy
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <returns>List of items</returns>
         private List<Item> GetItemsThatCharacterHasAndShopBuys(Character character)
         {
             List<Item> items = character.GetAllItemsFromInventory();
@@ -70,6 +75,11 @@ namespace GTA_RP.Items
             return both;
         }
 
+        /// <summary>
+        /// Method ran when character enters a shop
+        /// </summary>
+        /// <param name="checkpoint">Checkpoint</param>
+        /// <param name="character">Character</param>
         private void OnEnterShop(Checkpoint checkpoint, Character character)
         {
             // Open shop menu
@@ -80,12 +90,22 @@ namespace GTA_RP.Items
             API.shared.triggerClientEvent(character.client, "EVENT_OPEN_ITEM_SHOP_MENU", id, name, stock.Select(x => x.template.id).ToList(), stock.Select(x => x.template.name).ToList(), stock.Select(x => x.template.description).ToList(), stock.Select(x => x.amount).ToList(), stock.Select(x => x.price).ToList(), sellableItemsForCharacter.Select(x => x.id).ToList(), sellableItemsForCharacter.Select(x=> x.name).ToList(), sellableItemsForCharacter.Select(x => x.description).ToList(), sellableItemsForCharacter.Select(x => x.count).ToList(), sellableItemPrices);
         }
 
+        /// <summary>
+        /// Method that is run when character exits shop
+        /// </summary>
+        /// <param name="checkpoint">Checkpoint</param>
+        /// <param name="character">Character</param>
         private void OnExitShop(Checkpoint checkpoint, Character character)
         {
             // Close shop menu
             API.shared.triggerClientEvent(character.client, "EVENT_CLOSE_ITEM_SHOP_MENU");
         }
 
+        /// <summary>
+        /// Checks if shop sells an item
+        /// </summary>
+        /// <param name="itemId">Item id</param>
+        /// <returns>True if item is sold, otherwise false</returns>
         private bool DoesSellItem(int itemId)
         {
             foreach (ItemForSale item in stock)
@@ -96,6 +116,11 @@ namespace GTA_RP.Items
             return false;
         }
 
+        /// <summary>
+        /// Check if shop buys item
+        /// </summary>
+        /// <param name="itemId">Item id</param>
+        /// <returns>True if shop buys the item, otherwise false</returns>
         private bool DoesBuyitem(int itemId)
         {
             foreach (BuyableItem item in sellableItems)
@@ -106,6 +131,11 @@ namespace GTA_RP.Items
             return false;
         }
 
+        /// <summary>
+        /// Gets an item buy price
+        /// </summary>
+        /// <param name="itemId">Item id</param>
+        /// <returns>Item buy price</returns>
         private int GetItemBuyPrice(int itemId)
         {
             foreach (BuyableItem item in sellableItems)
@@ -116,6 +146,11 @@ namespace GTA_RP.Items
             return -1;
         }
 
+        /// <summary>
+        /// Gets item sell price
+        /// </summary>
+        /// <param name="itemId">Item id</param>
+        /// <returns>Item sell price</returns>
         private int GetItemSellPrice(int itemId)
         {
             foreach (ItemForSale item in stock)
@@ -139,6 +174,16 @@ namespace GTA_RP.Items
         }
 
         /// <summary>
+        /// Adds an item that shop can buy from the player
+        /// </summary>
+        /// <param name="id">Id of item</param>
+        /// <param name="price">Buy price</param>
+        public void AddItemForBuy(int id, int price)
+        {
+            sellableItems.Add(new BuyableItem(id, price));
+        }
+
+        /// <summary>
         /// Buys an item from the shop for character
         /// </summary>
         /// <param name="character">Buyer</param>
@@ -152,11 +197,17 @@ namespace GTA_RP.Items
                 if (character.money >= sellPrice)
                 {
                     Item item = ItemsFactory.CreateItemForId(itemId, count);
-                    character.AddItemToInventory(item, true, true);
-                    character.SetMoney(character.money - sellPrice);
-                    character.SendNotification("Item purchased!");
-                    character.PlayFrontendSound("PURCHASE", "HUD_LIQUOR_STORE_SOUNDSET");
-                    character.TriggerEvent("EVENT_UPDATE_SELL_ITEM_COUNT", itemId, character.GetAmountOfItems(itemId));
+                    bool ret = character.AddItemToInventory(item, true, true);
+                    if (ret)
+                    {
+                        character.SetMoney(character.money - sellPrice);
+                        character.SendNotification("Item purchased!");
+                        character.PlayFrontendSound("PURCHASE", "HUD_LIQUOR_STORE_SOUNDSET");
+                        character.TriggerEvent("EVENT_UPDATE_SELL_ITEM_COUNT", itemId, character.GetAmountOfItems(itemId));
+                    } else
+                    {
+                        character.SendErrorNotification("Your inventory is full!");
+                    }
                 }
                 else
                 {

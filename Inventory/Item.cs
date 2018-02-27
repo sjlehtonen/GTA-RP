@@ -41,22 +41,30 @@ namespace GTA_RP.Items
         }
 
         /// <summary>
+        /// Destroys the item and removes it from character's inventory
+        /// </summary>
+        protected void ConsumeItem(Character character)
+        {
+            character.RemoveItemFromInventory(this.id, 1, true, true);
+        }
+
+        /// <summary>
         /// This method uses the item
         /// </summary>
         /// <param name="user">Character that uses the item</param>
-        public abstract void Use(Character user);
+        public virtual void Use(Character user) { }
 
         /// <summary>
         /// Method that is ran when the item is added to the inventory of the owner
         /// </summary>
         /// <param name="owner">Character to whose inventory the item is added to</param>
-        public abstract void AddedToInventory(Character owner);
+        public virtual void AddedToInventory(Character owner) { }
 
         /// <summary>
         /// Method that is ran when the item is removed from the inventory of the owner
         /// </summary>
         /// <param name="owner">Character from whose inventory the item is removed from</param>
-        public abstract void RemovedFromInventory(Character owner);
+        public virtual void RemovedFromInventory(Character owner) { }
         
     }
 }

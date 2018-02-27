@@ -80,6 +80,9 @@ class HUDManager
 
         // Item menu values
         this.items = [];
+        this.itemMenuItems = [];
+        this.itemsMenu = null;
+        this.modifiers = [];
 
         // help values
         this.screenResolution = null;
@@ -334,13 +337,16 @@ class HUDManager
 
     createItemsMenu() {
         let menu = API.createMenu("Player Menu", "Inventory", 0, 0, 6);
+        this.itemMenuItems = [];
         for (var i = 0; i < this.items.length; i++) {
             let item = API.createMenuItem(this.items[i].name, this.items[i].description);
             item.SetRightLabel(this.items[i].amount.toString());
             let val = this.items[i].id;
             item.Activated.connect(() => this.useItem(val));
             menu.AddItem(item);
+            this.itemMenuItems.push(item);
         }
+        this.itemsMenu = menu;
         return menu;
     }
 
@@ -348,10 +354,16 @@ class HUDManager
         for (var i = 0; i < this.items.length; i++) {
             if (this.items[i].id == id) {
                 this.items[i].amount += count;
+                if (this.itemsMenu != null) this.itemMenuItems[i].SetRightLabel(this.items[i].amount.toString());
                 return;
             }
         }
-        this.items.push(new Item(id, name, count, description));
+        let item = new Item(id, name, count, description);
+        this.items.push(item);
+        let menuItem = API.createMenuItem(name, description);
+        menuItem.SetRightLabel(item.amount.toString());
+        this.itemsMenu.AddItem(menuItem);
+        this.itemMenuItems.push(menuItem);
     }
 
     removeItemFromInventory(id, count) {
@@ -359,9 +371,11 @@ class HUDManager
             if (this.items[i].id == id) {
                 if (count >= this.items[i].amount) {
                     this.items.splice(i, 1);
+                    if (this.itemsMenu != null) this.itemsMenu.RemoveItemAt(i);
                     return;
                 } else {
                     this.items[i].amount -= count;
+                    if (this.itemsMenu != null) this.itemMenuItems[i].SetRightLabel(this.items[i].amount.toString());
                     return;
                 }
             }

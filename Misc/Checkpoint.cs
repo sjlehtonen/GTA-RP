@@ -18,7 +18,7 @@ namespace GTA_RP.Misc
     {
         public Marker entrance { get; private set; }
         public SphereColShape shape { get; private set; }
-        private float range = 1.2f;
+        private float range = 1.05f;
         private event OnEnterCheckpointDelegate OnEnterCheckPointEvent;
         private event OnExitCheckpointDelegate OnExitCheckPointEvent;
 
@@ -41,6 +41,12 @@ namespace GTA_RP.Misc
             OnEnterCheckPointEvent += enterDelegate;
         }
 
+        public Checkpoint(Vector3 coordinates)
+        {
+            entrance = API.shared.createMarker(0, coordinates, new Vector3(), new Vector3(), new Vector3(1, 1, 1), 255, 255, 0, 0, 0);
+            shape = API.shared.createSphereColShape(coordinates, range);
+        }
+
         public Checkpoint(Vector3 coordinates, OnEnterCheckpointDelegate enterDelegate, OnExitCheckpointDelegate exitDelegate, int type, int dimension) : this(coordinates, enterDelegate, exitDelegate, type, dimension, 1, 1, 1, 255, 255, 0, 0, false)
         {
         }
@@ -51,6 +57,22 @@ namespace GTA_RP.Misc
 
         public Checkpoint(Vector3 coordinates, OnEnterCheckpointDelegate enterDelegate, OnExitCheckpointDelegate exitDelegate, int dimension = 0) : this(coordinates, enterDelegate, exitDelegate, 0, dimension, 1, 1, 1, 255, 255, 0, 0, false)
         {
+        }
+
+        public Checkpoint(Vector3 coordinates, OnEnterCheckpointDelegate enterDelegate, OnExitCheckpointDelegate exitDelegate, int type, float scale, int colorR, int colorG, int colorB, int dimension = 0) : this(coordinates, enterDelegate, exitDelegate, type, dimension, scale, scale, 1, 255, colorR, colorG, colorB, false)
+        {
+        }
+
+        /// <summary>
+        /// Removes the checkpoint
+        /// </summary>
+        public void DestroyCheckpoint()
+        {
+            API.shared.consoleOutput("Deleted checkpoint!");
+            entrance.delete();
+            API.shared.deleteColShape(shape);
+            shape = null;
+            entrance = null;
         }
 
         /// <summary>

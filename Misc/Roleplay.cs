@@ -49,7 +49,7 @@ namespace GTA_RP
             HouseManager.Instance().LoadHouseTemplates();
             JobManager.Instance().InitJobPickupPoints();
             ItemManager.Instance().InitializeItems();
-            MapManager.Instance().InitializeMinuteTimer();
+            MapManager.Instance().Initialize();
 
             FactionManager.Instance().InitializeFactions();
 

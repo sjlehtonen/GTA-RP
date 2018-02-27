@@ -52,7 +52,7 @@ namespace GTA_RP.Items
             itemShops.Add(new ItemShop(1, "Rob's Liquor", new Vector3(-1487.462f, -379.331f, 39.18343f)));
             itemShops.Add(new ItemShop(2, "LTD Gasoline", new Vector3(-48.61258f, -1757.845f, 28.52101f)));
             itemShops.Add(new ItemShop(3, "Rob's Liquor", new Vector3(1136.012f, -982.1758f, 45.43584f)));
-            itemShops.Add(new ItemShop(4, "LTD Gasoline", new Vector3(1163.478f, -324.059f, 69.20506f)));
+            itemShops.Add(new ItemShop(4, "LTD Gasoline", new Vector3(1163.478f, -324.059f, 68.20506f)));
             itemShops.Add(new ItemShop(5, "247 Supermarket", new Vector3(2557.196f, 382.482f, 107.7229f)));
             itemShops.Add(new ItemShop(6, "247 Supermarket", new Vector3(374.0887f, 325.9345f, 102.5664f)));
             itemShops.Add(new ItemShop(7, "LTD Gasoline", new Vector3(-707.8062f, -914.7662f, 18.31559f)));
@@ -64,6 +64,10 @@ namespace GTA_RP.Items
                 shop.AddItemForSale(0, 10230);
                 shop.AddItemForSale(1, 450);
                 shop.AddItemForSale(2, 100);
+                shop.AddItemForBuy(3, 25000);
+                shop.AddItemForSale(6, 25);
+                shop.AddItemForBuy(5, 75);
+                shop.AddItemForBuy(7, 150);
             }
         }
 
@@ -107,6 +111,11 @@ namespace GTA_RP.Items
         public void TryUseItemForCharacter(Character character, int itemId)
         {
             character.UseItemInInventory(itemId);
+        }
+
+        public Item CreateItemForId(int id)
+        {
+            return ItemsFactory.CreateItemForId(id);
         }
 
         /// <summary>

@@ -75,5 +75,30 @@ namespace GTA_RP.Factions
             return GetRank(info.rank);
         }
 
+        public override string GetRankText(Character character)
+        {
+            if (IsCharacterPartOfFaction(character))
+            {
+                Rank rank = GetRankForCharacter(character);
+                return rank.name;
+            }
+
+            return "";
+        }
+
+        private void LoadCharacterInfoFromDB()
+        {
+            DBManager.SelectQuery("SELECT * FROM faction_ranks", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            {
+                if (reader.GetInt32(3) == (int)this.id)
+                    AddCharacterToFaction(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2));
+            }).Execute();
+        }
+
+        public override void Initialize()
+        {
+            LoadCharacterInfoFromDB();
+        }
+
     }
 }

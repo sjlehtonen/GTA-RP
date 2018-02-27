@@ -39,9 +39,9 @@ namespace GTA_RP.Jobs
             PlayerManager.Instance().SubscribeToPlayerDisconnectEvent(this.PlayerDisconnected);
         }
 
-        private void PlayerDisconnected(Client c)
+        private void PlayerDisconnected(Character c)
         {
-            if (c == character.owner.client)
+            if (c == character)
             {
                 EndJob();
                 PlayerManager.Instance().UnsubscribeFromPlayerDisconnectEvent(this.PlayerDisconnected);

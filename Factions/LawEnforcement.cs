@@ -151,13 +151,14 @@ namespace GTA_RP.Factions
         /// <summary>
         /// Loads character info from DB
         /// </summary>
-        private void LoadCharacterInfoFromDB()
+        /*private void LoadCharacterInfoFromDB()
         {
-            DBManager.SelectQuery("SELECT * FROM police_ranks", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
+            DBManager.SelectQuery("SELECT * FROM faction_ranks", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                AddCharacterToFaction(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2));
+                if (reader.GetInt32(3) == (int)this.id)
+                    AddCharacterToFaction(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2));
             }).Execute();
-        }
+        }*/
 
         /// <summary>
         /// Sets a character to jail
@@ -235,9 +236,10 @@ namespace GTA_RP.Factions
         /// </summary>
         public override void Initialize()
         {
+            base.Initialize();
             CreateJailPoint();
             InitializeRanks();
-            LoadCharacterInfoFromDB();
+            //LoadCharacterInfoFromDB();
             LoadTicketsFromDB();
             LoadJailedCharactersFromDB();
             InitializeJailTimer();
@@ -270,16 +272,6 @@ namespace GTA_RP.Factions
             return 0;
         }
 
-        public override string GetRankText(Character character)
-        {
-            if (IsCharacterPartOfFaction(character))
-            {
-                Rank rank = GetRankForCharacter(character);
-                return rank.name;
-            }
-
-            return "Police Officer";
-        }
 
         /// <summary>
         /// Returns chat color for the law enforcement

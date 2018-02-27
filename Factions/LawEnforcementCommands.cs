@@ -16,12 +16,26 @@ namespace GTA_RP.Factions
 
     class LawEnforcementCommands : Script
     {
+        private bool IsCharacterValid(Character character)
+        {
+            if (character != null && character.factionID == FactionI.LAW_ENFORCEMENT) return true;
+            return false;
+        }
+
         [Command("arrest")]
         public void ArrestCharacter(Client client, int characterId, int time, string reason)
         {
             Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
-            if (character != null && character.factionID == FactionI.LAW_ENFORCEMENT)
+            if (IsCharacterValid(character))
                 FactionManager.Instance().LawEnforcement().ArrestCharacter(character, characterId, time, reason);
+        }
+
+        [Command("givefine")]
+        public void GiveTicketToCharacter(Client client, int characterId, int fee, string reason)
+        {
+            Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
+            if (IsCharacterValid(character))
+                FactionManager.Instance().LawEnforcement().FineCharacter(character, characterId, reason, fee);
         }
     }
 }

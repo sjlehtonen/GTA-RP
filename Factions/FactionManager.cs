@@ -14,8 +14,10 @@ namespace GTA_RP.Factions
 
         public FactionManager()
         {
-             RegisterFaction(new Civilian(FactionI.CIVILIAN, "Civilian", 50, 205, 50));
-             RegisterFaction(new LawEnforcement(FactionI.LAW_ENFORCEMENT, "Law enforcement", 0, 102, 204));
+            RegisterFaction(new Civilian(FactionI.CIVILIAN, "Civilian", 50, 205, 50));
+            RegisterFaction(new LawEnforcement(FactionI.LAW_ENFORCEMENT, "Law enforcement", 0, 102, 204));
+            RegisterFaction(new FireDepartment(FactionI.FIREMAN, "Fire department", 209, 33, 56));
+            RegisterFaction(new FirstResponder(FactionI.FIRST_RESPONDER, "First responder", 219, 107, 141));
         }
 
         /// <summary>
@@ -24,7 +26,10 @@ namespace GTA_RP.Factions
         public void InitializeFactions()
         {
             foreach (Faction faction in factions.Values)
+            {
+                API.shared.consoleOutput("[Factions] Initialized faction \"" + faction.name + "\"");
                 faction.Initialize();
+            }
         }
 
         /// <summary>
@@ -53,6 +58,8 @@ namespace GTA_RP.Factions
         }
 
         public LawEnforcement LawEnforcement() { return factions.Get(FactionI.LAW_ENFORCEMENT) as LawEnforcement; }
+        public FireDepartment FireDepartment() { return factions.Get(FactionI.FIREMAN) as FireDepartment;  }
+        public FirstResponder FirstResponder() { return factions.Get(FactionI.FIRST_RESPONDER) as FirstResponder;  }
 
         /// <summary>
         /// Handles the on duty command for character's faction

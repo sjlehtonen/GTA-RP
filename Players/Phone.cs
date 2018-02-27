@@ -353,9 +353,9 @@ namespace GTA_RP
         /// Stops the phone call when player disconnects
         /// </summary>
         /// <param name="c">Client</param>
-        private void PlayerDisconnectedEvent(Client c)
+        private void PlayerDisconnectedEvent(Character c)
         {
-            if (c == this.owner.owner.client)
+            if (c == this.owner)
             {
                 if (this.phoneCallActive || this.isCalling)
                     this.HangUpCall();

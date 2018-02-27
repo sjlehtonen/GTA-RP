@@ -15,12 +15,19 @@ using GTA_RP.Items;
 
 namespace GTA_RP
 {
-    public delegate void OnPlayerDisconnectDelegate(Client c);
+    public delegate void OnPlayerDisconnectDelegate(Character character);
+    public delegate void OnCharacterDeathDelegate(Character character, NetHandle entityKiller, int weapon);
 
     struct Position
     {
         public Vector3 pos;
         public Vector3 rot;
+
+        public Position(Vector3 pos, Vector3 rot)
+        {
+            this.pos = pos;
+            this.rot = rot;
+        }
     }
 
     /// <summary>
@@ -30,6 +37,7 @@ namespace GTA_RP
     class PlayerManager : Singleton<PlayerManager>
     {
         private event OnPlayerDisconnectDelegate OnPlayerDisconnectEvent;
+        private event OnCharacterDeathDelegate OnCharacterDeathEvent;
 
         private int accountCreationId = 0;
         public int textMessageId { get; private set; }
@@ -92,21 +100,10 @@ namespace GTA_RP
         /// </summary>
         private void InitStartCameraPositions()
         {
-            Position p;
-            p.pos = new Vector3(-1136.09, -58.34853, 44.20825);
-            p.rot = new Vector3(0, 0, -134.8262);
-
-            Position p2;
-            p2.pos = new Vector3(3346.998, 5183.969, 15.35839);
-            p2.rot = new Vector3(0, 0, -86.46388);
-
-            Position p3;
-            p3.pos = new Vector3(465.9247, 5594.497, 781.0376);
-            p3.rot = new Vector3(0, 0, 13.70422);
-
-            Position p5;
-            p5.pos = new Vector3(-545.1541, 4471.583, 60.59504);
-            p5.rot = new Vector3(0, 0, 112.1356);
+            Position p = new Position(new Vector3(-1136.09, -58.34853, 44.20825), new Vector3(0, 0, -134.8262));
+            Position p2 = new Position(new Vector3(3346.998, 5183.969, 15.35839), new Vector3(0, 0, -86.46388));
+            Position p3 = new Position(new Vector3(465.9247, 5594.497, 781.0376), new Vector3(0, 0, 13.70422));
+            Position p5 = new Position(new Vector3(-545.1541, 4471.583, 60.59504), new Vector3(0, 0, 112.1356));
 
             startCameraPositions.Add(p);
             startCameraPositions.Add(p2);
@@ -230,13 +227,19 @@ namespace GTA_RP
         /// <param name="reason">Disconnect reason</param>
         public void HandlePlayerDisconnect(Client player, String reason)
         {
-            if (OnPlayerDisconnectEvent != null)
-                OnPlayerDisconnectEvent.Invoke(player);
+            if (OnPlayerDisconnectEvent != null && IsClientUsingCharacter(player))
+                OnPlayerDisconnectEvent.Invoke(GetActiveCharacterForClient(player));
 
             Player p = GetPlayerByClient(player);
 
             if (p != null)
                 this.players.Remove(GetPlayerByClient(player));
+        }
+
+        public void HandlePlayerDeath(Client player, NetHandle entityKiller, int weapon)
+        {
+            if (OnCharacterDeathEvent != null && IsClientUsingCharacter(player))
+                OnCharacterDeathEvent.Invoke(GetActiveCharacterForClient(player), entityKiller, weapon);
         }
 
         /// <summary>
@@ -626,6 +629,16 @@ namespace GTA_RP
         public void UnsubscribeFromPlayerDisconnectEvent(OnPlayerDisconnectDelegate d)
         {
             OnPlayerDisconnectEvent -= d;
+        }
+
+        public void SubscribeToCharacterDeathEvent(OnCharacterDeathDelegate d)
+        {
+            OnCharacterDeathEvent += d;
+        }
+
+        public void UnsubcsriveFromCharacterDeathEvent(OnCharacterDeathDelegate d)
+        {
+            OnCharacterDeathEvent -= d;
         }
 
         /// <summary>

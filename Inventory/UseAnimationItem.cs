@@ -54,14 +54,45 @@ namespace GTA_RP.Items
             this.useRotFemale = new Vector3(float.Parse(rotSplit2[0], CultureInfo.InvariantCulture), float.Parse(rotSplit2[1], CultureInfo.InvariantCulture), float.Parse(rotSplit2[2], CultureInfo.InvariantCulture));
         }
 
-        public override void AddedToInventory(Character owner)
+        /// <summary>
+        /// Method that is ran before equipping item
+        /// If returns yes, then item will be equipped
+        /// </summary>
+        /// <returns>Yes if equipping can continue, otherwise false</returns>
+        protected virtual bool EquipItem(Character user)
         {
-
+            return true;
         }
 
-        public override void RemovedFromInventory(Character owner)
+        /// <summary>
+        /// Method that is ran before unequipping item
+        /// If returns yes, then item will be unequipped
+        /// </summary>
+        /// <returns>Yes if unequipping can continue, otherwise false</returns>
+        protected virtual bool UnEquipItem(Character user)
         {
+            return true;
+        }
 
+        protected void StopAnimationAndDetachItem(Character user)
+        {
+            user.SetEquippedItem(null);
+            user.StopAnimation();
+            equipped = false;
+            API.shared.deleteEntity(entity);
+        }
+
+        public bool IsEquipped()
+        {
+            return equipped;
+        }
+
+        public void ForceUnequip(Character user)
+        {
+            if (equipped)
+            {
+                this.StopAnimationAndDetachItem(user);
+            }
         }
 
         public override void Use(Character user)
@@ -70,17 +101,22 @@ namespace GTA_RP.Items
             {
                 if (!equipped)
                 {
-                    user.PlayAnimation((int)(AnimationFlags.Loop | AnimationFlags.OnlyAnimateUpperBody), this.animDict, this.animName);
-                    entity = API.shared.createObject(entityId, user.position, new Vector3(0, 0, 0));
-                    if (user.gender == 0) user.AttachObject(entity, bone.ToString(), this.usePosMan, this.useRotMan);
-                    else user.AttachObject(entity, bone.ToString(), this.usePosFemale, this.useRotFemale);
-                    equipped = true;
+                    if (this.EquipItem(user))
+                    {
+                        user.PlayAnimation((int)(AnimationFlags.Loop | AnimationFlags.OnlyAnimateUpperBody), this.animDict, this.animName);
+                        entity = API.shared.createObject(entityId, user.position, new Vector3(0, 0, 0));
+                        if (user.gender == 0) user.AttachObject(entity, bone.ToString(), this.usePosMan, this.useRotMan);
+                        else user.AttachObject(entity, bone.ToString(), this.usePosFemale, this.useRotFemale);
+                        equipped = true;
+                        user.SetEquippedItem(this);
+                    }
                 }
                 else
                 {
-                    user.StopAnimation();
-                    equipped = false;
-                    API.shared.deleteEntity(entity);
+                    if (this.UnEquipItem(user))
+                    {
+                        this.StopAnimationAndDetachItem(user);
+                    }
                 }
             }
         }
