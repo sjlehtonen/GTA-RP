@@ -115,5 +115,11 @@ namespace GTA_RP.Admin
         {
             createFactionVehicle(client, "1", "LSPD");
         }
+
+        [Command("tenginea")]
+        public void ToggleEngineA(Client client)
+        {
+            API.setVehicleEngineStatus(API.getPlayerVehicle(client), true);
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace GTA_RP.Factions
 
         private void InitializeRanks()
         {
-
+            this.AddRank(0, "Fire Officer", 600);
         }
 
         public override void Initialize()

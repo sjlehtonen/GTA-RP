@@ -96,6 +96,7 @@ namespace GTA_RP
             if (c.factionID != FactionI.CIVILIAN) c.UpdateFactionRankText(FactionManager.Instance().GetRankTextForCharacter(c), 255, 255, 255);
 
             API.shared.triggerClientEvent(c.owner.client, "EVENT_TOGGLE_HUD_ON");
+            PlayerManager.Instance().ToggleMinimapForPlayer(c.owner.client, true);
         }
     }
 }

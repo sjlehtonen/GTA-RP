@@ -66,11 +66,11 @@ namespace GTA_RP.Factions
         /// </summary>
         private void InitializeRanks()
         {
-            AddRank(0, "Police Officer I");
-            AddRank(1, "Police Officer II");
-            AddRank(2, "Traffic Police");
-            AddRank(3, "Detective");
-            AddRank(4, "Chief of Police");
+            AddRank(0, "Police Officer I", 500);
+            AddRank(1, "Police Officer II", 1000);
+            AddRank(2, "Traffic Police", 1200);
+            AddRank(3, "Detective", 2000);
+            AddRank(4, "Chief of Police", 4000);
         }
 
         /// <summary>
@@ -148,17 +148,6 @@ namespace GTA_RP.Factions
 
         private void OnExitCheckpoint(Checkpoint point, Character character) { }
 
-        /// <summary>
-        /// Loads character info from DB
-        /// </summary>
-        /*private void LoadCharacterInfoFromDB()
-        {
-            DBManager.SelectQuery("SELECT * FROM faction_ranks", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
-            {
-                if (reader.GetInt32(3) == (int)this.id)
-                    AddCharacterToFaction(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2));
-            }).Execute();
-        }*/
 
         /// <summary>
         /// Sets a character to jail
@@ -239,7 +228,6 @@ namespace GTA_RP.Factions
             base.Initialize();
             CreateJailPoint();
             InitializeRanks();
-            //LoadCharacterInfoFromDB();
             LoadTicketsFromDB();
             LoadJailedCharactersFromDB();
             InitializeJailTimer();
@@ -348,11 +336,12 @@ namespace GTA_RP.Factions
             }
         }
 
+
         /// <summary>
         /// Handles on duty command for law enforcement players
         /// </summary>
         /// <param name="c">Character object</param>
-        override public void HandleOnDutyCommand(Character c)
+        public override void HandleOnDutyCommand(Character c)
         {
             if (IsCharacterPartOfFaction(c))
             {

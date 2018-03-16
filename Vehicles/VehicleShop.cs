@@ -157,6 +157,7 @@ namespace GTA_RP.Vehicles
                 availableVehicles.ForEach(x => prices.Add(vehiclePrice[x]));
                 API.shared.triggerClientEvent(character.owner.client, "EVENT_CHARACTER_ENTER_VEHICLE_SHOP", id, availableVehicles, prices, vehiclePosition, vehicleRotation);
                 API.shared.triggerClientEvent(character.owner.client, "EVENT_SET_LOGIN_SCREEN_CAMERA", cameraPosition, cameraRotation);
+                PlayerManager.Instance().ToggleMinimapForPlayer(character.client, false);
             }
         }
 
@@ -172,6 +173,7 @@ namespace GTA_RP.Vehicles
                 TeleportPlayerOutOfShop(character);
                 API.shared.triggerClientEvent(character.owner.client, "EVENT_CHARACTER_EXIT_VEHICLE_SHOP");
                 API.shared.triggerClientEvent(character.owner.client, "EVENT_REMOVE_CAMERA");
+                PlayerManager.Instance().ToggleMinimapForPlayer(character.client, true);
             }
         }
 

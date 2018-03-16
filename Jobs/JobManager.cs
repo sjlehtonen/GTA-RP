@@ -32,7 +32,6 @@ namespace GTA_RP.Jobs
     /// </summary>
     class JobManager : Singleton<JobManager>
     {
-        private static JobManager _instance = null;
         private List<JobPickUpCheckpoint> jobPickupPoints = new List<JobPickUpCheckpoint>();
         private Dictionary<int, Job> jobsForCharacterId = new Dictionary<int, Job>();
         private Dictionary<int, JobInfo> jobInfo = new Dictionary<int, JobInfo>();
@@ -91,6 +90,7 @@ namespace GTA_RP.Jobs
             SetupPaydayTimer();
             AddJob(typeof(System.Object), 0, "Unemployed", 255, 255, 255, 0, "Unemployed");
             AddJob(typeof(TrashJob), 1, "Trash Collector", 255, 255, 255, 2500, "A job where you drive a garbage truck around and pick up trash");
+            AddJob(typeof(UnderwaterScavengerJob), 2, "Waste Cleaner", 255, 255, 255, 2600, "A job where you find underwater waste and deliver it for disposal");
         }
 
 
@@ -184,7 +184,7 @@ namespace GTA_RP.Jobs
                     {
                         JobInfo job = GetInfoForJobWithId(character.job);
                         character.SetMoney(character.money + job.salary);
-                        API.shared.sendNotificationToPlayer(character.client, "You earned $" + job.salary.ToString() + " from your payday!");
+                        character.SendNotification("You earned $" + job.salary.ToString() + " from your payday!");
                     }
                 }
             }
@@ -289,10 +289,27 @@ namespace GTA_RP.Jobs
             if (DoesCharacterHaveJob(c))
             {
                 Job j = jobsForCharacterId.Get(c.ID);
+                if (j == null) return false;
                 if (j.isActive) return true;
             }
 
             return false;
+        }
+
+        private void InitEvents()
+        {
+            PlayerManager.Instance().SubscribeToCharacterDeathEvent(this.CharacterDiedEventHandler);
+            PlayerManager.Instance().SubscribeToPlayerDisconnectEvent(this.CharacterDisconnectedEventHandler);
+        }
+
+        private void CharacterDiedEventHandler(Character character, NetHandle killer, int weapon)
+        {
+            this.StopJobForCharacter(character);
+        }
+
+        private void CharacterDisconnectedEventHandler(Character character)
+        {
+            this.StopJobForCharacter(character);
         }
         
 
@@ -315,21 +332,19 @@ namespace GTA_RP.Jobs
         /// <param name="c">Character to stop job for</param>
         public void StopJobForCharacter(Character c)
         {
-            if (DoesCharacterHaveJob(c))
+            if (IsJobActiveForCharacter(c))
             {
                 Job j = jobsForCharacterId.Get(c.ID);
-                if (j.isActive)
-                    j.EndJob();
+                if (j.isActive) j.EndJob();
             }
         }
 
-        public JobManager()
+
+
+        public void Initialize()
         {
-            if (_instance == null)
-            {
-                _instance = this;
-                 InitJobs();
-            }
+            InitJobs();
+            InitEvents();
         }
 
         /// <summary>
@@ -353,6 +368,7 @@ namespace GTA_RP.Jobs
         public void InitJobPickupPoints()
         {
             this.CreateJobPickupPointForJob(1, -574.9212f, -1779.259f, 22.47824f);
+            this.CreateJobPickupPointForJob(2, 503.6493f, -3124.747f, 6.069793f);
         }
     }
 }

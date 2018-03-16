@@ -70,6 +70,7 @@
     <Compile Include="Factions\FireDepartment.cs" />
     <Compile Include="Factions\FirstResponder.cs" />
     <Compile Include="Factions\RankedFaction.cs" />
+    <Compile Include="Factions\TaxiDriver.cs" />
     <Compile Include="Houses\HouseMarket.cs" />
     <Compile Include="Inventory\Ammo.cs" />
     <Compile Include="Inventory\FishingRodItem.cs" />
@@ -85,10 +86,13 @@
     <Compile Include="Inventory\UseAnimationItem.cs" />
     <Compile Include="Inventory\Weapon.cs" />
     <Compile Include="Jobs\JobPickUpCheckpoint.cs" />
+    <Compile Include="Jobs\UnderwaterScavengerJob.cs" />
+    <Compile Include="Jobs\VehicleJob.cs" />
     <Compile Include="Map\FishingHandler.cs" />
     <Compile Include="Map\FishingZone.cs" />
     <Compile Include="Map\MapManager.cs" />
     <Compile Include="Misc\Checkpoint.cs" />
+    <Compile Include="Misc\GTRPTimer.cs" />
     <Compile Include="Misc\LootTable.cs" />
     <Compile Include="Misc\Singleton.cs" />
     <Compile Include="Players\Character.cs" />

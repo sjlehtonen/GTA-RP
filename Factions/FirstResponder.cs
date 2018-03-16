@@ -11,7 +11,7 @@ using System.Timers;
 
 namespace GTA_RP.Factions
 {
-    class FirstResponder : FireDepartment
+    class FirstResponder : RankedFaction
     {
         public FirstResponder(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
 
@@ -27,7 +27,7 @@ namespace GTA_RP.Factions
 
         private void InitializeRanks()
         {
-            this.AddRank(0, "Medical Officer");
+            AddRank(0, "Medical Officer", 100);
         }
 
         public override void Initialize()

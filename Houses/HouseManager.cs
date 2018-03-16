@@ -69,6 +69,11 @@ namespace GTA_RP
         {
             houseMarket = new HouseMarket();
         }
+
+        private void InitEvents()
+        {
+            PlayerManager.Instance().SubscribeToPlayerDisconnectEvent(this.OnPlayerDisconnect);
+        }
         
 
         /// <summary>
@@ -125,9 +130,16 @@ namespace GTA_RP
         }
 
         // Check if character is in any house and if it is, then remove it upon disconnect
-        private void OnPlayerDisconnect()
+        private void OnPlayerDisconnect(Character character)
         {
-
+            foreach (House h in this.ownedHouses)
+            {
+                if (h.HasOccupant(character))
+                {
+                    h.RemoveOccupant(character);
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -668,6 +680,7 @@ namespace GTA_RP
             LoadHousesFromDB();
             InitBuildings();
             InitHouseMarket();
+            InitEvents();
         }
 
         /// <summary>

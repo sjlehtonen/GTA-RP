@@ -46,8 +46,15 @@ namespace GTA_RP.Map
 
         public void Initialize()
         {
+            this.InitializeClock();
             this.InitializeMinuteTimer();
             this.fishingHandler.InitializeFishingSpots();
+        }
+
+        private void InitializeClock()
+        {
+            TimeSpan time = DateTime.Now.TimeOfDay;
+            API.shared.setTime(time.Hours, time.Minutes);
         }
 
         /// <summary>
@@ -83,7 +90,9 @@ namespace GTA_RP.Map
         /// </summary>
         public void MinuteChanged(System.Object source, ElapsedEventArgs args)
         {
-            OnMinuteChangeEvent.Invoke(DateTime.Now.TimeOfDay);
+            TimeSpan time = DateTime.Now.TimeOfDay;
+            API.shared.setTime(time.Hours, time.Minutes);
+            OnMinuteChangeEvent.Invoke(time);
             minuteTimer.Enabled = true;
         }
 

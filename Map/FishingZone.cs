@@ -101,7 +101,6 @@ namespace GTA_RP.Map
         {
             if (!this.active)
             {
-                API.shared.consoleOutput("Spawned fishpoint!");
                 this.active = true;
                 this.checkpoint = new Checkpoint(new Vector3(fishingSpot.x, fishingSpot.y, fishingSpot.z), this.CharacterEnteredSpot, this.CharacterExitedSpot, 1, 2.0f, 66, 179, 244);
                 this.amountOfFish = this.random.Next(5, 27);
@@ -168,6 +167,7 @@ namespace GTA_RP.Map
         public void CharacterExitedSpot(Checkpoint spot, Character character)
         {
             // Stop fishing if not already stopped
+            this.StopFishing(character);
         }
 
         private void FishingTimerTick(System.Object source, ElapsedEventArgs args, Character character)
@@ -190,6 +190,7 @@ namespace GTA_RP.Map
 
             // Set character rotation
             character.client.rotation = new Vector3(this.fishingSpot.rotX, this.fishingSpot.rotY, this.fishingSpot.rotZ);
+
         }
 
         /// <summary>

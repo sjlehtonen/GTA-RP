@@ -51,6 +51,7 @@ namespace GTA_RP.Events
         /// </summary>
         private void InitEvents()
         {
+            // TODO: change to use character
             RegisterEvent("EVENT_REQUEST_ENTER_HOUSE", HouseManager.Instance(), "RequestEnterHouse");
             RegisterEvent("EVENT_REQUEST_EXIT_HOUSE", HouseManager.Instance(), "RequestExitHouse");
             RegisterEvent("EVENT_REQUEST_CREATE_ACCOUNT", PlayerManager.Instance(), "RequestCreateAccount");

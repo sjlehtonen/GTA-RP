@@ -357,9 +357,10 @@ CREATE TABLE IF NOT EXISTS `characters` (
 -- Dumping data for table gta_rp.characters: ~3 rows (approximately)
 /*!40000 ALTER TABLE `characters` DISABLE KEYS */;
 INSERT INTO `characters` (`id`, `player_id`, `first_name`, `last_name`, `faction_id`, `player_model`, `money`, `job`, `phone_number`, `spawn_house_id`) VALUES
-	(0, 0, 'John', 'Thomson', 1, 'Barry', 833445, 0, '4695300', 6),
-	(1, 0, 'Jane', 'Cheng', 2, 'MovPrem01SFY', 1292374, 1, '1325993', -1),
-	(2, 0, 'Jane', 'Thomson', 1, 'Bevhills01AFY', 50, 1, '3411699', -1);
+	(0, 0, 'John', 'Thomson', 1, 'Barry', 835445, 0, '4695300', 6),
+	(1, 0, 'Jane', 'Cheng', 2, 'MovPrem01SFY', 1289509, 0, '1325993', -1),
+	(2, 0, 'Jane', 'Thomson', 0, 'Bevhills01AFY', 517000, 1, '3411699', -1),
+	(3, 0, 'Sam', 'Thomson', 4, 'Beach02AMY', 200, 0, '9895075', -1);
 /*!40000 ALTER TABLE `characters` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.character_tickets
@@ -386,11 +387,12 @@ CREATE TABLE IF NOT EXISTS `faction_ranks` (
   PRIMARY KEY (`character_id`,`rank_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.faction_ranks: ~1 rows (approximately)
+-- Dumping data for table gta_rp.faction_ranks: ~3 rows (approximately)
 /*!40000 ALTER TABLE `faction_ranks` DISABLE KEYS */;
 INSERT INTO `faction_ranks` (`character_id`, `rank_id`, `modelHash`, `faction_id`) VALUES
 	(0, 3, 'CIASec01SMM', 1),
-	(1, 0, 'a', 2);
+	(1, 0, 'a', 2),
+	(3, 0, 'a', 4);
 /*!40000 ALTER TABLE `faction_ranks` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.fishing_loot
@@ -424,11 +426,14 @@ CREATE TABLE IF NOT EXISTS `fishing_spots` (
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.fishing_spots: ~1 rows (approximately)
+-- Dumping data for table gta_rp.fishing_spots: ~5 rows (approximately)
 /*!40000 ALTER TABLE `fishing_spots` DISABLE KEYS */;
 INSERT INTO `fishing_spots` (`id`, `type`, `posX`, `posY`, `posZ`, `rotX`, `rotY`, `rotZ`, `scale`) VALUES
 	(0, 0, -1836.53, -1261.21, 7.61579, 0, 0, 138.139, 1.15),
-	(1, 0, -1864.17, -1236.67, 7.61578, 0, 0, 47.8286, 1.15);
+	(1, 0, -1864.17, -1236.67, 7.61578, 0, 0, 47.8286, 1.15),
+	(2, 0, -1754.71, -1144.68, 12.0183, 0, 0, -130.559, 1.15),
+	(3, 0, -1769.61, -1137.5, 12.0191, 0, 0, 47.8871, 1.15),
+	(4, 1, 512.055, 3622.03, 30.8067, 0, 0, -10.1821, 1.4);
 /*!40000 ALTER TABLE `fishing_spots` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.houses
@@ -551,21 +556,23 @@ CREATE TABLE IF NOT EXISTS `items` (
   PRIMARY KEY (`owner_id`,`item_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table gta_rp.items: ~7 rows (approximately)
+-- Dumping data for table gta_rp.items: ~14 rows (approximately)
 /*!40000 ALTER TABLE `items` DISABLE KEYS */;
 INSERT INTO `items` (`owner_id`, `item_id`, `amount`) VALUES
 	(0, 0, 1),
 	(0, 1, 1),
 	(0, 2, 1),
-	(0, 5, 10),
+	(0, 5, 11),
 	(0, 6, 2),
-	(0, 7, 10),
+	(0, 7, 13),
 	(1, 0, 1),
 	(1, 1, 1),
-	(1, 2, 7),
-	(1, 5, 2),
+	(1, 2, 3),
+	(1, 5, 4),
 	(1, 7, 2),
-	(2, 1, 2);
+	(2, 1, 2),
+	(2, 2, 1),
+	(2, 6, 4);
 /*!40000 ALTER TABLE `items` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.item_templates

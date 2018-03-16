@@ -64,6 +64,8 @@ namespace GTA_RP.Factions
         /// <returns>Color that is used to display character's name in chat</returns>
         public abstract string GetChatColor();
 
+        public virtual void PaySalary() { }
+
         public Faction(FactionI id, String name, int colorR, int colorG, int colorB)
         {
             this.id = id;

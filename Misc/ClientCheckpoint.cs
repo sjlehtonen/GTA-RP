@@ -52,7 +52,10 @@ namespace GTA_RP
         private void EntityEnteredCheckpoint(ColShape shape, NetHandle entity)
         {
             if (this.onEnterCheckpointEvent != null)
+            {
+                if ((API.shared.getEntityType(entity) == EntityType.Player && entity==this.client.handle) || (API.shared.getEntityType(entity) == EntityType.Vehicle && API.shared.getPlayerVehicle(client) == entity))
                 this.onEnterCheckpointEvent.Invoke(this, entity);
+            }
         }
 
         /// <summary>
@@ -63,7 +66,10 @@ namespace GTA_RP
         private void EntityExitedCheckpoint(ColShape shape, NetHandle entity)
         {
             if (this.onExitCheckpointEvent != null)
-                this.onExitCheckpointEvent.Invoke(this, entity);
+            {
+                if ((API.shared.getEntityType(entity) == EntityType.Player && entity == this.client.handle) || (API.shared.getEntityType(entity) == EntityType.Vehicle && API.shared.getPlayerVehicle(client) == entity))
+                    this.onExitCheckpointEvent.Invoke(this, entity);
+            }
         }
 
         // Public methods

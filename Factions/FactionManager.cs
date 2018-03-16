@@ -2,6 +2,8 @@
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Shared;
 using GTA_RP.Misc;
+using GTA_RP.Map;
+using System;
 
 namespace GTA_RP.Factions
 {
@@ -15,9 +17,10 @@ namespace GTA_RP.Factions
         public FactionManager()
         {
             RegisterFaction(new Civilian(FactionI.CIVILIAN, "Civilian", 50, 205, 50));
-            RegisterFaction(new LawEnforcement(FactionI.LAW_ENFORCEMENT, "Law enforcement", 0, 102, 204));
-            RegisterFaction(new FireDepartment(FactionI.FIREMAN, "Fire department", 209, 33, 56));
-            RegisterFaction(new FirstResponder(FactionI.FIRST_RESPONDER, "First responder", 219, 107, 141));
+            RegisterFaction(new LawEnforcement(FactionI.LAW_ENFORCEMENT, "Law Enforcement", 0, 102, 204));
+            RegisterFaction(new FireDepartment(FactionI.FIREMAN, "Fire Department", 209, 33, 56));
+            RegisterFaction(new FirstResponder(FactionI.FIRST_RESPONDER, "First Responder", 219, 107, 141));
+            RegisterFaction(new TaxiDriver(FactionI.TAXI_DRIVER, "Los Santos Taxi", 244, 191, 66));
         }
 
         /// <summary>
@@ -30,6 +33,14 @@ namespace GTA_RP.Factions
                 API.shared.consoleOutput("[Factions] Initialized faction \"" + faction.name + "\"");
                 faction.Initialize();
             }
+
+            MapManager.Instance().SubscribeToOnMinuteChange(this.PaySalaries);
+        }
+
+        private void PaySalaries(TimeSpan t)
+        {
+            if (t.Minutes == 0)
+                foreach (Faction faction in factions.Values) faction.PaySalary();
         }
 
         /// <summary>

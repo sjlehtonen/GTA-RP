@@ -67,13 +67,13 @@ namespace GTA_RP.Jobs
         /// </summary>
         /// <param name="cp">Checkpoint where player(or vehicle) entered</param>
         /// <param name="e">Handle of entered object</param>
-        abstract public void OnEnterCheckpoint(ClientCheckpoint cp, NetHandle e);
+        virtual public void OnEnterCheckpoint(ClientCheckpoint cp, NetHandle e) { }
 
         /// <summary>
         /// Is triggered when player exits a checkpoint
         /// </summary>
         /// <param name="cp">Checkpoint that player(or vehicle) exited</param>
         /// <param name="e">Handle of object that exited</param>
-        abstract public void OnExitCheckpoint(ClientCheckpoint cp, NetHandle e);
+        virtual public void OnExitCheckpoint(ClientCheckpoint cp, NetHandle e) { }
     }
 }

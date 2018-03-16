@@ -70,7 +70,7 @@ class HUDManager
         this.factionTextColorG = 205;
         this.factionTextColorB = 50;
 
-        this.moneyText = "$ 55002";
+        this.moneyText = "$55002";
 
         // House menu values
         this.selectedHouse = null;
@@ -102,6 +102,13 @@ class HUDManager
         this.contactsMenu = null;
         this.textMessagesNeedUpdate = false;
         this.helpMenuActive = false;
+
+        // Job assist text
+        this.assistText = null;
+        this.assistTextColorR = null;
+        this.assistTextColorG = null;
+        this.assistTextColorB = null;
+        this.assistTextUser = null;
 
         // Faction menus
     }
@@ -169,7 +176,42 @@ class HUDManager
             case 'EVENT_REMOVE_ITEM_FROM_INVENTORY':
                 this.removeItemFromInventory(args[0], args[1]);
                 break;
+
+            case 'EVENT_SET_ASSIST_TEXT':
+                this.setAssistText(args[0], args[1], args[2], args[3], args[4]);
+                break;
+
+            case 'EVENT_REMOVE_ASSIST_TEXT':
+                this.removeAssistText(args[0]);
+                break;
+
+            case 'EVENT_TOGGLE_MINIMAP':
+                this.toggleMinimap(args[0]);
+                break;
         }
+
+    }
+
+    removeAssistText(user) {
+        if (this.assistTextUser == user) {
+            this.assistTextUser = null;
+            this.assistText = null;
+            this.assistTextColorB = null;
+            this.assistTextColorG = null;
+            this.assistTextColorR = null;
+        }
+    }
+
+    setAssistText(colorR, colorG, colorB, text, user) {
+        this.assistTextUser = user;
+        this.assistText = text;
+        this.assistTextColorR = colorR;
+        this.assistTextColorG = colorG;
+        this.assistTextColorB = colorB;
+    }
+
+    toggleMinimap(hide) {
+        API.callNative("DISPLAY_RADAR", hide);
     }
 
     addNewVehicle(id, license, spawned) {
@@ -234,6 +276,7 @@ class HUDManager
 
     updateMoney(newMoney)
     {
+        // add animation
         this.moneyText = "$" + newMoney;
     }
 
@@ -286,6 +329,23 @@ class HUDManager
         this.initItems(itemIds, itemNames, itemCounts, itemDescriptions);
     }
 
+    drawTimeAndAssistText(xPos, yPos)
+    {
+        let time = API.getTime();
+
+        let hours = time.Hours;
+        let minutes = time.Minutes;
+
+        if (minutes.toString().length == 1) minutes = '0' + minutes;
+        if (hours.toString().length == 1) hours = '0' + hours;
+
+        let timeString = hours + ':' + minutes;
+        if (this.assistText != null) timeString += ' | ';
+
+        API.drawText(timeString, xPos * 0.0146, yPos * 0.765, 0.55, 255, 255, 255, 200, 6, 0, false, true, 1000);
+        if (this.assistText != null) API.drawText(this.assistText, xPos * 0.0457, yPos * 0.765, 0.55, this.assistTextColorR, this.assistTextColorG, this.assistTextColorB, 200, 6, 0, false, true, 1000);
+    }
+
     draw()
     {
         if (this.hudActive) {
@@ -298,10 +358,11 @@ class HUDManager
             let yPos = this.screenResolution.Height * 0.809;
             let increment = yPos * 0.036;
 
-            API.drawText(this.characterName, xPos, yPos, 0.8, 255, 255, 255, 255, 1, 0, true, true, 1000);
-            API.drawText(this.factionText, xPos, yPos + increment * 2.3, 0.65, this.factionTextColorR, this.factionTextColorG, this.factionTextColorB, 255, 6, 0, false, true, 1000);
-            API.drawText(this.employmentText, xPos, yPos + increment * 3.4, 0.65, this.employmentTextColorR, this.employmentTextColorG, this.employmentTextColorB, 255, 6, 0, false, true, 1000);
-            API.drawText(this.moneyText, xPos, yPos + increment * 4.7, 0.635, 34, 139, 34, 255, 7, 0, false, true, 1000);
+            this.drawTimeAndAssistText(this.screenResolution.Width, this.screenResolution.Height);
+            API.drawText(this.characterName, xPos, yPos, 0.8, 255, 255, 255, 240, 1, 0, true, true, 1000);
+            API.drawText(this.factionText, xPos, yPos + increment * 2.3, 0.65, this.factionTextColorR, this.factionTextColorG, this.factionTextColorB, 240, 6, 0, false, true, 1000);
+            API.drawText(this.employmentText, xPos, yPos + increment * 3.4, 0.65, this.employmentTextColorR, this.employmentTextColorG, this.employmentTextColorB, 240, 6, 0, false, true, 1000);
+            API.drawText(this.moneyText, xPos, yPos + increment * 4.7, 0.635, 34, 139, 34, 240, 7, 0, false, true, 1000);
         }
     }
 
@@ -360,10 +421,13 @@ class HUDManager
         }
         let item = new Item(id, name, count, description);
         this.items.push(item);
-        let menuItem = API.createMenuItem(name, description);
-        menuItem.SetRightLabel(item.amount.toString());
-        this.itemsMenu.AddItem(menuItem);
-        this.itemMenuItems.push(menuItem);
+
+        if (this.itemsMenu != null) {
+            let menuItem = API.createMenuItem(name, description);
+            menuItem.SetRightLabel(item.amount.toString());
+            this.itemsMenu.AddItem(menuItem);
+            this.itemMenuItems.push(menuItem);
+        }
     }
 
     removeItemFromInventory(id, count) {

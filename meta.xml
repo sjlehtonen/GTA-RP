@@ -37,6 +37,7 @@
     <script src="Factions/LawEnforcementCommands.cs" type="server" lang="csharp" />
     <script src="Factions/FireDepartment.cs" type="server" lang="csharp" />
     <script src="Factions/FirstResponder.cs" type="server" lang="csharp" />
+    <script src="Factions/TaxiDriver.cs" type="server" lang="csharp" />
 
     <script src="Inventory/Ammo.cs" type="server" lang="csharp" />
     <script src="Inventory/Inventory.cs" type="server" lang="csharp" />
@@ -80,6 +81,7 @@
     <script src="Misc/Checkpoint.cs" type="server" lang="csharp" />
     <script src="Misc/Singleton.cs" type="server" lang="csharp" />
     <script src="Misc/LootTable.cs" type="server" lang="csharp" />
+    <script src="Misc/GTRPTimer.cs" type="server" lang="csharp" />
   
     <script src="Database/DBManager.cs" type="server" lang="csharp" />
     <script src="Database/Query.cs" type="server" lang="csharp" />
@@ -92,4 +94,6 @@
     <script src="Jobs/JobManager.cs" type="server" lang="csharp" />
     <script src="Jobs/TrashJob.cs" type="server" lang="csharp" />
     <script src="Jobs/JobPickUpCheckpoint.cs" type="server" lang="csharp" />
+    <script src="Jobs/VehicleJob.cs" type="server" lang="csharp" />
+    <script src="Jobs/UnderwaterScavengerJob.cs" type="server" lang="csharp" />
 </meta>

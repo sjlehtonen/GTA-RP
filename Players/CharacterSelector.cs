@@ -279,7 +279,6 @@ namespace GTA_RP
                     }
                     
                     p.SetActiveCharacter(c);
-
                     this.RemovePlayerFromCharacterSelector(p);
                 }
             }

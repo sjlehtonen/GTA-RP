@@ -14,20 +14,17 @@ using GTA_RP.Vehicles;
 
 namespace GTA_RP.Jobs
 {
-    class TrashJob : CheckpointJob
+    class TrashJob : VehicleJob
     {
         public int jobStage { get; private set; }
-        private const int jobPointCount = 4;
+        private const int jobPointCount = 1;
         private Random rdm = new Random();
-        private Boolean cooldown = false;
-        private Vehicle workVehicle = null;
+
         private Timer trashLoadTimer = new Timer();
         private Timer finishJobTimer = new Timer();
-        private Timer exitVehicleTimer = new Timer();
-        private Timer exitJobCooldownTimer = new Timer();
+
         private ClientCheckpoint currentCheckPoint = null;
 
-        // Fix Z
         /// <summary>
         /// List of trash pickup points
         /// 4 are picked randomly
@@ -68,20 +65,6 @@ namespace GTA_RP.Jobs
         {
             trashLoadTimer.Elapsed += FinishedLoadingTrash;
             finishJobTimer.Elapsed += FinishUnloadingTrash;
-            exitVehicleTimer.Elapsed += ExitVehicleTimerExpire;
-            exitJobCooldownTimer.Elapsed += EnableJob;
-
-            exitVehicleTimer.Interval = 15000;
-            exitVehicleTimer.AutoReset = false;
-
-            exitJobCooldownTimer.Interval = 600000;
-            exitVehicleTimer.AutoReset = false;
-        }
-
-
-        private void EnableJob(System.Object source, ElapsedEventArgs e)
-        {
-            cooldown = true;
         }
 
         /// <summary>
@@ -95,44 +78,11 @@ namespace GTA_RP.Jobs
         }
 
         /// <summary>
-        /// Ran when player exits vehicle
-        /// Starts timer to enter vehicle again
-        /// </summary>
-        /// <param name="c">Client who exited vehicle</param>
-        /// <param name="vHandle">Vehicle handle</param>
-        private void PlayerExitedVehicle(Client c, NetHandle vHandle, int seat)
-        {
-            if (c.handle == character.owner.client.handle && vHandle == workVehicle.handle)
-            {
-                API.shared.sendNotificationToPlayer(character.owner.client, "You have 15 seconds to get back into the work vehicle!");
-                exitVehicleTimer.Start();
-            }
-        }
-
-        /// <summary>
-        /// Ran when player enters vehicle
-        /// Stops the timer to enter vehicle
-        /// </summary>
-        /// <param name="c">Client who entered vehicle</param>
-        /// <param name="vHandle">Vehicle handle</param>
-        private void PlayerEnteredVehicle(Client c, NetHandle vHandle, int seat)
-        {
-            if (c.handle == character.owner.client.handle && vHandle == workVehicle.handle)
-                exitVehicleTimer.Stop();
-        }
-
-        /// <summary>
         /// Cleans up the job when it ends
         /// </summary>
         private void CleanUp()
         {
-            VehicleManager.Instance().UnsubscribeFromVehicleEnterEvent(this.PlayerEnteredVehicle);
-            VehicleManager.Instance().UnsubscribeFromVehicleDestroyedEvent(this.JobVehicleDestroyed);
-            VehicleManager.Instance().UnsubscribeFromVehicleExitEvent(this.PlayerExitedVehicle);
-            this.RemoveAllCheckpoints();
-            this.isActive = false;
             currentCheckPoint = null;
-            workVehicle = null;
             jobStage = 0;
         }
 
@@ -144,34 +94,11 @@ namespace GTA_RP.Jobs
         {
             if (workVehicle.handle == vHandle)
             {
-                API.shared.sendNotificationToPlayer(character.owner.client, "Vehicle destroyed! Task failed!");
+                character.SendNotification("Vehicle destroyed! Task failed!");
                 EndJob();
             }
         }
 
-        /// <summary>
-        /// Checks if player is in work vehicle
-        /// </summary>
-        /// <returns>True if player is in work vehicle, false otherwise</returns>
-        private Boolean IsPlayerInWorkVehicle()
-        {
-            return this.workVehicle.occupants.Contains(character.owner.client);
-        }
-
-        /// <summary>
-        /// Checks if player is in trash master vehicle
-        /// </summary>
-        /// <returns>True if player is in trash master, false otherwise</returns>
-        private Boolean IsPlayerInTrashMaster()
-        {
-            if (this.IsPlayerInVehicle())
-            {
-                if (this.GetPlayerVehicleHash().Equals(API.shared.vehicleNameToModel("Trash")) || this.GetPlayerVehicleHash().Equals(API.shared.vehicleNameToModel("Trash2")))
-                    return true;
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Spawns the trash collection points randomly
@@ -200,7 +127,7 @@ namespace GTA_RP.Jobs
             if (GetCheckpointCount() == 0)
             {
                 this.jobStage = 1;
-                API.shared.sendNotificationToPlayer(character.owner.client, "Task complete! Return to the marked delivery point");
+                character.SendNotification("Task complete! Return to the marked delivery point");
                 this.AddCheckpoint(endPoints.ElementAt(rdm.Next(0, endPoints.Count() - 1)), 1);
             }
         }
@@ -215,8 +142,7 @@ namespace GTA_RP.Jobs
             trashLoadTimer.Interval = 5000;
             trashLoadTimer.Enabled = true;
             currentCheckPoint = cp;
-            API.shared.sendNotificationToPlayer(character.owner.client, "Loading trash...", true);
-            //API.shared.triggerClientEvent(character.client, "EVENT_CREATE_TIMER_BAR", "Test", 5.0f);
+            character.SendNotification("Loading trash...");
         }
 
         /// <summary>
@@ -227,7 +153,7 @@ namespace GTA_RP.Jobs
             workVehicle.freezePosition = true;
             finishJobTimer.Interval = 5000;
             finishJobTimer.Enabled = true;
-            API.shared.sendNotificationToPlayer(character.owner.client, "Unloading trash...", true);
+            character.SendNotification("Unloading trash...");
         }
 
         /// <summary>
@@ -240,7 +166,7 @@ namespace GTA_RP.Jobs
             Timer t = (Timer)source;
             t.Enabled = false;
             workVehicle.freezePosition = false;
-            API.shared.playSoundFrontEnd(character.client, "FLIGHT_SCHOOL_LESSON_PASSED", "HUD_AWARDS");
+            character.PlayFrontendSound("FLIGHT_SCHOOL_LESSON_PASSED", "HUD_AWARDS");
             FinishJob();
         }
 
@@ -251,26 +177,11 @@ namespace GTA_RP.Jobs
         /// </summary>
         public override void StartJob()
         {
-            if (IsPlayerInTrashMaster())
+            if (IsPlayerInCorrectVehicle("garbage truck", "Trash", "Trash2") && !this.IsOnCooldown())
             {
-                if (!cooldown)
-                {
-                    this.jobStage = 0;
-                    RandomizeTrashPoints();
-                    workVehicle = character.owner.client.vehicle;
-                    this.isActive = true;
-                    VehicleManager.Instance().SubscribeToVehicleExitEvent(this.PlayerExitedVehicle);
-                    VehicleManager.Instance().SubscribeToVehicleDestroyedEvent(this.JobVehicleDestroyed);
-                    VehicleManager.Instance().SubscribeToVehicleEnterEvent(this.PlayerEnteredVehicle);
-                }
-                else
-                {
-                    API.shared.sendNotificationToPlayer(character.owner.client, "You recently stopped your job and have to wait before starting again");
-                }
-            }
-            else
-            {
-                API.shared.sendNotificationToPlayer(character.owner.client, "You have to be in a garbage truck to start the job!");
+                base.StartJob();
+                this.jobStage = 0;
+                RandomizeTrashPoints();
             }
         }
 
@@ -279,8 +190,7 @@ namespace GTA_RP.Jobs
         /// </summary>
         public override void EndJob()
         {
-            cooldown = true;
-            exitJobCooldownTimer.Start();
+            base.EndJob();
             CleanUp();
         }
 
@@ -289,7 +199,8 @@ namespace GTA_RP.Jobs
         /// </summary>
         public override void FinishJob()
         {
-            API.shared.sendNotificationToPlayer(character.owner.client, "Job complete! You earned $5500!");
+            base.FinishJob();
+            character.SendNotification("Job complete! You earned $5500!");
             character.SetMoney(character.money + 5500);
             CleanUp();
         }
@@ -303,14 +214,11 @@ namespace GTA_RP.Jobs
         {
             Timer t = (Timer)source;
             t.Enabled = false;
-            API.shared.sendNotificationToPlayer(character.owner.client, "Trash loaded", true);
+            character.SendNotification("Trash loaded");
             this.RemoveCheckpoint(currentCheckPoint);
             currentCheckPoint = null;
-
             workVehicle.freezePosition = false;
-            
-            API.shared.playSoundFrontEnd(character.client, "SELECT", "HUD_LIQUOR_STORE_SOUNDSET");
-
+            character.PlayFrontendSound("SELECT", "HUD_LIQUOR_STORE_SOUNDSET");
             CheckMissionComplete();
         }
 
@@ -323,12 +231,8 @@ namespace GTA_RP.Jobs
         {
             if (IsPlayerInWorkVehicle())
             {
-                Vehicle v = API.shared.getEntityFromHandle<Vehicle>(e);
-
-                if (jobStage == 0)
-                    LoadTrash(cp);
-                else if (jobStage == 1)
-                    UnloadTrash();
+                if (jobStage == 0)  LoadTrash(cp);
+                else if (jobStage == 1) UnloadTrash();
             }
 
         }

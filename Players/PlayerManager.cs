@@ -207,12 +207,18 @@ namespace GTA_RP
             return true;
         }
 
+        public void ToggleMinimapForPlayer(Client player, bool hide)
+        {
+            API.shared.triggerClientEvent(player, "EVENT_TOGGLE_MINIMAP", hide);
+        }
+
         /// <summary>
         /// Handles player connect event
         /// </summary>
         /// <param name="player">Player who connected</param>
         public void HandlePlayerConnect(Client player)
         {
+            ToggleMinimapForPlayer(player, false);
             SetClientStartCameraMode(player, true);
             if (!DoesPlayerHaveAccount(player))
                 OpenCreateAccountMenu(player);

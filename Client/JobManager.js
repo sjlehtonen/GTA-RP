@@ -21,7 +21,8 @@
 
         let item1 = API.createColoredItem("Accept job", description, "#53a828", "#69d831");
         let item2 = API.createColoredItem("Decline job", description, "#b52f20", "#e03a28");
-        let item3 = API.createMenuItem("Salary: " + salary, description);
+        let item3 = API.createMenuItem("Salary", description);
+        item3.SetRightLabel(salary);
 
         item2.Activated.connect((menu, sender) => this.closeJobMenu());
         item1.Activated.connect((menu, sender) => this.acceptJob());

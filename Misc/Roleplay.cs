@@ -50,6 +50,7 @@ namespace GTA_RP
             JobManager.Instance().InitJobPickupPoints();
             ItemManager.Instance().InitializeItems();
             MapManager.Instance().Initialize();
+            JobManager.Instance().Initialize();
 
             FactionManager.Instance().InitializeFactions();
 
