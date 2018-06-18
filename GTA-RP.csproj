@@ -71,6 +71,7 @@
     <Compile Include="Factions\FirstResponder.cs" />
     <Compile Include="Factions\RankedFaction.cs" />
     <Compile Include="Factions\TaxiDriver.cs" />
+    <Compile Include="Factions\TaxiDriverCommands.cs" />
     <Compile Include="Houses\HouseMarket.cs" />
     <Compile Include="Inventory\Ammo.cs" />
     <Compile Include="Inventory\FishingRodItem.cs" />

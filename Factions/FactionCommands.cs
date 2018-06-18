@@ -16,6 +16,24 @@ namespace GTA_RP.Factions
         private float posY;
         private float posZ;
 
+        protected bool IsCharacterValid(Character character, FactionI faction)
+        {
+            if (character != null && character.factionID == faction) return true;
+            return false;
+        }
+
+        protected bool IsCharacterValid(Client client, FactionI faction)
+        {
+            Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
+            return IsCharacterValid(character, faction);
+        }
+
+        protected bool IsCharacterValid(Character character)
+        {
+            if (character != null) return true;
+            return false;
+        }
+
         [Command("srx")]
         public void setRotX(Client c, string rot)
         {

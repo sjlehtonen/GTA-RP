@@ -105,12 +105,10 @@ namespace GTA_RP
         /// <returns>Connection string</returns>
         private String LoadConnectionInfo()
         {
-            FileIniDataParser parser = new FileIniDataParser();
-            IniData data = parser.ReadFile("resources/GTA-RP/Config/Config.ini");
-            string dbName = data["database"]["dbname"];
-            string username = data["database"]["username"];
-            string password = data["database"]["password"];
-            string server = data["database"]["server"];
+            string dbName = ConfigManager.Instance().ReadStringValue("database", "dbname");
+            string username = ConfigManager.Instance().ReadStringValue("database", "username");
+            string password = ConfigManager.Instance().ReadStringValue("database", "password");
+            string server = ConfigManager.Instance().ReadStringValue("database", "server");
             return "Server=" + server + "; database=" + dbName + "; UID=" + username + "; password=" + password;
         }
         

@@ -13,6 +13,7 @@ namespace GTA_RP.Misc
         private Timer timer = new Timer();
         private GTRPTimerDelegate delegateMethod;
         private bool repeat = false;
+        public object data { get; private set; }
 
         private void TimerElapsedMethod(System.Object source, ElapsedEventArgs args)
         {
@@ -21,6 +22,15 @@ namespace GTA_RP.Misc
         }
         public GTRPTimer(GTRPTimerDelegate method, int time, bool repeat = false)
         {
+            this.repeat = repeat;
+            this.delegateMethod = method;
+            this.timer.Interval = time;
+            timer.Elapsed += this.TimerElapsedMethod;
+        }
+
+        public GTRPTimer(GTRPTimerDelegate method, int time, object data, bool repeat = false)
+        {
+            this.data = data;
             this.repeat = repeat;
             this.delegateMethod = method;
             this.timer.Interval = time;

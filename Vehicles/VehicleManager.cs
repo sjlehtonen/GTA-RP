@@ -16,6 +16,9 @@ namespace GTA_RP.Vehicles
     public delegate void OnVehicleExitedDelegate(Client c, NetHandle vehicleHandle, int seat);
     public delegate void OnVehicleEnteredDelegate(Client c, NetHandle vehicleHandle, int seat);
 
+    public delegate void OnVehicleEnteredDelegateCharacter(Character c, NetHandle vehicleHandle, int seat);
+    public delegate void OnVehicleExitedDelegateCharacter(Character c, NetHandle vehicleHandle, int seat);
+
     /// <summary>
     /// Class responsible for handling vehicles
     /// </summary>
@@ -26,6 +29,8 @@ namespace GTA_RP.Vehicles
         private event OnVehicleDestroyedDelegate OnVehicleDestroyedEvent;
         private event OnVehicleExitedDelegate OnVehicleExitedEvent;
         private event OnVehicleEnteredDelegate OnVehicleEnterEvent;
+        private event OnVehicleEnteredDelegateCharacter OnVehicleEnterEventCharacter;
+        private event OnVehicleExitedDelegateCharacter OnVehicleExitedEventCharacter;
 
         private const int buyParkPrice = 10000;
         private const float doorLockDistance = 2.0f;
@@ -86,6 +91,26 @@ namespace GTA_RP.Vehicles
             this.OnVehicleEnterEvent += d;
         }
 
+        public void SubscribeToVehicleEnterEvent(OnVehicleEnteredDelegateCharacter d)
+        {
+            this.OnVehicleEnterEventCharacter += d;
+        }
+
+        public void UnsubscribeFromVehicleEnterEvent(OnVehicleEnteredDelegateCharacter d)
+        {
+            this.OnVehicleEnterEventCharacter -= d;
+        }
+
+        public void SubscribeToVehicleExitEvent(OnVehicleExitedDelegateCharacter d)
+        {
+            this.OnVehicleExitedEventCharacter += d;
+        }
+
+        public void UnsubscribeFromVehicleExitEvent(OnVehicleExitedDelegateCharacter d)
+        {
+            this.OnVehicleExitedEventCharacter -= d;
+        }
+
         /// <summary>
         /// Subscribes a delegate to exit vehicle event
         /// </summary>
@@ -139,7 +164,10 @@ namespace GTA_RP.Vehicles
         private void RunVehicleEnterEvents(Client c, NetHandle vehicle, int seat)
         {
             if (this.OnVehicleEnterEvent != null)
+            {
                 this.OnVehicleEnterEvent.Invoke(c, vehicle, seat);
+                if (PlayerManager.Instance().IsClientUsingCharacter(c)) this.OnVehicleEnterEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(c), vehicle, seat);
+            }
         }
 
         /// <summary>
@@ -225,7 +253,10 @@ namespace GTA_RP.Vehicles
         private void RunVehicleExitEvents(Client c, NetHandle vehicle, int seat)
         {
             if (this.OnVehicleExitedEvent != null)
+            {
                 this.OnVehicleExitedEvent.Invoke(c, vehicle, seat);
+                if (PlayerManager.Instance().IsClientUsingCharacter(c)) this.OnVehicleExitedEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(c), vehicle, seat);
+            }
         }
 
         /// <summary>
@@ -392,8 +423,37 @@ namespace GTA_RP.Vehicles
             NetHandle veh = API.shared.getPlayerVehicle(c.owner.client);
             foreach (RPVehicle v in vehicles)
             {
+                if (v.handle == null) continue;
                 if (v.handle == veh && v.spawned)
                     return v;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Checks whether a vehicle has a RPVehicle object
+        /// So basically if a vehicle is spawned with a command, this will return false
+        /// </summary>
+        /// <param name="vehicle">Vehicle handle</param>
+        /// <returns>True or false</returns>
+        public bool DoesVehicleHandleHaveRPVehicle(NetHandle vehicle)
+        {
+            if (vehicle == null) return false;
+
+            foreach(RPVehicle v in this.vehicles)
+            {
+                if (v.handle == null) continue;
+                if (v.handle == vehicle) return true;
+            }
+            return false;
+        }
+
+        public RPVehicle GetVehicleForHandle(NetHandle vehicle)
+        {
+            foreach (RPVehicle v in this.vehicles)
+            {
+                if (v.handle == null) continue;
+                if (v.handle == vehicle) return v;
             }
             return null;
         }

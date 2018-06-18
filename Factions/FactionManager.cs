@@ -71,6 +71,7 @@ namespace GTA_RP.Factions
         public LawEnforcement LawEnforcement() { return factions.Get(FactionI.LAW_ENFORCEMENT) as LawEnforcement; }
         public FireDepartment FireDepartment() { return factions.Get(FactionI.FIREMAN) as FireDepartment;  }
         public FirstResponder FirstResponder() { return factions.Get(FactionI.FIRST_RESPONDER) as FirstResponder;  }
+        public TaxiDriver TaxiDriver() { return factions.Get(FactionI.TAXI_DRIVER) as TaxiDriver; }
 
         /// <summary>
         /// Handles the on duty command for character's faction

@@ -360,7 +360,7 @@ INSERT INTO `characters` (`id`, `player_id`, `first_name`, `last_name`, `faction
 	(0, 0, 'John', 'Thomson', 1, 'Barry', 835445, 0, '4695300', 6),
 	(1, 0, 'Jane', 'Cheng', 2, 'MovPrem01SFY', 1289509, 0, '1325993', -1),
 	(2, 0, 'Jane', 'Thomson', 0, 'Bevhills01AFY', 517000, 1, '3411699', -1),
-	(3, 0, 'Sam', 'Thomson', 4, 'Beach02AMY', 200, 0, '9895075', -1);
+	(3, 0, 'Sam', 'Thomson', 4, 'Beach02AMY', 8590360, 0, '9895075', -1);
 /*!40000 ALTER TABLE `characters` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.character_tickets
@@ -572,7 +572,9 @@ INSERT INTO `items` (`owner_id`, `item_id`, `amount`) VALUES
 	(1, 7, 2),
 	(2, 1, 2),
 	(2, 2, 1),
-	(2, 6, 4);
+	(2, 5, 2),
+	(2, 6, 4),
+	(2, 7, 2);
 /*!40000 ALTER TABLE `items` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.item_templates
@@ -985,7 +987,8 @@ CREATE TABLE IF NOT EXISTS `text_messages` (
 INSERT INTO `text_messages` (`id`, `sender_number`, `receiver_number`, `time`, `message`) VALUES
 	(0, '1325993', '1325993', '19:53:00', 'test'),
 	(1, '3411699', '3411699', '23:34:00', 'asdadasd s'),
-	(2, '3411699', '3411699', '01:18:00', 'asda213');
+	(2, '3411699', '3411699', '01:18:00', 'asda213'),
+	(5, '9895075', '9895075', '21:18:00', 'asd');
 /*!40000 ALTER TABLE `text_messages` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.vehicles
@@ -1005,7 +1008,7 @@ CREATE TABLE IF NOT EXISTS `vehicles` (
   `color1` int(11) DEFAULT NULL,
   `color2` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- Dumping data for table gta_rp.vehicles: ~7 rows (approximately)
 /*!40000 ALTER TABLE `vehicles` DISABLE KEYS */;
@@ -1017,7 +1020,8 @@ INSERT INTO `vehicles` (`id`, `ownedId`, `factionId`, `model`, `park_x`, `park_y
 	(5, -1, 1, -2007026063, -1049, -864, 5, 0, -3, -122, '', 0, 63, 63),
 	(6, 0, 0, 719660200, -223, -1168, 23, 1, 0, -92, 'LS6X3USS', 0, 41, 55),
 	(7, 1, 0, 719660200, -679, 291, 81, -2, -3, -103, 'LSYXE325', 0, 127, 28),
-	(8, 1, 0, -956048545, -223, -1168, 23, 1, 0, -92, 'LSS2HL6K', 0, 135, 89);
+	(8, 1, 0, -956048545, -223, -1168, 23, 1, 0, -92, 'LSS2HL6K', 0, 135, 89),
+	(9, 3, 0, -956048545, -652, 276, 81, 0, -2, -82, 'LSMC6GD5', 0, 1, 1);
 /*!40000 ALTER TABLE `vehicles` ENABLE KEYS */;
 
 -- Dumping structure for table gta_rp.vehicle_prices

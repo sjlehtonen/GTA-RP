@@ -38,6 +38,7 @@
     <script src="Factions/FireDepartment.cs" type="server" lang="csharp" />
     <script src="Factions/FirstResponder.cs" type="server" lang="csharp" />
     <script src="Factions/TaxiDriver.cs" type="server" lang="csharp" />
+    <script src="Factions/TaxiDriverCommands.cs" type="server" lang="csharp" />
 
     <script src="Inventory/Ammo.cs" type="server" lang="csharp" />
     <script src="Inventory/Inventory.cs" type="server" lang="csharp" />
@@ -82,6 +83,7 @@
     <script src="Misc/Singleton.cs" type="server" lang="csharp" />
     <script src="Misc/LootTable.cs" type="server" lang="csharp" />
     <script src="Misc/GTRPTimer.cs" type="server" lang="csharp" />
+    <script src="Misc/ConfigManager.cs" type="server" lang="csharp" />
   
     <script src="Database/DBManager.cs" type="server" lang="csharp" />
     <script src="Database/Query.cs" type="server" lang="csharp" />
