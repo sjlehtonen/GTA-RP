@@ -21,6 +21,8 @@ namespace GTA_RP.Chat
         private string loocTextColor = "~#4ea0e8~";
         private string oocTextColor = "~#4ebfe8~";
         private string announcementTextColor = "~#f72c3a~";
+        private string advertisementTextColor = "~#217f2a";
+        private int advertisementPrice = 3000;
         private Boolean oocEnabled = true;
 
         public ChatManager()
@@ -28,6 +30,12 @@ namespace GTA_RP.Chat
             API.onChatMessage += this.handleChatMessage;
         }
 
+        /// <summary>
+        /// Sends a message related to phone call
+        /// </summary>
+        /// <param name="c">Character</param>
+        /// <param name="message">Message</param>
+        /// <param name="modifier">Modifier</param>
         private void sendPhoneChatMessage(Character c, string message, string modifier = "")
         {
             if (c.phone.phoneCallActive)
@@ -42,6 +50,14 @@ namespace GTA_RP.Chat
             }
         }
 
+        /// <summary>
+        /// Sends a distance chat message
+        /// </summary>
+        /// <param name="player">Client</param>
+        /// <param name="message">Message</param>
+        /// <param name="distance">Distance</param>
+        /// <param name="modifier">Modifier</param>
+        /// <param name="modifier2">Modifier 2</param>
         private void sendDistanceChatMessage(Client player, string message, float distance, string modifier="", string modifier2="")
         {
             if (PlayerManager.Instance().IsClientUsingCharacter(player))
@@ -53,6 +69,13 @@ namespace GTA_RP.Chat
             }
         }
 
+        /// <summary>
+        /// Sends distance message with color
+        /// </summary>
+        /// <param name="player">Player</param>
+        /// <param name="message">Message</param>
+        /// <param name="distance">Distance</param>
+        /// <param name="color">Message color</param>
         private void sendDistanceCommandMessageWithColor(Client player, string message, float distance, string color)
         {
             if (PlayerManager.Instance().IsClientUsingCharacter(player))
@@ -91,7 +114,27 @@ namespace GTA_RP.Chat
         public void handleLoocCommand(Client player, string text)
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            this.sendDistanceCommandMessageWithColor(player, "[LOOC] " + c.fullName + ": " + text, normalChatDistance, loocTextColor);
+            if (c != null) this.sendDistanceCommandMessageWithColor(player, "[LOOC] " + c.fullName + ": " + text, normalChatDistance, loocTextColor);
+        }
+
+        [Command("advertisement", GreedyArg = true, Alias = "adv", Description = "Sends an advertisement for $3000")]
+        public void handleAdvertisementCommand(Client player, string text)
+        {
+            if (PlayerManager.Instance().IsClientUsingCharacter(player))
+            {
+                Character sender = PlayerManager.Instance().GetActiveCharacterForClient(player);
+                if (sender.money >= advertisementPrice)
+                {
+                    List<Character> activeCharacters = PlayerManager.Instance().GetActiveCharacters();
+                    activeCharacters.ForEach(x => API.sendChatMessageToPlayer(x.client, advertisementTextColor, "[ADVERTISEMENT] " + text));
+                    sender.SetMoney(sender.money - advertisementPrice);
+                    sender.SendSuccessNotification("Advertisement sent!");
+                }
+                else
+                {
+                    sender.SendErrorNotification("You don't have enough money to send a notification.");
+                }
+            }
         }
 
 
@@ -101,8 +144,11 @@ namespace GTA_RP.Chat
             if (this.oocEnabled)
             {
                 Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-                List<Client> clients = API.getAllPlayers();
-                clients.ForEach(x => API.sendChatMessageToPlayer(x, oocTextColor, "[OOC] " + c.fullName + ": " + text));
+                if (c != null)
+                {
+                    List<Client> clients = API.getAllPlayers();
+                    clients.ForEach(x => API.sendChatMessageToPlayer(x, oocTextColor, "[OOC] " + c.fullName + ": " + text));
+                }
             }
             else
             {
@@ -114,7 +160,7 @@ namespace GTA_RP.Chat
         public void handleToggleOocCommand(Client player)
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c.owner.adminLevel != 0)
+            if (c != null && c.owner.adminLevel != 0)
             {
                 this.oocEnabled = !this.oocEnabled;
                 if (this.oocEnabled)
@@ -132,7 +178,7 @@ namespace GTA_RP.Chat
         public void handleAnnounceCommand(Client player, string text)
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c.owner.adminLevel != 0)
+            if (c != null && c.owner.adminLevel != 0)
             {
                 List<Client> clients = API.getAllPlayers();
                 clients.ForEach(x => API.sendChatMessageToPlayer(x, announcementTextColor, "[ANNOUNCEMENT] " + text));
@@ -143,14 +189,14 @@ namespace GTA_RP.Chat
         public void handleMeCommand(Client player, string text)
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            this.sendDistanceCommandMessageWithColor(player, "** " + c.fullName + " " + text, normalChatDistance, meTextColor);
+            if (c != null) this.sendDistanceCommandMessageWithColor(player, "** " + c.fullName + " " + text, normalChatDistance, meTextColor);
         }
 
         [Command("it", GreedyArg = true)]
         public void handleItCommand(Client player, string text)
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            this.sendDistanceCommandMessageWithColor(player, "** " + text + " **", normalChatDistance, meTextColor);
+            if (c != null) this.sendDistanceCommandMessageWithColor(player, "** " + text + " **", normalChatDistance, meTextColor);
         }
     }
 }

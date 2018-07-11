@@ -8,6 +8,10 @@ using System.Timers;
 namespace GTA_RP.Misc
 {
     public delegate void GTRPTimerDelegate(GTRPTimer timer);
+
+    /// <summary>
+    /// Wrapper for the .NET timer class
+    /// </summary>
     public class GTRPTimer
     {
         private Timer timer = new Timer();

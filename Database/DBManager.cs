@@ -1,10 +1,7 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
-using System.Collections.Generic;
 using GTA_RP.Misc;
 using GTA_RP.Database;
-using IniParser;
-using IniParser.Model;
 
 namespace GTA_RP
 {
@@ -105,10 +102,10 @@ namespace GTA_RP
         /// <returns>Connection string</returns>
         private String LoadConnectionInfo()
         {
-            string dbName = ConfigManager.Instance().ReadStringValue("database", "dbname");
-            string username = ConfigManager.Instance().ReadStringValue("database", "username");
-            string password = ConfigManager.Instance().ReadStringValue("database", "password");
-            string server = ConfigManager.Instance().ReadStringValue("database", "server");
+            string dbName = ConfigManager.ReadStringValue("database", "dbname");
+            string username = ConfigManager.ReadStringValue("database", "username");
+            string password = ConfigManager.ReadStringValue("database", "password");
+            string server = ConfigManager.ReadStringValue("database", "server");
             return "Server=" + server + "; database=" + dbName + "; UID=" + username + "; password=" + password;
         }
         

@@ -47,6 +47,9 @@ namespace GTA_RP
         private Dictionary<string, int> characterGenderDictionary = new Dictionary<string, int>();
         private CharacterSelector characterSelector = new CharacterSelector();
 
+        // Death things
+        private Dictionary<int, GTRPTimer> characterDeathTimers = new Dictionary<int, GTRPTimer>();
+
 
         private static Random Rnd = new Random();
         DBManager dbCon = DBManager.Instance();
@@ -242,10 +245,33 @@ namespace GTA_RP
                 this.players.Remove(GetPlayerByClient(player));
         }
 
+        private void HandleCharacterDeathTimerExpire(GTRPTimer timer)
+        {
+
+        }
+
+        private void HandleCharacterDeath(Character c, NetHandle entityKiller, int weapon)
+        {
+            // Override the character death to block spawning to hospital
+            // Create death timer
+            // characterDeathTimers[c.ID] = new GTRPTimer(HandleCharacterDeathTimerExpire, (int)TimeSpan.FromMinutes(3).TotalMilliseconds);
+
+            OnCharacterDeathEvent.Invoke(c, entityKiller, weapon);
+        }
+
+        /// <summary>
+        /// Is ran when player dies
+        /// </summary>
+        /// <param name="player">Player</param>
+        /// <param name="entityKiller">Killer</param>
+        /// <param name="weapon">Weapon</param>
+        /// <param name="args">Cancel args</param>
         public void HandlePlayerDeath(Client player, NetHandle entityKiller, int weapon)
         {
             if (OnCharacterDeathEvent != null && IsClientUsingCharacter(player))
-                OnCharacterDeathEvent.Invoke(GetActiveCharacterForClient(player), entityKiller, weapon);
+            {
+                HandleCharacterDeath(GetActiveCharacterForClient(player), entityKiller, weapon);
+            }
         }
 
         /// <summary>

@@ -46,4 +46,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 Config/Config.ini
+obj/
+bin/
 bfg.jar
+

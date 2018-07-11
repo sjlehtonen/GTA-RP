@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GTA_RP.Misc;
-using GTA_RP.Map;
-using IniParser;
+﻿using IniParser;
 using IniParser.Model;
 
 
-namespace GTA_RP.Database
+namespace GTA_RP.Misc
 {
-    class ConfigManager : Singleton<ConfigManager>
+    /// <summary>
+    /// Class for accessing config file
+    /// </summary>
+    class ConfigManager
     {
-        private FileIniDataParser parser;
-        private IniData data;
+        static private FileIniDataParser parser = new FileIniDataParser();
+        static private IniData data = null;
         private const string location = "resources/GTA-RP/Config/Config.ini";
-        public ConfigManager()
-        {
-            parser = new FileIniDataParser();
-            data = parser.ReadFile(location);
-        }
+
 
         /// <summary>
         /// Reads a string value from a section with a key
@@ -28,8 +20,9 @@ namespace GTA_RP.Database
         /// <param name="section">Section</param>
         /// <param name="key">Key</param>
         /// <returns></returns>
-        public string ReadStringValue(string section, string key)
+        static public string ReadStringValue(string section, string key)
         {
+            if (data == null) data = parser.ReadFile(location);
             return data[section][key];
         }
     }

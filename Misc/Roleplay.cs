@@ -36,6 +36,7 @@ namespace GTA_RP
             //API.onPlayerConnected += PlayerManager.Instance().HandlePlayerConnect;
             API.onPlayerDisconnected += PlayerManager.Instance().HandlePlayerDisconnect;
             API.onPlayerFinishedDownload += PlayerManager.Instance().HandlePlayerConnect;
+            API.onPlayerDeath += PlayerManager.Instance().HandlePlayerDeath;
 
 
             PlayerManager.Instance().InitAccountCreationId();

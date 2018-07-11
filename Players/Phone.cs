@@ -355,7 +355,7 @@ namespace GTA_RP
         /// <param name="c">Client</param>
         private void PlayerDisconnectedEvent(Character c)
         {
-            if (c == this.owner)
+            if (c == this.owner) // ?
             {
                 if (this.phoneCallActive || this.isCalling)
                     this.HangUpCall();
@@ -702,7 +702,6 @@ namespace GTA_RP
         /// <param name="number">Number to receive call from</param>
         public void ReceiveCall(String number)
         {
-            API.shared.consoleOutput("Receive call");
             String caller = number;
 
             if (HasContactForNumber(number))
@@ -733,7 +732,6 @@ namespace GTA_RP
                 }
                 else
                 {
-                    API.shared.consoleOutput("CallPhone");
                     characterToCall.phone.ReceiveCall(this.phoneNumber);
                     this.SetPhoneCalling();
                     String caller = number;
@@ -758,7 +756,6 @@ namespace GTA_RP
                 Character characterCaller = PlayerManager.Instance().GetCharacterWithPhoneNumber(this.callerNumber);
                 if (characterCaller != null)
                 {
-                    API.shared.consoleOutput("Pickup call");
                     if (characterCaller.phone.isCalling)
                     {
                         characterCaller.phone.SetCallActive(this.phoneNumber);
@@ -774,7 +771,6 @@ namespace GTA_RP
         /// </summary>
         public void CloseCall()
         {
-            API.shared.consoleOutput("close call");
             SetCallInactive();
             API.shared.triggerClientEvent(owner.owner.client, "EVENT_PHONE_CALL_ENDED");
             API.shared.sendNotificationToPlayer(owner.owner.client, "Call ended");
@@ -786,7 +782,6 @@ namespace GTA_RP
         /// </summary>
         public void HangUpCall()
         {
-            API.shared.consoleOutput("Hangup call");
             if (this.isCalling)
             {
                 Character callingChar = PlayerManager.Instance().GetCharacterWithPhoneNumber(this.callingNumber);

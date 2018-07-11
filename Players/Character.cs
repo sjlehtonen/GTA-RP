@@ -284,19 +284,37 @@ namespace GTA_RP
             }
         }
 
+        /// <summary>
+        /// Gets the amount of certain item
+        /// </summary>
+        /// <param name="itemId">Item id</param>
+        /// <returns></returns>
         public int GetAmountOfItems(int itemId)
         {
             return inventory.GetItemCount(itemId);
         }
 
+        /// <summary>
+        /// Gets all items from the inventory
+        /// </summary>
+        /// <returns>Items</returns>
         public List<Item> GetAllItemsFromInventory()
         {
             return this.inventory.GetAlItems();
         }
 
+        /// <summary>
+        /// Sets character model
+        /// </summary>
+        /// <param name="modelName">Model name</param>
         public void SetModel(string modelName)
         {
             this.client.setSkin(API.shared.pedNameToModel(modelName));
+        }
+
+        public void SetRagdoll(int duration, int ragDollType)
+        {
+            // API.shared.
         }
 
         /// <summary>

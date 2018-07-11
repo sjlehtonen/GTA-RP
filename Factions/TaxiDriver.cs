@@ -40,16 +40,31 @@ namespace GTA_RP.Factions
         private const int taxiFee = 100;
         private const int taxiStartingFee = 200;
 
+        /// <summary>
+        /// Stops taxi meter for character in taxi
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <param name="taxiId">Taxi id</param>
         private void StopTaxiMeterForCharacterInTaxi(Character character, int taxiId)
         {
             GetTaxiMeterForCharacterInTaxi(character, taxiId).taxiTimer.Stop();
         }
 
+        /// <summary>
+        /// Restarts a taxi meter for character in car
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <param name="taxiId">Taxi id</param>
         private void RestartTaxiMeterForCharacterInTaxi(Character character, int taxiId)
         {
             GetTaxiMeterForCharacterInTaxi(character, taxiId).taxiTimer.Start();
         }
 
+        /// <summary>
+        /// Removes taxi meter from character in taxi
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <param name="taxiId">Taxi id</param>
         private void RemoveTaxiMeterFromCharacterInTaxi(Character character, int taxiId)
         {
             StopTaxiMeterForCharacterInTaxi(character, taxiId);
@@ -69,6 +84,12 @@ namespace GTA_RP.Factions
             return false;
         }
 
+        /// <summary>
+        /// When character enters taxi, this is ran
+        /// </summary>
+        /// <param name="c">Character</param>
+        /// <param name="vehicleHandle">Vehicle handle</param>
+        /// <param name="seat">Seat</param>
         private void CharacterEnteredTaxi(Character c, NetHandle vehicleHandle, int seat)
         {
             if (VehicleManager.Instance().DoesVehicleHandleHaveRPVehicle(vehicleHandle))
@@ -81,6 +102,12 @@ namespace GTA_RP.Factions
             }
         }
 
+        /// <summary>
+        /// When character exits taxi, this is ran
+        /// </summary>
+        /// <param name="c">Character</param>
+        /// <param name="vehicleHandle">Vehicle handle</param>
+        /// <param name="seat">Seat</param>
         private void CharacterExitedTaxi(Character c, NetHandle vehicleHandle, int seat)
         {
             if (VehicleManager.Instance().DoesVehicleHandleHaveRPVehicle(vehicleHandle))
@@ -93,6 +120,12 @@ namespace GTA_RP.Factions
             }
         }
 
+        /// <summary>
+        /// Gets taxi meter for character in a taxi
+        /// </summary>
+        /// <param name="c">Character</param>
+        /// <param name="taxiId">Taxi id</param>
+        /// <returns></returns>
         private TaxiMeter GetTaxiMeterForCharacterInTaxi(Character c, int taxiId)
         {
             if (!taxiMeters.ContainsKey(taxiId)) return null;
@@ -100,6 +133,12 @@ namespace GTA_RP.Factions
             return taxiMeters[taxiId][c.ID];
         }
 
+        /// <summary>
+        /// Gets taxi fee for character in car
+        /// </summary>
+        /// <param name="c">Character</param>
+        /// <param name="taxiId">Taxi id</param>
+        /// <returns></returns>
         private int GetTaxiFeeForCharacterInTaxi(Character c, int taxiId)
         {
             return taxiMeters[taxiId][c.ID].money;
@@ -110,6 +149,10 @@ namespace GTA_RP.Factions
             return "~y~";
         }
 
+        /// <summary>
+        /// Pays a taxi meter fee in a car
+        /// </summary>
+        /// <param name="payer">Payer</param>
         public void PayTaxiMeterFee(Character payer)
         {
             // Give money to driver
@@ -140,16 +183,30 @@ namespace GTA_RP.Factions
             }
         }
 
+        /// <summary>
+        /// Sets taxi meter for character in a car
+        /// </summary>
+        /// <param name="character">Character</param>
+        /// <param name="carId">Car id</param>
         public void SetTaxiMeterHUDForCharacter(Character character, int carId)
         {
             character.TriggerEvent("EVENT_SET_ASSIST_TEXT", 237, 195, 68, "Taxi Fee: $"+GetTaxiFeeForCharacterInTaxi(character, carId), 1); // replace 1000 with taxi fee
         }
 
+        /// <summary>
+        /// Disables the taxi meter for character
+        /// </summary>
+        /// <param name="character">Character</param>
         public void DisableTaxiMeterHUDForCharacter(Character character)
         {
             character.TriggerEvent("EVENT_REMOVE_ASSIST_TEXT", 1);
         }
 
+        /// <summary>
+        /// Sets taxi meter for character
+        /// </summary>
+        /// <param name="setter">Setter</param>
+        /// <param name="character">Character to who the meter is set</param>
         public void SetTaxiMeterForCharacter(Character setter, Character character)
         {
             // Has to be in same car
@@ -181,6 +238,11 @@ namespace GTA_RP.Factions
             taxiMeters[taxiVehicle.id][character.ID].taxiTimer.Start();
         }
 
+        /// <summary>
+        /// Stops a taxi meter for character
+        /// </summary>
+        /// <param name="setter">Setter</param>
+        /// <param name="character">Character</param>
         public void StopTaxiMeterForCharacter(Character setter, Character character)
         {
             RPVehicle v = VehicleManager.Instance().GetVehicleForCharacter(setter);

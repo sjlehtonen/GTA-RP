@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Admin\AdminCommands.cs" />
     <Compile Include="Chat\ChatManager.cs" />
+    <Compile Include="Misc\ConfigManager.cs" />
     <Compile Include="Database\NormalQuery.cs" />
     <Compile Include="Database\Query.cs" />
     <Compile Include="Database\SelectQuery.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Players\Phone.cs" />
     <Compile Include="Vehicles\VehicleShop.cs" />
     <Compile Include="Weather\WeatherManager.cs" />
+    <Compile Include="Web\WebSocketManager.cs" />
     <Content Include="Client\AccountManager.js" />
     <Content Include="Client\CameraManager.js" />
     <Compile Include="Database\DBManager.cs" />
