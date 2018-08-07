@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
-using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Misc;
 
 namespace GTA_RP
 {
+    /// <summary>
+    /// Struct to represent teleport destination with id,
+    /// location and name.
+    /// </summary>
     public struct TeleportDestination
     {
         public int id;
@@ -17,6 +17,9 @@ namespace GTA_RP
         public String name;
     }
 
+    /// <summary>
+    /// Class for teleport
+    /// </summary>
     public class Teleport : Checkpoint
     {
         private float range = 2.0f;

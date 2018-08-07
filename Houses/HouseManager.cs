@@ -60,16 +60,19 @@ namespace GTA_RP
         /// <summary>
         /// Constructor of HouseManager
         /// </summary>
-        public HouseManager()
-        {
+        public HouseManager() { }
 
-        }
-
+        /// <summary>
+        /// Initializes the housing market.
+        /// </summary>
         private void InitHouseMarket()
         {
             houseMarket = new HouseMarket();
         }
 
+        /// <summary>
+        /// Initialize all event subscriptions.
+        /// </summary>
         private void InitEvents()
         {
             PlayerManager.Instance().SubscribeToPlayerDisconnectEvent(this.OnPlayerDisconnect);

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
@@ -14,11 +10,14 @@ namespace GTA_RP.Misc
     public delegate void OnEnterCheckpointDelegate(Checkpoint checkpoint, Character c);
     public delegate void OnExitCheckpointDelegate(Checkpoint checkpoint, Character c);
 
+    /// <summary>
+    /// Class that represents a checkpoint (usually those red things on the ground)
+    /// </summary>
     public class Checkpoint
     {
         public Marker entrance { get; private set; }
         public SphereColShape shape { get; private set; }
-        private float range = 1.05f;
+        private const float range = 1.05f;
         private event OnEnterCheckpointDelegate OnEnterCheckPointEvent;
         private event OnExitCheckpointDelegate OnExitCheckPointEvent;
 
@@ -68,7 +67,6 @@ namespace GTA_RP.Misc
         /// </summary>
         public void DestroyCheckpoint()
         {
-            API.shared.consoleOutput("Deleted checkpoint!");
             entrance.delete();
             API.shared.deleteColShape(shape);
             shape = null;
@@ -95,7 +93,7 @@ namespace GTA_RP.Misc
             if (OnEnterCheckPointEvent != null)
             {
                 Player p = PlayerManager.Instance().PlayerForHandle(entity);
-                if (p != null) OnEnterCheckPointEvent.Invoke(this, p.activeCharacter);
+                if (p != null) { OnEnterCheckPointEvent.Invoke(this, p.activeCharacter); }
             }
         }
 
@@ -109,7 +107,7 @@ namespace GTA_RP.Misc
             if (OnExitCheckPointEvent != null)
             {
                 Player p = PlayerManager.Instance().PlayerForHandle(entity);
-                if (p != null) OnExitCheckPointEvent.Invoke(this, p.activeCharacter);
+                if (p != null) { OnExitCheckPointEvent.Invoke(this, p.activeCharacter); }
             }
         }
     }

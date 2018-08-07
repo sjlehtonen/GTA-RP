@@ -34,6 +34,43 @@ namespace GTA_RP.Factions
             return false;
         }
 
+        /// <summary>
+        /// Handles /duty command and directs it to the right class
+        /// </summary>
+        /// <param name="player"></param>
+        [Command("duty")]
+        public void toggleDuty(Client player)
+        {
+            if (PlayerManager.Instance().IsClientUsingCharacter(player))
+            {
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
+                FactionManager.Instance().HandleDutyCommand(character);
+            }
+        }
+
+
+
+        /// <summary>
+        /// TEST COMMANDS FOR DEBUGGING ITEM DIRECTIONS
+        /// NOT USED IN ANYTHING REAL
+        /// </summary>
+
+        /*
+        [Command("testr")]
+        public void testObject(Client player)
+        {
+            if (PlayerManager.Instance().IsClientUsingCharacter(player))
+            {
+                API.shared.consoleOutput("rotX: " + this.rotX + " - rotY: " + this.rotY + " - rotZ: " + this.rotZ);
+                API.shared.consoleOutput("posX: " + this.posX + " - posY: " + this.posY + " - posZ: " + this.posZ);
+                API.deleteEntity(entity);
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
+                character.PlayAnimation((int)(AnimationFlags.AllowPlayerControl | AnimationFlags.Loop | AnimationFlags.OnlyAnimateUpperBody), "amb@world_human_stand_fishing@base", "base");
+                entity = API.shared.createObject(1338703913, character.position, new Vector3(0, 0, 0));
+                character.AttachObject(entity, "57005", new Vector3(posX,posY,posZ), new Vector3(rotX,rotY,rotZ));
+            }
+        }
+
         [Command("srx")]
         public void setRotX(Client c, string rot)
         {
@@ -74,36 +111,10 @@ namespace GTA_RP.Factions
         {
             this.posZ = float.Parse(rot);
             this.testObject(c);
-        }
+        }*/
 
-        /// <summary>
-        /// Handles /duty command and directs it to the right class
-        /// </summary>
-        /// <param name="player"></param>
-        [Command("duty")]
-        public void toggleDuty(Client player)
-        {
-            if (PlayerManager.Instance().IsClientUsingCharacter(player))
-            {
-                Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
-                FactionManager.Instance().HandleDutyCommand(character);
-            }
-        }
-
-        [Command("testr")]
-        public void testObject(Client player)
-        {
-            if (PlayerManager.Instance().IsClientUsingCharacter(player))
-            {
-                API.shared.consoleOutput("rotX: " + this.rotX + " - rotY: " + this.rotY + " - rotZ: " + this.rotZ);
-                API.shared.consoleOutput("posX: " + this.posX + " - posY: " + this.posY + " - posZ: " + this.posZ);
-                API.deleteEntity(entity);
-                Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
-                character.PlayAnimation((int)(AnimationFlags.AllowPlayerControl | AnimationFlags.Loop | AnimationFlags.OnlyAnimateUpperBody), "amb@world_human_stand_fishing@base", "base");
-                entity = API.shared.createObject(1338703913, character.position, new Vector3(0, 0, 0));
-                character.AttachObject(entity, "57005", new Vector3(posX,posY,posZ), new Vector3(rotX,rotY,rotZ));
-            }
-        }
+        ////
+        ////
 
     }
 }

@@ -1,16 +1,17 @@
 ﻿using System;
 using GTA_RP.Factions;
-using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Shared.Math;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using System.Collections.Generic;
 using GTA_RP.Items;
 
 namespace GTA_RP
 {
+    /// <summary>
+    /// TODO
+    /// </summary>
     public enum StatusEffect
     {
         HANDCUFFED = 0
@@ -59,7 +60,7 @@ namespace GTA_RP
             set
             {
                 moneyPrivate = value;
-                API.shared.triggerClientEvent(owner.client, "EVENT_UPDATE_MONEY", moneyPrivate.ToString());
+                this.TriggerEvent("EVENT_UPDATE_MONEY", moneyPrivate.ToString());
             }
         }
 
@@ -143,7 +144,9 @@ namespace GTA_RP
             var second = obj as Character;
 
             if (second == null)
+            {
                 return false;
+            }
             
             return this.ID.Equals(second.ID);
         }
@@ -198,7 +201,10 @@ namespace GTA_RP
         public void SetMoney(int amount, bool updateDatabase = true)
         {
             this.money = amount;
-            if (updateDatabase) PlayerManager.Instance().UpdateCharacterMoneyToDatabase(this, this.money);
+            if (updateDatabase)
+            {
+                PlayerManager.Instance().UpdateCharacterMoneyToDatabase(this, this.money);
+            }
         }
 
         /// <summary>
@@ -231,16 +237,26 @@ namespace GTA_RP
             bool ret = this.inventory.AddItem(item, updateDB);
             if (ret)
             {
-                if (updateUI) API.shared.triggerClientEvent(this.client, "EVENT_ADD_ITEM_TO_INVENTORY", item.id, item.name, item.count, item.description);
+                if (updateUI)
+                {
+                    this.TriggerEvent("EVENT_ADD_ITEM_TO_INVENTORY", item.id, item.name, item.count, item.description);
+                }
             }
             return ret;
         }
 
+        /// <summary>
+        /// Checks if character has an item with this id and count
+        /// </summary>
+        /// <param name="id">Item id</param>
+        /// <param name="count">Count</param>
+        /// <returns>True if has item with count, otherwise false</returns>
         public bool HasItemWithid(int id, int count)
         {
             return inventory.DoesContainItemWithIdAndCount(id, count);
         }
 
+        /// Wrapper for trigger event
         public void TriggerEvent(string name, params object[] args)
         {
             this.client.triggerEvent(name, args);
@@ -262,11 +278,19 @@ namespace GTA_RP
             this.SendNotification(message);
             this.PlayFrontendSound("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
         }
+
+        public void SendPictureNotification(string message, string picture, string senderName, string senderNumber)
+        {
+            API.shared.sendPictureNotificationToPlayer(client, message, picture, 0, 1, senderName, senderNumber);
+        }
         
         public void RemoveItemFromInventory(int itemId, int count, bool updateDB, bool updateUI = true)
         {
             this.inventory.RemoveItemWithId(itemId, count);
-            if (updateUI) this.client.triggerEvent("EVENT_REMOVE_ITEM_FROM_INVENTORY", itemId, count); // check
+            if (updateUI)
+            {
+                this.TriggerEvent("EVENT_REMOVE_ITEM_FROM_INVENTORY", itemId, count); // confirm working
+            }
         }
 
         public void UnequipItemWithName(string name)
@@ -326,7 +350,9 @@ namespace GTA_RP
         public void PlayAnimation(int flag, string animDict, string animName)
         {
             if (this.owner != null)
+            {
                 API.shared.playPlayerAnimation(this.owner.client, flag, animDict, animName);
+            }
         }
 
         public void StopAnimation()
@@ -347,7 +373,9 @@ namespace GTA_RP
         public bool IsAvailable()
         {
             if (!client.isAiming && !client.inFreefall && !client.isInCover && !client.isParachuting && !client.isReloading && !client.isShooting && !client.dead)
+            {
                 return true;
+            }
             return false;
         }
 
@@ -361,7 +389,9 @@ namespace GTA_RP
         public void AttachObject(NetHandle entity, string bone, Vector3 posOffset, Vector3 rotOffset)
         {
             if (this.owner != null)
+            {
                 API.shared.attachEntityToEntity(entity, owner.client.handle, bone, posOffset, rotOffset);
+            }
         }
 
         public bool IsUsingPhone()

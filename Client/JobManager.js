@@ -1,4 +1,8 @@
-﻿class JobManager {
+﻿/**
+ * Class for managing the jobs system.
+ * Things like job menus should be put here.
+ */
+class JobManager {
     constructor() {
         this.jobId = null;
         this.jobMenu = null;

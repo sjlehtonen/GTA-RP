@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GTA_RP.Misc;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
-using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using System.Timers;
-using GTA_RP.Items;
 
 namespace GTA_RP.Map
 {
     public delegate void OnTimeMinuteChangedEvent(TimeSpan time);
 
+    /// <summary>
+    /// Class reponsible for managing things on the map such as fishing zones, blips on minimap etc.
+    /// </summary>
     class MapManager : Singleton<MapManager>
     {
         public MapManager() { }

@@ -5,13 +5,11 @@
     <assembly ref="MySql.Data.dll"/>
     <assembly ref="INIFileParser.dll"/>
   
-    <script src="client/EventResponder.js" type="client" lang="javascript" />
     <script src="client/CameraManager.js" type="client" lang="javascript" />
     <script src="client/CheckpointManager.js" type="client" lang="javascript" />
     <script src="client/HouseManager.js" type="client" lang="javascript" />
     <script src="client/HUDManager.js" type="client" lang="javascript" />
     <script src="client/AccountManager.js" type="client" lang="javascript" />
-    <script src="client/HelpMenu.js" type="client" lang="javascript" />
     <script src="client/VehicleShopManager.js" type="client" lang="javascript" />
     <script src="client/JobManager.js" type="client" lang="javascript" />
     <script src="client/HouseMarketManager.js" type="client" lang="javascript" />
@@ -55,7 +53,6 @@
     <script src="Inventory/ShovelItem.cs" type="server" lang="csharp" />
   
     <script src="Admin/AdminCommands.cs" type="server" lang="csharp" />
-    <script src="PedManager/PedManager.cs" type="server" lang="csharp" />
   
     <script src="Vehicles/RPVehicle.cs" type="server" lang="csharp" />
     <script src="Vehicles/VehicleManager.cs" type="server" lang="csharp" />

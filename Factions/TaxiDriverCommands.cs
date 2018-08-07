@@ -1,11 +1,13 @@
-﻿using System;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
+﻿using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 
 namespace GTA_RP.Factions
 {
 
+    /// <summary>
+    /// Commands for the taxi driver faction.
+    /// I have been too lazy to implement the GUI for this.
+    /// </summary>
     class TaxiDriverCommands : FactionCommands
     {
 

@@ -9,6 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 
+/// <summary>
+/// TODO: Refactor this whole class and move everything phone related
+/// to PhoneManager class or something like that.
+/// </summary>
 namespace GTA_RP
 {
     /// <summary>
@@ -109,10 +113,13 @@ namespace GTA_RP
             if (c == this.owner.owner.client)
             {
                 if (phoneState == PhoneState.PHONE_CALLING)
+                {
                     SetPhoneCallingAnimation();
-
+                }
                 else if (phoneState == PhoneState.PHONE_READING)
+                {
                     SetPhoneUsingAnimation();
+                }
             }
         }
 
@@ -126,9 +133,13 @@ namespace GTA_RP
             if (c == this.owner.owner.client)
             {
                 if (phoneState == PhoneState.PHONE_CALLING)
+                {
                     SetPhoneCallingAnimation();
+                }
                 else if (phoneState == PhoneState.PHONE_READING)
+                {
                     SetPhoneUsingAnimation();
+                }
             }
         }
 
@@ -151,9 +162,13 @@ namespace GTA_RP
         {
             entity = API.shared.createObject(-1038739674, owner.position, new Vector3(0, 0, 0));
             if (!IsMale())
+            {
                 owner.AttachObject(entity, "57005", femaleUsingPhonePosition, femaleUsingPhoneRotation);
+            }
             else
+            {
                 owner.AttachObject(entity, "57005", maleUsingPhonePosition, maleUsingPhoneRotation);
+            }
         }
 
         /// <summary>
@@ -163,9 +178,13 @@ namespace GTA_RP
         {
             entity = API.shared.createObject(-1038739674, owner.position, new Vector3(0, 0, 0));
             if (!IsMale())
+            {
                 owner.AttachObject(entity, "57005", femaleCallingPhonePosition, femaleCallingPhoneRotation);
+            }
             else
+            {
                 owner.AttachObject(entity, "57005", maleCallingPhonePosition, maleCallingPhoneRotation);
+            }
         }
 
         /// <summary>
@@ -192,7 +211,7 @@ namespace GTA_RP
         /// <returns>True if owner is male, otherwise false</returns>
         private Boolean IsMale()
         {
-            if (gender == 0) return true;
+            if (gender == 0) { return true; }
             return false;
         }
 
@@ -276,7 +295,9 @@ namespace GTA_RP
         private Boolean ValidatePlayerVehicle()
         {
             if (owner.isInVehicle && owner.vehicleClass != 13 && owner.vehicleClass != 9)
+            {
                 return true;
+            }
             return false;
         }
 
@@ -358,9 +379,13 @@ namespace GTA_RP
             if (c == this.owner) // ?
             {
                 if (this.phoneCallActive || this.isCalling)
+                {
                     this.HangUpCall();
+                }
                 else if (this.phoneState == PhoneState.PHONE_READING)
+                {
                     this.DeletePhone();
+                }
             }
             VehicleManager.Instance().UnsubscribeFromVehicleEnterEvent(this.OwnerEnteredVehicle);
             VehicleManager.Instance().UnsubscribeFromVehicleExitEvent(this.OwnerExitedVehicle);
@@ -379,7 +404,7 @@ namespace GTA_RP
             simulateCallTimer.AutoReset = false;
             simulateCallTimer.Elapsed += SimulatePhoneCallTimerEvent;
             simulateCallTimer.Enabled = true;
-            API.shared.triggerClientEvent(this.owner.owner.client, "EVENT_PHONE_CALL_STARTED", number);
+            this.owner.TriggerEvent("EVENT_PHONE_CALL_STARTED", number);
         }
 
         /// <summary>
@@ -402,7 +427,7 @@ namespace GTA_RP
 
         public bool IsUsingPhone()
         {
-            if (phoneState != PhoneState.PHONE_NOT_USING) return true;
+            if (phoneState != PhoneState.PHONE_NOT_USING) { return true; }
             return false;
         }
 
@@ -454,9 +479,13 @@ namespace GTA_RP
             foreach(TextMessage m in receivedMessages)
             {
                 if (HasContactForNumber(m.senderNumber))
+                {
                     senders.Add(GetNameForNumber(m.senderNumber));
+                }
                 else
+                {
                     senders.Add(m.senderNumber);
+                }
             }
 
             return senders;
@@ -534,10 +563,14 @@ namespace GTA_RP
         public void SetPhoneCalling()
         {
             if (phoneState == PhoneState.PHONE_CALLING)
+            {
                 return;
+            }
 
             if (phoneState != PhoneState.PHONE_CALLING)
+            {
                 RecreatePhone(PhoneState.PHONE_CALLING);
+            }
 
             SetPhoneCallingAnimation();
             phoneState = PhoneState.PHONE_CALLING;
@@ -549,7 +582,9 @@ namespace GTA_RP
         public void SetPhoneNotUsing()
         {
             if (phoneState == PhoneState.PHONE_NOT_USING)
+            {
                 return;
+            }
 
             SetPhoneNotUsingAnimation();
 
@@ -571,7 +606,7 @@ namespace GTA_RP
             a.number = number;
             addressBook.Add(a);
             this.AddContactToDatabase(a);
-            API.shared.sendNotificationToPlayer(this.owner.owner.client, "Contact added!");
+            this.owner.SendNotification("Contact added!");
         }
 
         /// <summary>
@@ -659,16 +694,16 @@ namespace GTA_RP
             if (HasContactForNumber(senderNumber))
             {
                 String senderName = GetNameForNumber(senderNumber);
-                API.shared.sendPictureNotificationToPlayer(this.owner.owner.client, text, "CHAR_DEFAULT", 0, 1, senderName, senderNumber);
-                API.shared.triggerClientEvent(this.owner.owner.client, "EVENT_NEW_TEXT_MESSAGE_RECEIVED", id, senderName, text, time);
+                this.owner.SendPictureNotification(text, "CHAR_DEFAULT", senderName, senderNumber);
+                this.owner.TriggerEvent("EVENT_NEW_TEXT_MESSAGE_RECEIVED", id, senderName, text, time);
             }
             else
             {
-                API.shared.sendPictureNotificationToPlayer(this.owner.owner.client, text, "CHAR_DEFAULT", 0, 1, senderNumber, "");
-                API.shared.triggerClientEvent(this.owner.owner.client, "EVENT_NEW_TEXT_MESSAGE_RECEIVED", id, senderNumber, text, time);
+                this.owner.SendPictureNotification(text, "CHAR_DEFAULT", senderNumber, "");
+                this.owner.TriggerEvent("EVENT_NEW_TEXT_MESSAGE_RECEIVED", id, senderNumber, text, time);
             }
 
-            API.shared.sendNotificationToPlayer(this.owner.owner.client, "You got a new text message!");
+            this.owner.SendNotification("You got a new text message!");
 
         }
 
@@ -705,10 +740,12 @@ namespace GTA_RP
             String caller = number;
 
             if (HasContactForNumber(number))
+            {
                 caller = GetNameForNumber(number);
+            }
 
             this.callerNumber = number;
-            API.shared.triggerClientEvent(this.owner.owner.client, "EVENT_RECEIVE_PHONE_CALL", caller);
+            this.owner.TriggerEvent("EVENT_RECEIVE_PHONE_CALL", caller);
         }
 
         /// <summary>
@@ -737,9 +774,11 @@ namespace GTA_RP
                     String caller = number;
 
                     if (HasContactForNumber(number))
+                    {
                         caller = GetNameForNumber(number);
+                    }
 
-                    API.shared.triggerClientEvent(this.owner.owner.client, "EVENT_PHONE_CALL_STARTED", caller);
+                    this.owner.TriggerEvent("EVENT_PHONE_CALL_STARTED", caller);
                     this.isCalling = true;
                     this.callingNumber = number;
                 }
@@ -760,7 +799,7 @@ namespace GTA_RP
                     {
                         characterCaller.phone.SetCallActive(this.phoneNumber);
                         this.SetCallActive(this.callerNumber);
-                        API.shared.triggerClientEvent(this.owner.owner.client, "EVENT_PHONE_CALL_PICKED_UP", this.callerNumber);
+                        this.owner.TriggerEvent("EVENT_PHONE_CALL_PICKED_UP", this.callerNumber);
                     }
                 }
             }
@@ -772,8 +811,8 @@ namespace GTA_RP
         public void CloseCall()
         {
             SetCallInactive();
-            API.shared.triggerClientEvent(owner.owner.client, "EVENT_PHONE_CALL_ENDED");
-            API.shared.sendNotificationToPlayer(owner.owner.client, "Call ended");
+            this.owner.TriggerEvent("EVENT_PHONE_CALL_ENDED");
+            this.owner.SendNotification("Call ended");
             SetPhoneNotUsing();
         }
 
@@ -787,7 +826,9 @@ namespace GTA_RP
                 Character callingChar = PlayerManager.Instance().GetCharacterWithPhoneNumber(this.callingNumber);
 
                 if (callingChar != null)
-                    API.shared.triggerClientEvent(callingChar.owner.client, "EVENT_PHONE_CALL_ENDED");
+                {
+                    this.owner.TriggerEvent("EVENT_PHONE_CALL_ENDED");
+                }
 
                 this.isCalling = false;
                 this.callingNumber = null;
@@ -801,7 +842,7 @@ namespace GTA_RP
                 SetPhoneNotUsing();
             }
 
-            API.shared.triggerClientEvent(owner.owner.client, "EVENT_PHONE_CALL_ENDED");
+            this.owner.TriggerEvent("EVENT_PHONE_CALL_ENDED");
         }
     }
 }

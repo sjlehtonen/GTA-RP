@@ -38,12 +38,16 @@ class Item {
     }
 }
 
+/**
+ * Class for managing the player HUD.
+ * All additions to the HUD should be placed here.
+ */
 class HUDManager
 {
     constructor() {
         this.hudActive = false;
-        this.characterName = "Player";
-        this.phoneNumber = "1234";
+        this.characterName = "";
+        this.phoneNumber = "";
 
         this.receivedTextMessages = [];
         this.contacts = [];
@@ -60,17 +64,17 @@ class HUDManager
         this.addContactNumber = "";
         this.addContactName = "";
 
-        this.employmentText = "Unemployed";
+        this.employmentText = "";
         this.employmentTextColorR = 255;
         this.employmentTextColorG = 255;
         this.employmentTextColorB = 255;
 
-        this.factionText = "Civilian";
+        this.factionText = "";
         this.factionTextColorR = 50;
         this.factionTextColorG = 205;
         this.factionTextColorB = 50;
 
-        this.moneyText = "$55002";
+        this.moneyText = "";
 
         // House menu values
         this.selectedHouse = null;
@@ -110,7 +114,7 @@ class HUDManager
         this.assistTextColorB = null;
         this.assistTextUser = null;
 
-        // Faction menus
+        // Faction menus here...
     }
 
     handleHUDEvent(eventName, args)

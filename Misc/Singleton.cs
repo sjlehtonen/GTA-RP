@@ -1,6 +1,7 @@
-﻿using System;
-
-
+﻿
+/// <summary>
+/// Base class for singleton
+/// </summary>
 namespace GTA_RP.Misc
 {
     public abstract class Singleton<T>

@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
-using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Misc;
 
 namespace GTA_RP.Map
 {
 
+    /// <summary>
+    /// Class responsible for handling everything related to fishing.
+    /// </summary>
     class FishingHandler
     {
         private List<FishingZone> fishingZones = new List<FishingZone>();
@@ -23,6 +20,9 @@ namespace GTA_RP.Map
             PlayerManager.Instance().SubscribeToCharacterDeathEvent(this.PlayerDied);
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         private void GenerateFishingSpots()
         {
 

@@ -1,16 +1,14 @@
 ﻿using System;
-using GrandTheftMultiplayer.Server.Constant;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using System.Collections.Generic;
 using GTA_RP.Map;
 using GTA_RP.Misc;
-using System.Timers;
 
 namespace GTA_RP.Factions
 {
+    /// <summary>
+    /// Structure for a ticket given by a cop.
+    /// </summary>
     struct Ticket
     {
         public int id;
@@ -29,6 +27,11 @@ namespace GTA_RP.Factions
         }
     }
 
+    /// <summary>
+    /// Class that represents arrest.
+    /// Contains time and reason.
+    /// Is mapped to character ID in the law enforcement faction.
+    /// </summary>
     class Arrest
     {
         public int minutes;

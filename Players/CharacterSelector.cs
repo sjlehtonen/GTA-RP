@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Shared.Math;
-using GTA_RP.Jobs;
-using GTA_RP.Factions;
 using GrandTheftMultiplayer.Server.Elements;
 using System.Linq;
 using System.Globalization;
@@ -96,13 +94,10 @@ namespace GTA_RP
         public void InitAllowedCharacterCreatorModels()
         {
             PlayerManager.Instance().SubscribeToPlayerDisconnectEvent(this.PlayerDisconnected);
-            var cmd = DBManager.SimpleQuery("SELECT * FROM allowed_character_creator_models");
-            var reader = cmd.ExecuteReader();
-            while(reader.Read())
+            DBManager.SelectQuery("SELECT * FROM allowed_character_creator_models", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
                 allowedCharacterCreatorModels.Add(reader.GetString(0));
-            }
-            reader.Close();
+            }).Execute();
         }
 
         /// <summary>
@@ -111,13 +106,10 @@ namespace GTA_RP
         /// </summary>
         public void InitPhoneNumbers()
         {
-            var cmd = DBManager.SimpleQuery("SELECT phone_number FROM characters");
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            DBManager.SelectQuery("SELECT phone_number FROM characters", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
                 phoneNumbers.Add(reader.GetString(0));
-            }
-            reader.Close();
+            }).Execute();
         }
 
         /// <summary>

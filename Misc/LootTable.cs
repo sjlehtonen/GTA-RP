@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GTA_RP.Items;
 
 namespace GTA_RP.Misc
 {
+    /// <summary>
+    /// Class that represents loot from loot table
+    /// </summary>
     public class Loot
     {
         public int chance, itemId; // chance is a number from 1 to 1000 which is the drop chance, -1 always drop
@@ -17,6 +16,10 @@ namespace GTA_RP.Misc
         }
     }
 
+    /// <summary>
+    /// Class that represents a loot table
+    /// For example used on fishing spots, could also be used on trasure hunting
+    /// </summary>
     class LootTable
     {
         private int[] lootTable = new int[1000];
@@ -30,7 +33,10 @@ namespace GTA_RP.Misc
                 for (; i < loot.chance; i++) lootTable[i + spot] = loot.itemId;
                 spot += i + 1;
             }
-            for (; spot < 1000; spot++) lootTable[spot] = -1;
+            for (; spot < 1000; spot++)
+            {
+                lootTable[spot] = -1;
+            }
         }
 
         /// <summary>

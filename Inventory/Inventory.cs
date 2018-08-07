@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GTA_RP.Items
 {
@@ -72,7 +69,9 @@ namespace GTA_RP.Items
             if (item != null)
             {
                 if (item.count >= count)
+                {
                     return true;
+                }
                 return false;
             }
             return false;
@@ -81,7 +80,10 @@ namespace GTA_RP.Items
         public int GetItemCount(int itemId)
         {
             Item item = items.SingleOrDefault(x => x.id == itemId);
-            if (item == null) return 0;
+            if (item == null)
+            {
+                return 0;
+            }
             return item.count;
         }
 
@@ -93,7 +95,11 @@ namespace GTA_RP.Items
         public void RemoveItemWithId(int id, int count)
         {
             Item item = items.SingleOrDefault(x => x.id == id);
-            if (item == null) return;
+            if (item == null)
+            {
+                return;
+            }
+
             if (item.count <= count)
             {
                 items.Remove(item);
@@ -120,7 +126,10 @@ namespace GTA_RP.Items
         public void UseItemWithId(int id)
         {
             Item item = items.SingleOrDefault(x => x.id == id);
-            if (item != null) item.Use(this.owner);
+            if (item != null)
+            {
+                item.Use(this.owner);
+            }
         }
 
         /// <summary>

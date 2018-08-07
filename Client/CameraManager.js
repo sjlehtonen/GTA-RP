@@ -1,4 +1,8 @@
-﻿class CameraManager {
+﻿/**
+ * Class for managing cameras.
+ * Currently used for the login camera.
+ */
+class CameraManager {
     constructor() {
 
     }

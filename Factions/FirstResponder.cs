@@ -4,13 +4,13 @@ using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
-using System.Collections.Generic;
-using GTA_RP.Map;
-using GTA_RP.Misc;
-using System.Timers;
 
 namespace GTA_RP.Factions
 {
+    /// <summary>
+    /// Class for the first responder faction.
+    /// TODO
+    /// </summary>
     class FirstResponder : RankedFaction
     {
         public FirstResponder(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }

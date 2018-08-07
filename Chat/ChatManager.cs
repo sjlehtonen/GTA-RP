@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Shared;
-using GrandTheftMultiplayer.Shared.Math;
-using GTA_RP.Factions;
 using GrandTheftMultiplayer.Server.Managers;
 
 namespace GTA_RP.Chat
 {
+    /// <summary>
+    /// Class reponsible for managing the chat.
+    /// </summary>
     class ChatManager : Script
     {
-        private float whisperChatDistance = 5.0f;
-        private float normalChatDistance = 10.0f;
-        private float yellChatDistance = 20.0f;
-        private string meTextColor = "~#ea884f~";
-        private string loocTextColor = "~#4ea0e8~";
-        private string oocTextColor = "~#4ebfe8~";
-        private string announcementTextColor = "~#f72c3a~";
-        private string advertisementTextColor = "~#217f2a";
+        /// <summary>
+        /// Distances for different speech types and colors for different messages.
+        /// </summary>
+        private const float whisperChatDistance = 5.0f;
+        private const float normalChatDistance = 10.0f;
+        private const float yellChatDistance = 20.0f;
+        private const string meTextColor = "~#ea884f~";
+        private const string loocTextColor = "~#4ea0e8~";
+        private const string oocTextColor = "~#4ebfe8~";
+        private const string announcementTextColor = "~#f72c3a~";
+        private const string advertisementTextColor = "~#217f2a";
         private int advertisementPrice = 3000;
         private Boolean oocEnabled = true;
 

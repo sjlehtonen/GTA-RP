@@ -18,7 +18,10 @@ class BuyableItem {
     }
 }
 
-
+/**
+ * Class for managing the shop menus and such.
+ * Everything related to the shop should be here.
+ */
 class ItemShopManager {
     constructor() {
         this.itemsForSale = [];

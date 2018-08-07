@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
+﻿using System.Timers;
 
 namespace GTA_RP.Items
 {
+    /// <summary>
+    /// Item class for shovel
+    /// Planned for treasure hunter job
+    /// TODO
+    /// </summary>
     class ShovelItem : UseAnimationItem
     {
         private int diggingTime;

@@ -14,6 +14,9 @@ namespace GTA_RP.Factions
     {
         private Dictionary<FactionI, Faction> factions = new Dictionary<FactionI, Faction>();
 
+        /// <summary>
+        /// Register all new factions here, otherwise they won't be added to the game.
+        /// </summary>
         public FactionManager()
         {
             RegisterFaction(new Civilian(FactionI.CIVILIAN, "Civilian", 50, 205, 50));
@@ -37,10 +40,19 @@ namespace GTA_RP.Factions
             MapManager.Instance().SubscribeToOnMinuteChange(this.PaySalaries);
         }
 
-        private void PaySalaries(TimeSpan t)
+        /// <summary>
+        /// Pays the salaries for members in all factions.
+        /// </summary>
+        /// <param name="timeSpan">Timespan</param>
+        private void PaySalaries(TimeSpan timeSpan)
         {
-            if (t.Minutes == 0)
-                foreach (Faction faction in factions.Values) faction.PaySalary();
+            if (timeSpan.Minutes == 0)
+            {
+                foreach (Faction faction in factions.Values)
+                {
+                    faction.PaySalary();
+                }
+            }
         }
 
         /// <summary>
@@ -63,11 +75,19 @@ namespace GTA_RP.Factions
             return factions.Get(id);
         }
 
-        public string GetRankTextForCharacter(Character c)
+        /// <summary>
+        /// Gets the name of the faction rank of the character.
+        /// </summary>
+        /// <param name="character"></param>
+        /// <returns>Rank name</returns>
+        public string GetRankTextForCharacter(Character character)
         {
-            return factions[c.factionID].GetRankText(c);
+            return factions[character.factionID].GetRankText(character);
         }
 
+        /// Accessor methods for different factions
+        /// If you create a new faction, you can add an accessor method here so it's easier
+        /// to access the faction from the faction manager.
         public LawEnforcement LawEnforcement() { return factions.Get(FactionI.LAW_ENFORCEMENT) as LawEnforcement; }
         public FireDepartment FireDepartment() { return factions.Get(FactionI.FIREMAN) as FireDepartment;  }
         public FirstResponder FirstResponder() { return factions.Get(FactionI.FIRST_RESPONDER) as FirstResponder;  }
@@ -76,10 +96,10 @@ namespace GTA_RP.Factions
         /// <summary>
         /// Handles the on duty command for character's faction
         /// </summary>
-        /// <param name="c">Character object</param>
-        public void HandleDutyCommand(Character c)
+        /// <param name="character">Character object</param>
+        public void HandleDutyCommand(Character character)
         {
-            factions.Get(c.factionID).HandleOnDutyCommand(c);
+            factions.Get(character.factionID).HandleOnDutyCommand(character);
         }
 
     }

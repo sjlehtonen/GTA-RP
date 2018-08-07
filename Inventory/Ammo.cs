@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace GTA_RP.Items
 {
+    /// <summary>
+    /// Class for representing weapon ammo.
+    /// TODO
+    /// </summary>
     class Ammo : Item
     {
         private int weaponId;

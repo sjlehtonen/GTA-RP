@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GTA_RP.Misc;
 using GTA_RP.Items;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
-using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using System.Timers;
 
@@ -44,6 +37,9 @@ namespace GTA_RP.Map
 
     public delegate void FishingZoneDepletedDelegate(FishingZone zone);
 
+    /// <summary>
+    /// Class that represents a fishing zone with certain location and certain loot table.
+    /// </summary>
     public class FishingZone
     {
         private int id;

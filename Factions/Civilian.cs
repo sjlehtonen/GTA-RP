@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GTA_RP.Jobs;
+﻿using GTA_RP.Jobs;
 
 namespace GTA_RP.Factions
 {
@@ -14,10 +9,7 @@ namespace GTA_RP.Factions
     {
         public Civilian(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
 
-        public override void Initialize()
-        {
-
-        }
+        public override void Initialize() { }
 
         public override string GetRankText(Character character)
         {
@@ -30,9 +22,7 @@ namespace GTA_RP.Factions
             return "~g~";
         }
 
-        public override void HandleOnDutyCommand(Character c)
-        {
-
-        }
+        // Citizen has no duty, no need to implement
+        public override void HandleOnDutyCommand(Character c) { }
     }
 }

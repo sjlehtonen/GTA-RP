@@ -25,7 +25,7 @@ namespace GTA_RP
         /// </summary>
         public void StartScript()
         {
-            API.consoleOutput("####Script started!####");
+            API.consoleOutput("#### Script started! ####");
             WeatherManager weatherManager = new WeatherManager();
 
             API.onVehicleDeath += VehicleManager.Instance().VehicleDestroyedEvent;
@@ -55,7 +55,7 @@ namespace GTA_RP
 
             FactionManager.Instance().InitializeFactions();
 
-            API.consoleOutput("####Script load complete!####");
+            API.consoleOutput("#### Script load complete! ####");
         }
     }
 }

@@ -1,12 +1,10 @@
 ﻿using System;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using System.Collections.Generic;
 using System.Linq;
-using GTA_RP.Jobs;
 using GTA_RP.Factions;
 using GTA_RP.Misc;
 using System.Security.Cryptography;
@@ -247,7 +245,7 @@ namespace GTA_RP
 
         private void HandleCharacterDeathTimerExpire(GTRPTimer timer)
         {
-
+            // TODO
         }
 
         private void HandleCharacterDeath(Character c, NetHandle entityKiller, int weapon)
@@ -357,7 +355,7 @@ namespace GTA_RP
 
         /// <summary>
         /// Encrypts the given password
-        /// TODO: Code a better encryption method instead of using md5. For example Rijndael
+        /// TODO: Code a better encryption method instead of using md5. For example bcrypt
         /// </summary>
         /// <param name="password">Password to encrypt</param>
         /// <returns>Encrypted version of the password</returns>
@@ -368,7 +366,9 @@ namespace GTA_RP
                 byte[] data = hasher.ComputeHash(Encoding.UTF8.GetBytes(password));
                 StringBuilder builder = new StringBuilder();
                 for (int i = 0; i < data.Length; i++)
+                {
                     builder.Append(data[i].ToString("x2"));
+                }
                 return builder.ToString();
             }
         }
@@ -390,7 +390,9 @@ namespace GTA_RP
             if (pass != null)
             {
                 if (pass.Equals(EncryptPassword(password)))
+                {
                     return true;
+                }
             }
 
             return false;

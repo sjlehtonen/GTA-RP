@@ -1,12 +1,7 @@
 ﻿using GrandTheftMultiplayer.Shared.Math;
-using GrandTheftMultiplayer.Server.API;
-using GTA_RP.Items;
 using GTA_RP.Misc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GTA_RP.Map;
 
 namespace GTA_RP.Items
@@ -85,9 +80,12 @@ namespace GTA_RP.Items
             // Open shop menu
             List<Item> sellableItemsForCharacter = GetItemsThatCharacterHasAndShopBuys(character);
             List<int> sellableItemPrices = new List<int>();
-            foreach (Item item in sellableItemsForCharacter) sellableItemPrices.Add(GetItemBuyPrice(item.id));
+            foreach (Item item in sellableItemsForCharacter)
+            {
+                sellableItemPrices.Add(GetItemBuyPrice(item.id));
+            }
 
-            API.shared.triggerClientEvent(character.client, "EVENT_OPEN_ITEM_SHOP_MENU", id, name, stock.Select(x => x.template.id).ToList(), stock.Select(x => x.template.name).ToList(), stock.Select(x => x.template.description).ToList(), stock.Select(x => x.amount).ToList(), stock.Select(x => x.price).ToList(), sellableItemsForCharacter.Select(x => x.id).ToList(), sellableItemsForCharacter.Select(x=> x.name).ToList(), sellableItemsForCharacter.Select(x => x.description).ToList(), sellableItemsForCharacter.Select(x => x.count).ToList(), sellableItemPrices);
+            character.TriggerEvent("EVENT_OPEN_ITEM_SHOP_MENU", id, name, stock.Select(x => x.template.id).ToList(), stock.Select(x => x.template.name).ToList(), stock.Select(x => x.template.description).ToList(), stock.Select(x => x.amount).ToList(), stock.Select(x => x.price).ToList(), sellableItemsForCharacter.Select(x => x.id).ToList(), sellableItemsForCharacter.Select(x => x.name).ToList(), sellableItemsForCharacter.Select(x => x.description).ToList(), sellableItemsForCharacter.Select(x => x.count).ToList(), sellableItemPrices);
         }
 
         /// <summary>
@@ -98,7 +96,7 @@ namespace GTA_RP.Items
         private void OnExitShop(Checkpoint checkpoint, Character character)
         {
             // Close shop menu
-            API.shared.triggerClientEvent(character.client, "EVENT_CLOSE_ITEM_SHOP_MENU");
+            character.TriggerEvent("EVENT_CLOSE_ITEM_SHOP_MENU");
         }
 
         /// <summary>
@@ -111,7 +109,9 @@ namespace GTA_RP.Items
             foreach (ItemForSale item in stock)
             {
                 if (item.template.id == itemId)
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -126,7 +126,9 @@ namespace GTA_RP.Items
             foreach (BuyableItem item in sellableItems)
             {
                 if (item.id == itemId)
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -141,7 +143,9 @@ namespace GTA_RP.Items
             foreach (BuyableItem item in sellableItems)
             {
                 if (item.id == itemId)
+                {
                     return item.price;
+                }
             }
             return -1;
         }
@@ -156,7 +160,9 @@ namespace GTA_RP.Items
             foreach (ItemForSale item in stock)
             {
                 if (item.template.id == itemId)
+                {
                     return item.price;
+                }
             }
             return -1;
         }
@@ -170,7 +176,9 @@ namespace GTA_RP.Items
         {
             stock.Add(new ItemForSale(ItemManager.Instance().GetItemTemplateForId(id), price, 1));
             if (canAlsoBuy)
+            {
                 sellableItems.Add(new BuyableItem(id, (int)price / 2));
+            }
         }
 
         /// <summary>
@@ -225,9 +233,9 @@ namespace GTA_RP.Items
         /// <param name="count">How many items to buy</param>
         public void SellItem(Character character, int id, int count = 1)
         {
-            if (!character.HasItemWithid(id, count)) return;
-            if (!DoesBuyitem(id)) return;
-            if (!storeCheckPoint.IsCharacterInsideCheckpoint(character)) return;
+            if (!character.HasItemWithid(id, count)) { return; }
+            if (!DoesBuyitem(id)) { return; }
+            if (!storeCheckPoint.IsCharacterInsideCheckpoint(character)) { return; }
 
             character.RemoveItemFromInventory(id, count, true);
             character.SetMoney(character.money + GetItemBuyPrice(id) * count);

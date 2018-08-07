@@ -1,4 +1,8 @@
-﻿class HouseManager {
+﻿/**
+ * Class for managing houses.
+ * Things like enter house menus are managed here.
+ */
+class HouseManager {
 
     constructor() {
         this.dict = new Map();

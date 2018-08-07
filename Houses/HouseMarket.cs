@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using GTA_RP.Misc;
 using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Map;
 
 namespace GTA_RP.Houses
 {
+    /// <summary>
+    /// Structure that represents a house that is on sale.
+    /// </summary>
     struct HouseForSale
     {
         public HouseForSale(int entryId, int price, string name, string sellerName, int sellerId, int templateId)
@@ -123,8 +122,10 @@ namespace GTA_RP.Houses
         private List<string> GetBuildingNamesForHousesOnSale(List<HouseForSale> housesForSale)
         {
             List<string> buildingNames = new List<string>();
-            foreach(HouseForSale house in housesForSale)
+            foreach (HouseForSale house in housesForSale)
+            {
                 buildingNames.Add(HouseManager.Instance().GetBuildingNameForHouseTemplateId(house.templateId));
+            }
             return buildingNames;
         }
 
@@ -138,7 +139,7 @@ namespace GTA_RP.Houses
             List<HouseForSale> housesForSale = new List<HouseForSale>();
             housesForSale.AddRange(this.housesForSale);
             housesForSale.Sort((x, y) => x.price.CompareTo(y.price));
-            API.shared.triggerClientEvent(character.owner.client, "EVENT_OPEN_HOUSE_MARKET_MENU", housesForSale.Select(x => x.entryId).ToList(), housesForSale.Select(x => x.name).ToList(), housesForSale.Select(x => x.price).ToList(), housesForSale.Select(x => x.sellerName).ToList(), GetBuildingNamesForHousesOnSale(housesForSale));
+            character.TriggerEvent("EVENT_OPEN_HOUSE_MARKET_MENU", housesForSale.Select(x => x.entryId).ToList(), housesForSale.Select(x => x.name).ToList(), housesForSale.Select(x => x.price).ToList(), housesForSale.Select(x => x.sellerName).ToList(), GetBuildingNamesForHousesOnSale(housesForSale));
         }
 
         /// <summary>
@@ -147,7 +148,7 @@ namespace GTA_RP.Houses
         /// <param name="character">Character</param>
         private void CloseHouseMarketMenuForCharacter(Character character)
         {
-            API.shared.triggerClientEvent(character.client, "EVENT_CLOSE_HOUSE_MARKET_MENU");
+            character.TriggerEvent("EVENT_CLOSE_HOUSE_MARKET_MENU");
         }
 
         /// <summary>
@@ -198,7 +199,7 @@ namespace GTA_RP.Houses
         /// <param name="houseId">House id</param>
         public void AddPlayerHouseForSale(Character character, int houseId)
         {
-
+            // TODO
         }
 
         /// <summary>
@@ -235,25 +236,23 @@ namespace GTA_RP.Houses
                     {
                         PlayerManager.Instance().AddMoneyForCharacterWithId(house.sellerId, house.price);
                         if (PlayerManager.Instance().IsCharacterWithIdOnline(house.sellerId))
+                        {
                             PlayerManager.Instance().SendNotificationToCharacterWithid(sellEntryId, "Your house " + house.name + " was just sold for " + house.price + "!");
+                        }
                     }
                     this.RemoveHouseFromSale(house);
                     this.CloseHouseMarketMenuForCharacter(character);
-                    API.shared.playSoundFrontEnd(character.client, "LOCAL_PLYR_CASH_COUNTER_COMPLETE", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS");
-                    API.shared.sendNotificationToPlayer(character.client, "Congratulations! You have bought a house at " + HouseManager.Instance().GetBuildingNameForHouseTemplateId(house.templateId) + " for $" + house.price.ToString());
+                    character.PlayFrontendSound("LOCAL_PLYR_CASH_COUNTER_COMPLETE", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS");
+                    character.SendNotification("Congratulations! You have bought a house at " + HouseManager.Instance().GetBuildingNameForHouseTemplateId(house.templateId) + " for $" + house.price.ToString());
                 }
                 else
                 {
-                    API.shared.sendNotificationToPlayer(character.owner.client, "You don't have enought money to buy this property!");
+                    character.SendErrorNotification("You don't have enought money to buy this property!");
                 }
             }
             else
             {
-                API.shared.sendNotificationToPlayer(character.client, "Property not found!");
-                API.shared.consoleOutput("DEBUG");
-                API.shared.consoleOutput("EntryID: " + sellEntryId.ToString());
-                foreach (HouseForSale s in housesForSale)
-                    API.shared.consoleOutput("ID: " + s.entryId);
+                character.SendErrorNotification("Property not found!");
             }
         }
 
@@ -264,7 +263,7 @@ namespace GTA_RP.Houses
         /// <param name="houseId">House id</param>
         public void TryPutHouseForSaleForCharacter(Character character, int houseId)
         {
-
+            // TODO
         }
 
         /// <summary>
@@ -296,7 +295,9 @@ namespace GTA_RP.Houses
         private void InitializeNonPlayerHouseSales()
         {
             for (int i = 0; i < maxNonPlayerHousesForSale; i++)
+            {
                 housesForSale.Add(GenerateNonPlayerHouse());
+            }
         }
 
         /// <summary>
@@ -304,6 +305,7 @@ namespace GTA_RP.Houses
         /// </summary>
         private void InitializePlayerHouseSales()
         {
+            // TODO
             // Set currentEntryId here to the max + 1 of the player house sell ids
         }
 
@@ -314,7 +316,11 @@ namespace GTA_RP.Houses
         /// <returns>Yes if seller is player, otherwise no</returns>
         private bool IsSellerOfHousePlayer(HouseForSale house)
         {
-            if (house.sellerId != -1) return true;
+            if (house.sellerId != -1)
+            {
+                return true;
+            }
+
             return false;
         }
 

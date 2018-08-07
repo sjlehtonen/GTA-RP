@@ -7,6 +7,9 @@ using GTA_RP.Map;
 
 namespace GTA_RP.Items
 {
+    /// <summary>
+    /// Class for fishing rod item.
+    /// </summary>
     class FishingRodItem : UseAnimationItem
     {
         public FishingRodItem(int id, string name, string description, int entityId, int bone, string other, int amount = 1) : base(id, name, description, entityId, bone, other, amount) { }

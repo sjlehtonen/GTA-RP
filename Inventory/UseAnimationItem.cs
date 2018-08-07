@@ -1,11 +1,4 @@
-﻿using GTA_RP.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
+﻿using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using System.Globalization;
@@ -13,6 +6,9 @@ using GTA_RP.Factions;
 
 namespace GTA_RP.Items
 {
+    /// <summary>
+    /// Item that has an animation on use
+    /// </summary>
     class UseAnimationItem : Item
     {
         protected Vector3 usePosMan;

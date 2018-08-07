@@ -5,6 +5,9 @@ using GTA_RP.Database;
 
 namespace GTA_RP
 {
+    /// <summary>
+    /// Class for handling all database interactions such as connecting and queries.
+    /// </summary>
     class DBManager : Singleton<DBManager>
     {
         public DBManager() { }

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace GTA_RP.Items
 {
+    /// <summary>
+    /// Item types
+    /// Add new item types here if you want to create new kinds of items
+    /// </summary>
     public enum ItemType
     {
         ITEM_NO_USE = 0,
@@ -16,6 +15,9 @@ namespace GTA_RP.Items
         ITEM_SHOVEL = 5
     }
 
+    /// <summary>
+    /// Factory class for creating items.
+    /// </summary>
     class ItemsFactory
     {
         static private Item CreateWeapon(int id, int hash, string name, string description, int amount = 1)
@@ -55,6 +57,12 @@ namespace GTA_RP.Items
             return CreateItemForTemplate(template, amount);
         }
 
+        /// <summary>
+        /// Creates an actual item object from item template
+        /// </summary>
+        /// <param name="template">Item template</param>
+        /// <param name="amount">Amount</param>
+        /// <returns>Item object</returns>
         static public Item CreateItemForTemplate(ItemTemplate template, int amount = 1)
         {
             if (template.type == ItemType.ITEM_WEAPON) return CreateWeapon(template.id, template.field1, template.name, template.description, amount);

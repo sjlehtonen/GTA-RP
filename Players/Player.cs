@@ -1,8 +1,5 @@
 ﻿using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
-using GrandTheftMultiplayer.Shared;
-using GrandTheftMultiplayer.Shared.Math;
 using GrandTheftMultiplayer.Server.Constant;
 using System.Collections.Generic;
 using GTA_RP.Jobs;
@@ -67,7 +64,17 @@ namespace GTA_RP
         /// </summary>
         public void CleanUp()
         {
-            if (this.activeCharacter != null) this.activeCharacter.CleanUp();
+            if (this.activeCharacter != null) { this.activeCharacter.CleanUp(); }
+        }
+
+        /// <summary>
+        /// Triggers a client event
+        /// </summary>
+        /// <param name="name">Event name</param>
+        /// <param name="args">Event args</param>
+        public void TriggerEvent(string name, params object[] args)
+        {
+            this.client.triggerEvent(name, args);
         }
 
         /// <summary>

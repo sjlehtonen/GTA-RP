@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GTA_RP.Vehicles;
-using GrandTheftMultiplayer.Server.Constant;
 using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Shared;
-using GrandTheftMultiplayer.Shared.Math;
-using GTA_RP.Map;
 using GTA_RP.Misc;
 
 namespace GTA_RP.Factions
 {
+    /// <summary>
+    /// Class that represents a taxi meter.
+    /// </summary>
     class TaxiMeter
     {
         public int setterId;
@@ -30,6 +26,10 @@ namespace GTA_RP.Factions
         public Character setter { get { return PlayerManager.Instance().GetCharacterWithId(this.setterId); } }
     }
 
+    /// <summary>
+    /// Faction for taxi drivers.
+    /// TODO
+    /// </summary>
     class TaxiDriver : RankedFaction
     {
         private Dictionary<int, Dictionary<int, TaxiMeter>> taxiMeters = new Dictionary<int, Dictionary<int, TaxiMeter>>(); // Car ID maps to character ids
@@ -219,6 +219,12 @@ namespace GTA_RP.Factions
                 return;
             }
 
+            if (setter.ID == character.ID)
+            {
+                setter.SendNotification("You can't set the taxi meter on yourself");
+                return;
+            }
+
             if (v2 == null || v2.id != taxiVehicle.id)
             {
                 setter.SendNotification("Your customer has to be in your the taxi");
@@ -277,11 +283,11 @@ namespace GTA_RP.Factions
             c.onDuty = !c.onDuty;
             if (c.onDuty)
             {
-
+                // TODO
             }
             else
             {
-
+                // TODO
             }
         }
 

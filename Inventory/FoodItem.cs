@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace GTA_RP.Items
 {
+    /// <summary>
+    /// Class for food items that restore health or do other things when used.
+    /// TODO: Implement animations
+    /// </summary>
     class FoodItem : UseAnimationItem
     {
         private int healthToRestore;
@@ -22,7 +26,7 @@ namespace GTA_RP.Items
             user.client.health += this.healthToRestore;
             user.PlayFrontendSound("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
             this.ConsumeItem(user);
-            // Implement animation
+            // TODO: Implement animation
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿class CheckpointManager {
+﻿/**
+ * Class for managing client side checkpoints (those red things usually)
+ */
+class CheckpointManager {
     constructor() {
         this.checkpoints = [];
         this.blips = [];

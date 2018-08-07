@@ -1,4 +1,8 @@
-﻿class AccountManager {
+﻿/**
+* This class is responsible for all the account related actions on
+* the client side.
+*/
+class AccountManager {
 
     constructor() {
         this.characterNameToModelDict = new Map();

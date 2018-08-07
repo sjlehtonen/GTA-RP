@@ -1,23 +1,17 @@
-﻿using System;
-using GrandTheftMultiplayer.Server.Constant;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Shared;
-using GrandTheftMultiplayer.Shared.Math;
-using System.Collections.Generic;
-using GTA_RP.Map;
-using GTA_RP.Misc;
-using System.Timers;
-
+﻿
 namespace GTA_RP.Factions
 {
+    /// <summary>
+    /// Class for the fire department faction.
+    /// TODO
+    /// </summary>
     class FireDepartment : RankedFaction
     {
         public FireDepartment(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
 
         public override void HandleOnDutyCommand(Character c)
         {
-
+            // TODO
         }
 
         public override string GetChatColor()
@@ -27,6 +21,7 @@ namespace GTA_RP.Factions
 
         private void InitializeRanks()
         {
+            // Add new ranks here
             this.AddRank(0, "Fire Officer", 600);
         }
 

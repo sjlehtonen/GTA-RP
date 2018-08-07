@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrandTheftMultiplayer.Server.API;
+﻿using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
@@ -68,7 +63,9 @@ namespace GTA_RP
             if (this.onExitCheckpointEvent != null)
             {
                 if ((API.shared.getEntityType(entity) == EntityType.Player && entity == this.client.handle) || (API.shared.getEntityType(entity) == EntityType.Vehicle && API.shared.getPlayerVehicle(client) == entity))
+                {
                     this.onExitCheckpointEvent.Invoke(this, entity);
+                }
             }
         }
 
@@ -93,7 +90,9 @@ namespace GTA_RP
             var second = obj as ClientCheckpoint;
 
             if (second == null)
+            {
                 return false;
+            }
 
             return this.id.Equals(second.id);
         }

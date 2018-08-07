@@ -8,7 +8,11 @@
     }
 }
 
-
+/**
+ * Class for managing the housing market.
+ * In the future I plan to move this to a website
+ * so it's more intuitive than the ingame UI.
+ */
 class HouseMarketManager {
     constructor() {
         this.housesForSale = [];

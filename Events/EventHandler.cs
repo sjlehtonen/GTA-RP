@@ -33,7 +33,8 @@ namespace GTA_RP.Events
     }
 
     /// <summary>
-    /// A class responsible for handling events that are sent by the client
+    /// A class responsible for handling events that are sent by the client.
+    /// This class routes the events to the appropriate managers.
     /// </summary>
     class EventHandler : Script
     {
@@ -51,7 +52,7 @@ namespace GTA_RP.Events
         /// </summary>
         private void InitEvents()
         {
-            // TODO: change to use character
+            // TODO: change to use the new format with character
             RegisterEvent("EVENT_REQUEST_ENTER_HOUSE", HouseManager.Instance(), "RequestEnterHouse");
             RegisterEvent("EVENT_REQUEST_EXIT_HOUSE", HouseManager.Instance(), "RequestExitHouse");
             RegisterEvent("EVENT_REQUEST_CREATE_ACCOUNT", PlayerManager.Instance(), "RequestCreateAccount");
@@ -75,6 +76,9 @@ namespace GTA_RP.Events
             RegisterEvent("EVENT_TRY_LOCK_VEHICLE", VehicleManager.Instance(), "LockVehicleWithId");
             RegisterEvent("EVENT_TRY_BUY_PARKING_SPOT", VehicleManager.Instance(), "TryPurchasePark");
             RegisterEvent("EVENT_TRY_SET_SPAWN_LOCATION", PlayerManager.Instance(), "SetCharacterSpawnHouse");
+
+            // There events are in the new format and pass the character directly, if the user hasn't chosen a character
+            // then the event is not called.
             RegisterEvent("EVENT_ACCEPT_JOB", JobManager.Instance(), "TakeJobForClient", Option.OPTION_USES_CHARACTER);
             RegisterEvent("EVENT_TRY_BUY_PROPERTY", HouseManager.Instance(), "TryBuyMarketHouseForCharacter", Option.OPTION_USES_CHARACTER);
             RegisterEvent("EVENT_TRY_USE_ITEM", ItemManager.Instance(), "TryUseItemForCharacter", Option.OPTION_USES_CHARACTER);

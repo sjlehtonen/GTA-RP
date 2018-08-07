@@ -22,7 +22,10 @@ namespace GTA_RP.Misc
         /// <returns></returns>
         static public string ReadStringValue(string section, string key)
         {
-            if (data == null) data = parser.ReadFile(location);
+            if (data == null)
+            {
+                data = parser.ReadFile(location);
+            }
             return data[section][key];
         }
     }

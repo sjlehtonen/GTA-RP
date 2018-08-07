@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Constant;
-using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using System.Timers;
-using GTA_RP.Vehicles;
 
 namespace GTA_RP.Jobs
 {
@@ -112,7 +105,9 @@ namespace GTA_RP.Jobs
                 int number = rdm.Next(0, positions.Count());
 
                 while (usedNumbers.Contains(number))
+                {
                     number = rdm.Next(0, positions.Count());
+                }
 
                 this.AddCheckpoint(positions.ElementAt(number), 1);
                 usedNumbers.Add(number);
@@ -231,8 +226,8 @@ namespace GTA_RP.Jobs
         {
             if (IsPlayerInWorkVehicle())
             {
-                if (jobStage == 0)  LoadTrash(cp);
-                else if (jobStage == 1) UnloadTrash();
+                if (jobStage == 0) { LoadTrash(cp); }
+                else if (jobStage == 1) { UnloadTrash(); }
             }
 
         }

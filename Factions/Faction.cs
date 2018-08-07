@@ -1,27 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
-using System.Reflection;
 
 namespace GTA_RP.Factions
 {
-    struct FactionCommand
-    {
-        public FactionCommand(string handlerMethod, params Type[] arguments)
-        {
-            this.arguments = new List<Type>(arguments);
-            this.handlerMethod = handlerMethod;
-        }
-
-        public List<Type> arguments;
-        public string handlerMethod;
-    }
-
     /// <summary>
     /// Base class for faction
     /// </summary>

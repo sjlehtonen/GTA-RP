@@ -5,6 +5,9 @@
     }
 }
 
+/**
+ * Class for managing the vehicle shops.
+ */
 class VehicleShopManager {
     constructor() {
         this.id = null;

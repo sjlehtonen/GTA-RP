@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Constant;
-using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
-using System.Timers;
-using GTA_RP.Vehicles;
 using GTA_RP.Misc;
 
 namespace GTA_RP.Jobs
 {
+    /// <summary>
+    /// Underwater scavenger job where player drives a small submarine
+    /// and tries to find trash underwater, the deeper the player
+    /// goes, the easier it is to find trash.
+    /// Some things TODO
+    /// </summary>
     class UnderwaterScavengerJob : VehicleJob
     {
         private int dangerousMaterialFound = 0;
@@ -29,6 +27,9 @@ namespace GTA_RP.Jobs
         private Random rnd = new Random();
         private int jobStage = 0;
 
+        /// <summary>
+        /// Add possible ending locations here, currently only 1
+        /// </summary>
         private Vector3[] endPositions =
         {
             new Vector3(529.3144, -3145.132, -1.2811469)
@@ -36,6 +37,12 @@ namespace GTA_RP.Jobs
 
         public UnderwaterScavengerJob(Character c) : base(c) { this.searchTimer = new GTRPTimer(this.TryToFindMaterial, (int)TimeSpan.FromSeconds(10).TotalMilliseconds, true); }
 
+        /// <summary>
+        /// Tries to find hazardous material.
+        /// If player is deeper the chance is higher.
+        /// Player also has to move from already checked spots.
+        /// </summary>
+        /// <param name="timer">Not used now</param>
         private void TryToFindMaterial(GTRPTimer timer)
         {
             if (this.IsPlayerInWorkVehicle())
@@ -65,11 +72,17 @@ namespace GTA_RP.Jobs
             }
         }
 
+        /// <summary>
+        /// Updates the player HUD
+        /// </summary>
         private void UpdateUI()
         {
             this.character.TriggerEvent("EVENT_SET_ASSIST_TEXT", 135, 232, 71, "Waste found: " + this.dangerousMaterialFound + "/" + this.dangerousMaterialRequired, 0);
         }
 
+        /// <summary>
+        /// Checks if player finished the job
+        /// </summary>
         private void CheckFinish()
         {
             if (dangerousMaterialFound == dangerousMaterialRequired)
@@ -80,6 +93,7 @@ namespace GTA_RP.Jobs
             }
             UpdateUI();
         }
+
 
         public override void OnEnterCheckpoint(ClientCheckpoint cp, NetHandle e)
         {
@@ -93,6 +107,10 @@ namespace GTA_RP.Jobs
             }
         }
 
+        /// <summary>
+        /// Sets the delivery point
+        /// TODO: make endpoint random
+        /// </summary>
         private void SetDeliverPoint()
         {
             this.jobStage = 1;
@@ -106,19 +124,32 @@ namespace GTA_RP.Jobs
             this.finished = false;
         }
 
+        /// <summary>
+        /// Toggles UI on and off
+        /// </summary>
+        /// <param name="enabled">Set UI on or off</param>
         private void ToggleUI(bool enabled)
         {
-            if (enabled) UpdateUI();
-            else this.character.TriggerEvent("EVENT_REMOVE_ASSIST_TEXT", 0);
+            if (enabled) { UpdateUI(); }
+            else { this.character.TriggerEvent("EVENT_REMOVE_ASSIST_TEXT", 0); }
 
         }
 
+        /// <summary>
+        /// Starts job temporarily (kind of resumes)
+        /// </summary>
         private void StartJobTemp()
         {
-            if (this.jobStage == 0) this.searchTimer.Start();
+            if (this.jobStage == 0)
+            {
+                this.searchTimer.Start();
+            }
             this.ToggleUI(true);
         }
 
+        /// <summary>
+        /// Stops job temporarily (kind of pause)
+        /// </summary>
         private void StopJobTemp()
         {
             this.searchTimer.Stop();

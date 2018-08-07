@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
 using GrandTheftMultiplayer.Shared;
-using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Misc;
 using GTA_RP.Map;
-using System.Timers;
 
 namespace GTA_RP.Jobs
 {
@@ -102,7 +96,9 @@ namespace GTA_RP.Jobs
         private Job CreateJobForId(Character c)
         {
             if (jobInfo.ContainsKey(c.job) && c.job != 0)
+            {
                 return Activator.CreateInstance(jobInfo.Get(c.job).job, c) as Job;
+            }
 
             return null;
         }
@@ -135,7 +131,9 @@ namespace GTA_RP.Jobs
         public Boolean DoesCharacterHaveJob(Character c)
         {
             if (c.job != 0)
+            {
                 return true;
+            }
             return false;
         }
 
@@ -156,7 +154,9 @@ namespace GTA_RP.Jobs
         private void CreateJobForCharacter(Character c)
         {
             if (!IsJobSetForCharacter(c))
+            {
                 jobsForCharacterId.Add(c.ID, this.CreateJobForId(c));
+            }
         }
 
         /// <summary>
@@ -166,7 +166,9 @@ namespace GTA_RP.Jobs
         private void RemoveJobFromCharacter(Character c)
         {
             if (IsJobSetForCharacter(c))
+            {
                 jobsForCharacterId.Remove(c.ID);
+            }
         }
 
         /// <summary>
@@ -201,7 +203,9 @@ namespace GTA_RP.Jobs
             foreach(JobPickUpCheckpoint point in jobPickupPoints)
             {
                 if (point.jobId == jobId && point.IsCharacterInCheckpoint(character))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -289,8 +293,8 @@ namespace GTA_RP.Jobs
             if (DoesCharacterHaveJob(c))
             {
                 Job j = jobsForCharacterId.Get(c.ID);
-                if (j == null) return false;
-                if (j.isActive) return true;
+                if (j == null) { return false; }
+                if (j.isActive) { return true; }
             }
 
             return false;
@@ -335,7 +339,10 @@ namespace GTA_RP.Jobs
             if (IsJobActiveForCharacter(c))
             {
                 Job j = jobsForCharacterId.Get(c.ID);
-                if (j.isActive) j.EndJob();
+                if (j.isActive)
+                {
+                    j.EndJob();
+                }
             }
         }
 
@@ -364,6 +371,7 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Initialize all job pickup points
         /// Places markers on map where players can take jobs
+        /// TODO: Add these to database
         /// </summary>
         public void InitJobPickupPoints()
         {

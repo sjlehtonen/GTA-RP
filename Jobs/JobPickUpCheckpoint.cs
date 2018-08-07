@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Constant;
-using GrandTheftMultiplayer.Server.Managers;
-using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Misc;
 
 namespace GTA_RP.Jobs
 {
+    /// <summary>
+    /// Class that represents a job pickup point (red circle on ground, like checkpoint)
+    /// </summary>
     class JobPickUpCheckpoint
     {
         public int jobId { get; private set; }
@@ -38,7 +32,7 @@ namespace GTA_RP.Jobs
         /// <param name="info">Jobinfo</param>
         private void OpenJobSelectionMenuForCharacter(Character character, JobInfo info)
         {
-            API.shared.triggerClientEvent(character.owner.client, "EVENT_OPEN_TAKE_JOB_MENU", this.jobId, info.name, info.salary.ToString(), info.description);
+            character.TriggerEvent("EVENT_OPEN_TAKE_JOB_MENU", this.jobId, info.name, info.salary.ToString(), info.description);
         }
 
         /// <summary>
@@ -59,7 +53,7 @@ namespace GTA_RP.Jobs
         /// <param name="character">Character who walked out of the checkpoint</param>
         public void CharacterExitedCheckpoint(Checkpoint checkpoint, Character character)
         {
-            API.shared.triggerClientEvent(character.owner.client, "EVENT_CLOSE_TAKE_JOB_MENU");
+            character.TriggerEvent("EVENT_CLOSE_TAKE_JOB_MENU");
         }
 
         /// <summary>

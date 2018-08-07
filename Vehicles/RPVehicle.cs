@@ -73,7 +73,9 @@ namespace GTA_RP.Vehicles
             }
 
             if (!licensePlateText.Equals("") && this.spawned)
+            {
                 this.handle.numberPlate = licensePlateText;
+            }
 
             VehicleManager.Instance().SubscribeToVehicleDestroyedEvent(this.VehicleDestroyedEvent);
         }
@@ -87,7 +89,9 @@ namespace GTA_RP.Vehicles
             if (spawned)
             {
                 if (vehicle == handle)
+                {
                     handle = null;
+                }
             }
         }
 

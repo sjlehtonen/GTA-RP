@@ -4,6 +4,9 @@ using GrandTheftMultiplayer.Server.Managers;
 
 namespace GTA_RP.Jobs
 {
+    /// <summary>
+    /// Class for general job commands
+    /// </summary>
     class JobCommands : Script
     {
 

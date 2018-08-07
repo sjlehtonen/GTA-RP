@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
+﻿using System.Timers;
 
 namespace GTA_RP.Misc
 {
@@ -22,7 +17,10 @@ namespace GTA_RP.Misc
         private void TimerElapsedMethod(System.Object source, ElapsedEventArgs args)
         {
             this.delegateMethod.Invoke(this);
-            if (this.repeat) this.timer.Enabled = true;
+            if (this.repeat)
+            {
+                this.timer.Enabled = true;
+            }
         }
         public GTRPTimer(GTRPTimerDelegate method, int time, bool repeat = false)
         {

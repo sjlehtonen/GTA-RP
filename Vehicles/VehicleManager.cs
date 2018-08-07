@@ -2,7 +2,6 @@
 using System.Linq;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 using GTA_RP.Factions;
@@ -154,7 +153,9 @@ namespace GTA_RP.Vehicles
         private void RunVehicleDestroyedEvents(NetHandle vehicle)
         {
             if (this.OnVehicleDestroyedEvent != null)
+            {
                 this.OnVehicleDestroyedEvent.Invoke(vehicle);
+            }
         }
 
         /// <summary>
@@ -166,7 +167,10 @@ namespace GTA_RP.Vehicles
             if (this.OnVehicleEnterEvent != null)
             {
                 this.OnVehicleEnterEvent.Invoke(c, vehicle, seat);
-                if (PlayerManager.Instance().IsClientUsingCharacter(c)) this.OnVehicleEnterEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(c), vehicle, seat);
+                if (PlayerManager.Instance().IsClientUsingCharacter(c))
+                {
+                    this.OnVehicleEnterEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(c), vehicle, seat);
+                }
             }
         }
 
@@ -189,7 +193,9 @@ namespace GTA_RP.Vehicles
             Random rnd = new Random();
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < length; i++)
+            {
                 builder.Append(values[rnd.Next(0, values.Length)]);
+            }
             return builder.ToString();
         }
 
@@ -200,7 +206,10 @@ namespace GTA_RP.Vehicles
         /// <param name="locked">Locked</param>
         private void SendVehicleLockedMessage(Client client, Boolean locked)
         {
-            if (locked) API.shared.sendNotificationToPlayer(client, "Vehicle locked");
+            if (locked)
+            {
+                API.shared.sendNotificationToPlayer(client, "Vehicle locked");
+            }
             else API.shared.sendNotificationToPlayer(client, "Vehicle unlocked");
         }
 
@@ -214,7 +223,9 @@ namespace GTA_RP.Vehicles
             foreach(RPVehicle v in vehicles)
             {
                 if (v.licensePlateText.Equals(licensePlate))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -243,7 +254,9 @@ namespace GTA_RP.Vehicles
                 reader.Close();
             }
             else
+            {
                 this.vehicleInsertId = 0;
+            }
         }
 
         /// <summary>
@@ -255,7 +268,10 @@ namespace GTA_RP.Vehicles
             if (this.OnVehicleExitedEvent != null)
             {
                 this.OnVehicleExitedEvent.Invoke(c, vehicle, seat);
-                if (PlayerManager.Instance().IsClientUsingCharacter(c)) this.OnVehicleExitedEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(c), vehicle, seat);
+                if (PlayerManager.Instance().IsClientUsingCharacter(c))
+                {
+                    this.OnVehicleExitedEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(c), vehicle, seat);
+                }
             }
         }
 
@@ -269,7 +285,10 @@ namespace GTA_RP.Vehicles
         private void CreateVehicleShop(int id, Vector3 entrance, Vector3 exit, Vector3 exitRot, Vector3 cameraPos, Vector3 cameraRot, Vector3 charPos, Vector3 vehiclePos, Vector3 vehicleRot)
         {
             VehicleShop shop = new VehicleShop(id, entrance, exit, exitRot, cameraPos, cameraRot, charPos, vehiclePos, vehicleRot);
-            if (!vehicleShops.ContainsKey(id)) vehicleShops[id] = shop;
+            if (!vehicleShops.ContainsKey(id))
+            {
+                vehicleShops[id] = shop;
+            }
         }
 
         /// <summary>
@@ -278,7 +297,7 @@ namespace GTA_RP.Vehicles
         /// <param name="id">Vehicle shop</param>
         private VehicleShop GetVehicleShopWithId(int id)
         {
-            if (vehicleShops.ContainsKey(id)) return vehicleShops[id];
+            if (vehicleShops.ContainsKey(id)) { return vehicleShops[id]; }
             return null;
         }
 
@@ -292,7 +311,10 @@ namespace GTA_RP.Vehicles
         {
             if (API.shared.isPlayerInAnyVehicle(character.owner.client))
             {
-                if (API.shared.getPlayerVehicle(character.owner.client) == veh.handle) return true;
+                if (API.shared.getPlayerVehicle(character.owner.client) == veh.handle)
+                {
+                    return true;
+                }
             }
             return false;
         }

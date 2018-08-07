@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace GTA_RP.Items
 {
+    /// <summary>
+    /// Class for representing an item template.
+    /// </summary>
     class ItemTemplate
     {
         public int id { get; private set; }

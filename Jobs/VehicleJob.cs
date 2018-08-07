@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GrandTheftMultiplayer.Server.API;
 using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Server.Constant;
-using GrandTheftMultiplayer.Server.Managers;
 using GrandTheftMultiplayer.Shared;
-using GrandTheftMultiplayer.Shared.Math;
 using System.Timers;
 using GTA_RP.Vehicles;
 
 namespace GTA_RP.Jobs
 {
+    /// <summary>
+    /// Class that represents a job that is done with a vehicle primarily.
+    /// The job is associated to vehicle.
+    /// </summary>
     abstract class VehicleJob : CheckpointJob
     {
         private Timer exitVehicleTimer = new Timer();
@@ -102,7 +100,7 @@ namespace GTA_RP.Jobs
 
         protected Boolean IsPlayerInWorkVehicleAsDriver()
         {
-            if (this.workVehicle.occupants.Contains(character.owner.client) && API.shared.getPlayerVehicleSeat(character.client) == -1) return true;
+            if (this.workVehicle.occupants.Contains(character.owner.client) && API.shared.getPlayerVehicleSeat(character.client) == -1) { return true; }
             return false;
         }
 
@@ -146,7 +144,9 @@ namespace GTA_RP.Jobs
             foreach(string name in names)
             {
                 if (this.GetPlayerVehicleHash().Equals(API.shared.vehicleNameToModel(name)))
+                {
                     return true;
+                }
             }
 
             character.SendNotification(String.Format("You have to be in a {0} to start the job!", vehicleNameErrorMessage));

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GTA_RP.Misc;
-using GrandTheftMultiplayer.Server.API;
-using GrandTheftMultiplayer.Server.Elements;
-using GrandTheftMultiplayer.Shared;
 using GrandTheftMultiplayer.Shared.Math;
 
 namespace GTA_RP.Items
@@ -19,10 +13,7 @@ namespace GTA_RP.Items
         private List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
         private List<ItemShop> itemShops = new List<ItemShop>();
 
-        public ItemManager()
-        {
-
-        }
+        public ItemManager() { }
 
         /// <summary>
         /// Loads items from database
@@ -45,6 +36,7 @@ namespace GTA_RP.Items
 
         /// <summary>
         /// Initializes all item shops
+        /// TODO: Move these to database.
         /// </summary>
         private void InitializeItemShops()
         {
@@ -59,6 +51,8 @@ namespace GTA_RP.Items
             itemShops.Add(new ItemShop(8, "Rob's Liquor", new Vector3(-1223.017f, -906.9675f, 11.34636f)));
             itemShops.Add(new ItemShop(9, "LTD Gasoline", new Vector3(-1820.645f, 792.2414f, 137.1385f)));
 
+            /// TODO: move these to database, should be easy
+            /// Currently all shops have same items with same prices.
             foreach (ItemShop shop in itemShops)
             {
                 shop.AddItemForSale(0, 10230);
@@ -143,7 +137,6 @@ namespace GTA_RP.Items
         /// <param name="count">Amount to sell</param>
         public void TrySellItemForCharacter(Character character, int shopId, int itemId, int count)
         {
-            API.shared.consoleOutput("try sell");
             ItemShop shop = GetItemShopForId(shopId);
             if (shop != null)
             {
