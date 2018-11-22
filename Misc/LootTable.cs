@@ -46,7 +46,10 @@ namespace GTA_RP.Misc
         /// <returns>Item</returns>
         private Item CreateItemForId(int id)
         {
-            if (id == -1) return null;
+            if (id == -1)
+            {
+                return null;
+            }
             return ItemManager.Instance().CreateItemForId(id);
         }
 

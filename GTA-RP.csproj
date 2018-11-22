@@ -102,7 +102,6 @@
     <Compile Include="Players\Phone.cs" />
     <Compile Include="Vehicles\VehicleShop.cs" />
     <Compile Include="Weather\WeatherManager.cs" />
-    <Compile Include="Web\WebSocketManager.cs" />
     <Content Include="Client\AccountManager.js" />
     <Content Include="Client\CameraManager.js" />
     <Compile Include="Database\DBManager.cs" />

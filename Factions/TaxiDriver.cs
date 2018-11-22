@@ -80,7 +80,10 @@ namespace GTA_RP.Factions
         /// <returns>If taxi meter is set, yes, otherwise no</returns>
         private bool IsTaxiMeterSetForCharacterOnCar(Character character, int carId)
         {
-            if (taxiMeters.ContainsKey(carId)) return taxiMeters[carId].ContainsKey(character.ID);
+            if (taxiMeters.ContainsKey(carId))
+            {
+                return taxiMeters[carId].ContainsKey(character.ID);
+            }
             return false;
         }
 
@@ -128,8 +131,10 @@ namespace GTA_RP.Factions
         /// <returns></returns>
         private TaxiMeter GetTaxiMeterForCharacterInTaxi(Character c, int taxiId)
         {
-            if (!taxiMeters.ContainsKey(taxiId)) return null;
-            if (!taxiMeters[taxiId].ContainsKey(c.ID)) return null;
+            if (!taxiMeters.ContainsKey(taxiId) || !taxiMeters[taxiId].ContainsKey(c.ID))
+            {
+                return null;
+            }
             return taxiMeters[taxiId][c.ID];
         }
 
@@ -177,7 +182,7 @@ namespace GTA_RP.Factions
                 meter.setter.SetMoney(meter.setter.money + meter.money);
                 payer.SendSuccessNotification("You payed a taxi fee of $" + meter.money);
                 meter.setter.SendNotification("You received taxi fee payment of $" + meter.money + " from " + payer.fullName);
-                // Destroy the taxi meter totally
+                // Destroy the taxi meter
                 RemoveTaxiMeterFromCharacterInTaxi(payer, v.id);
 
             }
@@ -190,7 +195,7 @@ namespace GTA_RP.Factions
         /// <param name="carId">Car id</param>
         public void SetTaxiMeterHUDForCharacter(Character character, int carId)
         {
-            character.TriggerEvent("EVENT_SET_ASSIST_TEXT", 237, 195, 68, "Taxi Fee: $"+GetTaxiFeeForCharacterInTaxi(character, carId), 1); // replace 1000 with taxi fee
+            character.TriggerEvent("EVENT_SET_ASSIST_TEXT", 237, 195, 68, "Taxi Fee: $" + GetTaxiFeeForCharacterInTaxi(character, carId), 1); // replace 1000 with taxi fee
         }
 
         /// <summary>
@@ -237,8 +242,12 @@ namespace GTA_RP.Factions
                 return;
             }
 
-            if (!taxiMeters.ContainsKey(taxiVehicle.id)) taxiMeters[taxiVehicle.id] = new Dictionary<int, TaxiMeter>();
-            taxiMeters[taxiVehicle.id][character.ID] = new TaxiMeter(setter.ID, 200, new GTRPTimer(RPTimerEvent, taxiFeeInterval, new KeyValuePair<int,int>(taxiVehicle.id,character.ID), true)); // Starting money
+            if (!taxiMeters.ContainsKey(taxiVehicle.id))
+            {
+                taxiMeters[taxiVehicle.id] = new Dictionary<int, TaxiMeter>();
+            }
+
+            taxiMeters[taxiVehicle.id][character.ID] = new TaxiMeter(setter.ID, 200, new GTRPTimer(RPTimerEvent, taxiFeeInterval, new KeyValuePair<int, int>(taxiVehicle.id, character.ID), true)); // Starting money
             SetTaxiMeterHUDForCharacter(character, taxiVehicle.id);
             setter.SendNotification("Taxi meter set for customer " + character.fullName);
             taxiMeters[taxiVehicle.id][character.ID].taxiTimer.Start();
@@ -253,9 +262,11 @@ namespace GTA_RP.Factions
         {
             RPVehicle v = VehicleManager.Instance().GetVehicleForCharacter(setter);
             TaxiMeter meter = GetTaxiMeterForCharacterInTaxi(character, v.id);
-            if (meter == null) return;
-
-            GetTaxiMeterForCharacterInTaxi(character,v.id).taxiTimer.Stop();
+            if (meter == null)
+            {
+                return;
+            }
+            GetTaxiMeterForCharacterInTaxi(character, v.id).taxiTimer.Stop();
             setter.SendNotification("Taxi meter stopped for " + character.fullName);
         }
 
@@ -274,7 +285,7 @@ namespace GTA_RP.Factions
 
         public void RPTimerEvent(GTRPTimer timer)
         {
-            KeyValuePair<int,int> pAndCar = (KeyValuePair<int,int>)timer.data;
+            KeyValuePair<int, int> pAndCar = (KeyValuePair<int, int>)timer.data;
             UpdateTaxiFeeForCharacterInTaxi(pAndCar.Key, pAndCar.Value);
         }
 

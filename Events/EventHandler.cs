@@ -113,7 +113,9 @@ namespace GTA_RP.Events
             List<object> paramList = new List<object>();
 
             if (e.options.Contains(Option.OPTION_INCLUDE_EVENT))
+            {
                 paramList.Add(e.eventName);
+            }
 
             if (e.options.Contains(Option.OPTION_USES_CHARACTER))
             {
@@ -124,8 +126,8 @@ namespace GTA_RP.Events
             {
                 paramList.Add(c);
             }
-            
-            for(int i = 0; i < arguments.Length; i++)
+
+            for (int i = 0; i < arguments.Length; i++)
             {
                 paramList.Add(arguments[i]);
             }
@@ -146,7 +148,10 @@ namespace GTA_RP.Events
             {
                 RPEvent eventToInvoke = events[eventName];
 
-                if (eventToInvoke.options.Contains(Option.OPTION_USES_CHARACTER) && !PlayerManager.Instance().IsClientUsingCharacter(player)) return;
+                if (eventToInvoke.options.Contains(Option.OPTION_USES_CHARACTER) && !PlayerManager.Instance().IsClientUsingCharacter(player))
+                {
+                    return;
+                }
                 Type type = eventToInvoke.classInstance.GetType();
                 MethodInfo method = type.GetMethod(eventToInvoke.method, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
                 object[] prs = GetArgumentParametersForEvent(eventToInvoke, player, arguments);

@@ -48,8 +48,10 @@ namespace GTA_RP
         {
             if (this.onEnterCheckpointEvent != null)
             {
-                if ((API.shared.getEntityType(entity) == EntityType.Player && entity==this.client.handle) || (API.shared.getEntityType(entity) == EntityType.Vehicle && API.shared.getPlayerVehicle(client) == entity))
-                this.onEnterCheckpointEvent.Invoke(this, entity);
+                if ((API.shared.getEntityType(entity) == EntityType.Player && entity == this.client.handle) || (API.shared.getEntityType(entity) == EntityType.Vehicle && API.shared.getPlayerVehicle(client) == entity))
+                {
+                    this.onEnterCheckpointEvent.Invoke(this, entity);
+                }
             }
         }
 

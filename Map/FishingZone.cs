@@ -70,7 +70,9 @@ namespace GTA_RP.Map
             var second = obj as FishingZone;
 
             if (second == null)
+            {
                 return false;
+            }
 
             return this.id.Equals(second.id);
         }
@@ -145,7 +147,10 @@ namespace GTA_RP.Map
         /// <returns>True if character in zone with correct rotation, otherwise false</returns>
         public bool IsCharacterInZoneWithCorrectRotation(Character character)
         {
-            if (checkpoint == null) return false;
+            if (checkpoint == null)
+            {
+                return false;
+            }
             return checkpoint.IsCharacterInsideCheckpoint(character);
         }
 
@@ -217,7 +222,8 @@ namespace GTA_RP.Map
                 {
                     character.SendNotification("You caught a " + item.name);
                     this.ReduceFish();
-                } else
+                }
+                else
                 {
                     character.SendNotification("Your inventory is full!");
                     this.StopFishing(character);

@@ -210,8 +210,9 @@ namespace GTA_RP.Factions
                 if (arrestedCharacters.ContainsKey(character.ID))
                 {
                     arrestedCharacters[character.ID].minutes -= 1;
-                    if (arrestedCharacters[character.ID].minutes <= 0)
+                    if (arrestedCharacters[character.ID].minutes <= 0) {
                         ReleaseCharacterFromJail(character);
+                    }
                     else
                     {
                         DBManager.UpdateQuery("UPDATE jailed_characters SET time=@time WHERE id=@id")
@@ -259,7 +260,10 @@ namespace GTA_RP.Factions
         /// <returns>Remaining jail time</returns>
         public int GetJailTimeLeftForCharacter(Character character)
         {
-            if (arrestedCharacters.ContainsKey(character.ID)) return arrestedCharacters[character.ID].minutes;
+            if (arrestedCharacters.ContainsKey(character.ID))
+            {
+                return arrestedCharacters[character.ID].minutes;
+            }
             return 0;
         }
 
@@ -303,7 +307,9 @@ namespace GTA_RP.Factions
                 characterToArrest.SendNotification("You have been arrested by officer " + arrester.fullName + " for " + time.ToString() + " minutes. Reason: " + reason);
                 this.SetCharacterToJail(arrester, characterToArrest, time, reason);
 
-            } else {
+            }
+            else
+            {
                 arrester.SendNotification("Error: Character with that id is not online!");
             }
         }
@@ -359,7 +365,8 @@ namespace GTA_RP.Factions
                     // Determine what to do based on rank
                     // Add weapons, items etc
 
-                } else
+                }
+                else
                 {
                     c.onDuty = false;
                     c.SetModel(c.model);

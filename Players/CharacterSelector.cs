@@ -257,19 +257,21 @@ namespace GTA_RP
                     p.client.dimension = 0;
                     p.client.freezePosition = false;
 
-                    if (PlayerManager.Instance().TeleportPlayerToJailIfTimeLeft(c)) {
+                    if (PlayerManager.Instance().TeleportPlayerToJailIfTimeLeft(c))
+                    {
                         c.SendNotification("You have " + PlayerManager.Instance().GetTimeLeftInJailForCharacter(c) + " minutes of jail time left");
                     }
                     else if (c.spawnHouseId != -1)
                     {
                         HouseManager.Instance().AddCharacterToHouseWithId(c.spawnHouseId, c);
                         p.client.position = HouseManager.Instance().GetSpawnLocationOfHouseWithId(c.spawnHouseId);
-                    } else
+                    }
+                    else
                     {
                         // Default spawn
                         p.client.position = new Vector3(-692.194, 295.9935, 82.83133);
                     }
-                    
+
                     p.SetActiveCharacter(c);
                     this.RemovePlayerFromCharacterSelector(p);
                 }

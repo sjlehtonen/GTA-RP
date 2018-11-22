@@ -18,7 +18,12 @@ namespace GTA_RP.Misc
         {
             var reader = mysqlCommand.ExecuteReader();
             while (reader.Read())
-                if (code != null) code(reader);
+            {
+                if (code != null)
+                {
+                    code(reader);
+                }
+            }
             reader.Close();
         }
     }

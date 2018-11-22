@@ -282,11 +282,16 @@ namespace GTA_RP.Houses
                     replaceAmount--;
                 }
 
-                if (replaceAmount == 0) break;
+                if (replaceAmount == 0)
+                {
+                    break;
+                }
             }
 
             for (int i = 0; i < replaceAmount; i++)
+            {
                 housesForSale.Add(GenerateNonPlayerHouse());
+            }
         }
 
         /// <summary>
