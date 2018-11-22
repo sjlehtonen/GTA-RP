@@ -121,8 +121,7 @@ namespace GTA_RP
             bool result = true;
             if (Connection == null)
             {
-                if (String.IsNullOrEmpty(databaseName)) result = false;
-                string connstring = string.Format(LoadConnectionInfo(), databaseName);
+                string connstring = LoadConnectionInfo();
                 connection = new MySqlConnection(connstring);
                 connection.Open();
                 result = true;
