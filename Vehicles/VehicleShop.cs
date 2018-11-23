@@ -147,6 +147,7 @@ namespace GTA_RP.Vehicles
             {
                 characters.Add(character);
                 TeleportPlayerInsideShop(character);
+                List<int> prices = new List<int>();
                 availableVehicles.ForEach(x => prices.Add(vehiclePrice[x]));
                 character.TriggerEvent("EVENT_CHARACTER_ENTER_VEHICLE_SHOP", id, availableVehicles, prices, vehiclePosition, vehicleRotation);
                 character.TriggerEvent("EVENT_SET_LOGIN_SCREEN_CAMERA", cameraPosition, cameraRotation);

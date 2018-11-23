@@ -14,7 +14,9 @@ namespace GTA_RP.Factions
             this.name = name;
             this.itemIds = new List<int>();
             this.salary = salary;
-            itemIds.ToList().ForEach(x => this.itemIds.Add(x));
+            foreach (int itemId in itemIds) {
+                this.itemIds.Add(itemId);
+            }
         }
 
         public string name;

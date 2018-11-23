@@ -346,7 +346,7 @@ namespace GTA_RP
         /// <returns>A house with selected id</returns>
         private House GetHouseForId(int houseId)
         {
-            ownedHouses.SingleOrDefault(h => h.id == houseId);
+            return ownedHouses.SingleOrDefault(h => h.id == houseId);
         }
 
         /// <summary>

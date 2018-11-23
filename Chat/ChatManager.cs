@@ -82,7 +82,6 @@ namespace GTA_RP.Chat
         {
             if (PlayerManager.Instance().IsClientUsingCharacter(player))
             {
-                Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
                 List<Character> characters = PlayerManager.Instance().GetCharactersInDistance(player.position, distance);
                 characters.ForEach(x => API.sendChatMessageToPlayer(x.owner.client, color, message));
             }

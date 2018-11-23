@@ -53,7 +53,8 @@ namespace GTA_RP.Items
         static public Item CreateItemForId(int id, int amount = 1)
         {
             ItemTemplate template = ItemManager.Instance().GetItemTemplateForId(id);
-            if (template == null) {
+            if (template == null)
+            {
                 return null;
             }
             return CreateItemForTemplate(template, amount);

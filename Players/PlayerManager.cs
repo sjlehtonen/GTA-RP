@@ -572,7 +572,7 @@ namespace GTA_RP
             }
 
             Character character = this.GetActiveCharacterForClient(c);
-            if (characters != null && character.phone.HasContactForNumber(number))
+            if (character != null && character.phone.HasContactForNumber(number))
             {
                 API.shared.sendNotificationToPlayer(c, "You already have a contact for number " + number);
                 return false;
@@ -640,7 +640,7 @@ namespace GTA_RP
         /// <returns>Character with given phone number, null if not found</returns>
         public Character GetCharacterWithPhoneNumber(String number)
         {
-            return this.GetActiveCharacters().SingleOrDefault(x => x.phone.phoneNumber.Equals(numbers));
+            return this.GetActiveCharacters().SingleOrDefault(x => x.phone.phoneNumber.Equals(number));
         }
 
 
@@ -908,7 +908,7 @@ namespace GTA_RP
         /// <returns>List of active characters</returns>
         public List<Character> GetActiveCharacters()
         {
-            return players.Where(p => p.activeCharacter != null).ToList();
+            return players.Where(p => p.activeCharacter != null).Select(x => x.activeCharacter).ToList();
         }
 
         /// <summary>

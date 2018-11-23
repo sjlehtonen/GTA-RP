@@ -454,7 +454,7 @@ namespace GTA_RP.Vehicles
         public RPVehicle GetVehicleForCharacter(Character c)
         {
             NetHandle veh = API.shared.getPlayerVehicle(c.owner.client);
-            vehicles.SingleOrDefault(x => x.handle != null && x.handle == veh && veh.spawned);
+            return vehicles.SingleOrDefault(x => x.handle != null && x.handle == veh && x.spawned);
         }
 
         /// <summary>
@@ -480,7 +480,7 @@ namespace GTA_RP.Vehicles
 
         public RPVehicle GetVehicleForHandle(NetHandle vehicle)
         {
-            this.vehicles.SingleOrDefault(x => x.handle != null && x.handle == vehicle);
+            return this.vehicles.SingleOrDefault(x => x.handle != null && x.handle == vehicle);
         }
 
         /// <summary>

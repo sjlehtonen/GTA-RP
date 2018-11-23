@@ -357,7 +357,7 @@ namespace GTA_RP.Factions
                 if (!c.onDuty)
                 {
                     CharacterInfo info = GetInfoForCharacter(c);
-                    Rank rank = GetRank(info.rank);
+                    //Rank rank = GetRank(info.rank);
 
                     c.onDuty = true;
                     c.SetModel(info.onDutyModel);
