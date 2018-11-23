@@ -13,6 +13,10 @@ The classes are fairly well documented so if you wonder how something is impleme
 -If you get sql errors, make sure you have used the latest gta_rp.sql file
 ```
 
+```diff
+-If you are trying to run the server on OS X or Linux by using Mono, remember to use the correct DLL files. The System.Data.Dll needs to be specific to the platform, for example on OS X you will find the right one in the mono install folder. If you try to use windows DLL on OS X or Linux, you will get large errors and message that the DLL can't be read on mono. 
+```
+
 ## Current features
 - Account system in a way that one account can have multiple characters
 - House ownership system
@@ -67,7 +71,7 @@ password="password here"
 			- In the future, social club ID will be used instead.
 	- It also contains a few characters on the account, their property ownerships and vehicle ownerships
 
-5. Have **MySql.Data.dll**, **INIFileParser.dll** and **System.Data.dll** in the GTA-MP Server directory root (If you don't have them, move them from the dll folder)
+5. Have **MySql.Data.dll**, **INIFileParser.dll** and **System.Data.dll** in the GTA-MP Server directory root (If you don't have them, move them from the dll folder). Note that these DLLs are for windows platform, if you run the server on OS X by using mono, you need to replace the System.Data.dll with the OS X mono specific one.
 
 ## Pictures of the game mode
 
