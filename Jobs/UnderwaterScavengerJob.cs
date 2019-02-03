@@ -27,6 +27,8 @@ namespace GTA_RP.Jobs
         private Random rnd = new Random();
         private int jobStage = 0;
 
+        private const int salary = 12500;
+
         /// <summary>
         /// Add possible ending locations here, currently only 1
         /// </summary>
@@ -67,8 +69,14 @@ namespace GTA_RP.Jobs
                         checkedSpots.Add(this.workVehicle.position);
                     }
                 }
-                else if (zPos > maxZPos) character.SendNotification("There is no waste this close to the surface. Go deeper.");
-                else character.SendNotification("You are too deep to find waste. Go towards the surface.");
+                else if (zPos > maxZPos)
+                {
+                    character.SendNotification("There is no waste this close to the surface. Go deeper.");
+                }
+                else
+                {
+                    character.SendNotification("You are too deep to find waste. Go towards the surface.");
+                }
             }
         }
 
@@ -102,7 +110,7 @@ namespace GTA_RP.Jobs
             {
                 this.finished = true;
                 character.PlayFrontendSound("FLIGHT_SCHOOL_LESSON_PASSED", "HUD_AWARDS");
-                this.character.SetMoney(this.character.money + 12500);
+                this.character.SetMoney(this.character.money + salary);
                 this.FinishJob();
             }
         }

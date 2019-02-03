@@ -25,7 +25,9 @@ namespace GTA_RP.Items
             var second = obj as Item;
 
             if (second == null)
+            {
                 return false;
+            }
 
             return this.id.Equals(second.id);
         }
@@ -60,6 +62,6 @@ namespace GTA_RP.Items
         /// </summary>
         /// <param name="owner">Character from whose inventory the item is removed from</param>
         public virtual void RemovedFromInventory(Character owner) { }
-        
+
     }
 }

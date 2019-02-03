@@ -79,7 +79,9 @@ namespace GTA_RP
             get
             {
                 if (API.shared.getPlayerVehicleSeat(this.owner.client) == -1)
+                {
                     return true;
+                }
                 return false;
             }
         }
@@ -147,7 +149,7 @@ namespace GTA_RP
             {
                 return false;
             }
-            
+
             return this.ID.Equals(second.ID);
         }
 
@@ -283,7 +285,7 @@ namespace GTA_RP
         {
             API.shared.sendPictureNotificationToPlayer(client, message, picture, 0, 1, senderName, senderNumber);
         }
-        
+
         public void RemoveItemFromInventory(int itemId, int count, bool updateDB, bool updateUI = true)
         {
             this.inventory.RemoveItemWithId(itemId, count);
@@ -295,7 +297,7 @@ namespace GTA_RP
 
         public void UnequipItemWithName(string name)
         {
-            foreach(Item item in inventory.GetAlItems())
+            foreach (Item item in inventory.GetAlItems())
             {
                 if (item.name == name)
                 {

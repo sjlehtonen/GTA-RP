@@ -48,18 +48,22 @@ namespace GTA_RP
         // Death things
         private Dictionary<int, GTRPTimer> characterDeathTimers = new Dictionary<int, GTRPTimer>();
 
+        // Constants
+        // At some point move these to server config files
+        private const int firstNameMinLength = 3;
+        private const int firstNameMaxLength = 8;
+        private const int lastNameMinLength = 2;
+        private const int lastNameMaxLength = 10;
+        private const int maxCharactersCount = 5;
 
-        private static Random Rnd = new Random();
+        private const int phoneNumberLength = 7;
+        private const int phoneBookNameMaxLength = 12;
+
+        private const int minPasswordLength = 6;
+        private const int maxPasswordLength = 20;
+
         DBManager dbCon = DBManager.Instance();
 
-        // temp values
-        private int rotX = 0;
-        private int rotY = 0;
-        private int rotZ = 0;
-        private float posX = 0;
-        private float posY = 0;
-        private float posZ = 0;
-        private NetHandle phone;
 
         public PlayerManager()
         {
@@ -162,7 +166,10 @@ namespace GTA_RP
                 rows = reader.GetInt32(0);
             }).AddValue("@number", number).Execute();
 
-            if (rows > 0) return true;
+            if (rows > 0)
+            {
+                return true;
+            }
             return false;
         }
 
@@ -175,7 +182,7 @@ namespace GTA_RP
         /// <returns>True if message was sent succesfully, otherwise false</returns>
         private Boolean DeliverOfflineTextMessage(int id, String receiver, TextMessage message)
         {
-            if(DoesCharacterExistWithPhoneNumber(receiver))
+            if (DoesCharacterExistWithPhoneNumber(receiver))
             {
                 DBManager.InsertQuery("INSERT INTO text_messages VALUES (@id, @sender_number, @receiver_number, @time, @message)")
                     .AddValue("@id", id)
@@ -204,7 +211,10 @@ namespace GTA_RP
                 rows = reader.GetInt32(0);
             }).AddValue("@firstName", firstName).AddValue("@lastName", lastName).Execute();
 
-            if (rows < 1) return false;
+            if (rows < 1)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -222,11 +232,11 @@ namespace GTA_RP
             ToggleMinimapForPlayer(player, false);
             SetClientStartCameraMode(player, true);
             if (!DoesPlayerHaveAccount(player))
+            {
                 OpenCreateAccountMenu(player);
-            //else
-              //  API.shared.sendChatMessageToPlayer(player, "Welcome! Please login by using the /login [password] command");
+            }
         }
-        
+
         /// <summary>
         /// Handles player disconnect event
         /// </summary>
@@ -235,12 +245,16 @@ namespace GTA_RP
         public void HandlePlayerDisconnect(Client player, String reason)
         {
             if (OnPlayerDisconnectEvent != null && IsClientUsingCharacter(player))
+            {
                 OnPlayerDisconnectEvent.Invoke(GetActiveCharacterForClient(player));
+            }
 
             Player p = GetPlayerByClient(player);
 
             if (p != null)
+            {
                 this.players.Remove(GetPlayerByClient(player));
+            }
         }
 
         private void HandleCharacterDeathTimerExpire(GTRPTimer timer)
@@ -252,6 +266,7 @@ namespace GTA_RP
         {
             // Override the character death to block spawning to hospital
             // Create death timer
+            // This is not yet implemented in GTA-MP so commented out meanwhile
             // characterDeathTimers[c.ID] = new GTRPTimer(HandleCharacterDeathTimerExpire, (int)TimeSpan.FromMinutes(3).TotalMilliseconds);
 
             OnCharacterDeathEvent.Invoke(c, entityKiller, weapon);
@@ -406,7 +421,9 @@ namespace GTA_RP
         private Boolean IsPlayerLoggedIn(Client player)
         {
             if (players.Where(p => player.Equals(p.client)).ToList().Count > 0)
+            {
                 return true;
+            }
 
             return false;
         }
@@ -425,7 +442,9 @@ namespace GTA_RP
             }).AddValue("@name", player.name).Execute();
 
             if (count > 0)
+            {
                 return true;
+            }
 
             return false;
         }
@@ -437,16 +456,18 @@ namespace GTA_RP
         /// <param name="password">Inputted password</param>
         public void HandlePlayerLogin(Client player, string password)
         {
-            if(IsPlayerLoggedIn(player))
+            if (IsPlayerLoggedIn(player))
             {
                 API.shared.sendChatMessageToPlayer(player, "You are already logged in!");
                 return;
             }
 
-            if(!DoesPlayerHaveAccount(player))
+            if (!DoesPlayerHaveAccount(player))
+            {
                 return;
+            }
 
-            if(AuthenticatePlayer(player, password))
+            if (AuthenticatePlayer(player, password))
             {
                 Player newPlayer = LoadPlayerForClient(player);
                 List<Character> characters = LoadCharactersForPlayer(newPlayer);
@@ -501,9 +522,9 @@ namespace GTA_RP
         /// <returns>True if validated, otherwise false</returns>
         private Boolean ValidateTextMessage(Client c, String receiver, String message)
         {
-            if (receiver.Length != 7)
+            if (receiver.Length != phoneNumberLength)
             {
-                API.shared.sendNotificationToPlayer(c, "Phone number has to be 7 digits long");
+                API.shared.sendNotificationToPlayer(c, String.Format("Phone number has to be {0} digits long", phoneNumberLength));
                 return false;
             }
 
@@ -538,20 +559,20 @@ namespace GTA_RP
                 return false;
             }
 
-            if (number.Length != 7)
+            if (number.Length != phoneNumberLength)
             {
-                API.shared.sendChatMessageToPlayer(c, "Phone number has to 7 digits long!");
+                API.shared.sendChatMessageToPlayer(c, String.Format("Phone number has to {0} digits long!", phoneNumberLength));
                 return false;
             }
 
-            if (name.Length > 12)
+            if (name.Length > phoneBookNameMaxLength)
             {
-                API.shared.sendChatMessageToPlayer(c, "Name can't be longer than 12 characters!");
+                API.shared.sendChatMessageToPlayer(c, String.Format("Name can't be longer than {0} characters!", phoneBookNameMaxLength));
                 return false;
             }
 
             Character character = this.GetActiveCharacterForClient(c);
-            if (character.phone.HasContactForNumber(number))
+            if (character != null && character.phone.HasContactForNumber(number))
             {
                 API.shared.sendNotificationToPlayer(c, "You already have a contact for number " + number);
                 return false;
@@ -616,19 +637,13 @@ namespace GTA_RP
         /// Gets character with given phone number
         /// </summary>
         /// <param name="number">Phone number</param>
-        /// <returns>Character with given phone number</returns>
+        /// <returns>Character with given phone number, null if not found</returns>
         public Character GetCharacterWithPhoneNumber(String number)
         {
-            foreach (Character c in this.GetActiveCharacters())
-            {
-                if (c.phone.phoneNumber.Equals(number))
-                    return c;
-            }
-
-            return null;
+            return this.GetActiveCharacters().SingleOrDefault(x => x.phone.phoneNumber.Equals(number));
         }
 
-        
+
         /// <summary>
         /// Sets a new spawn position for player inside a house that is owned by him/her
         /// </summary>
@@ -694,8 +709,10 @@ namespace GTA_RP
         public Player PlayerForHandle(NetHandle e)
         {
             Client c = ClientForHandle(e);
-            if (c==null)
+            if (c == null)
+            {
                 return null;
+            }
 
             return this.GetPlayerByClient(c);
         }
@@ -707,7 +724,10 @@ namespace GTA_RP
         /// <param name="newMoney">New money amount</param>
         public void UpdateCharacterMoneyToDatabase(Character character, int newMoney)
         {
-            DBManager.UpdateQuery("UPDATE characters SET money=@money WHERE id=@id").AddValue("@id", character.ID).AddValue("@money", newMoney).Execute();
+            DBManager.UpdateQuery("UPDATE characters SET money=@money WHERE id=@id")
+            .AddValue("@id", character.ID)
+            .AddValue("@money", newMoney)
+            .Execute();
         }
 
         /// <summary>
@@ -724,16 +744,10 @@ namespace GTA_RP
         /// Gets player object for client
         /// </summary>
         /// <param name="client">Client</param>
-        /// <returns>Player object for client</returns>
+        /// <returns>Player object for client, null if no player found</returns>
         public Player GetPlayerByClient(Client client)
         {
-            foreach(Player p in players)
-            {
-                if (p.client == client)
-                    return p;
-            }
-
-            return null;
+            return players.SingleOrDefault(x => x.client == client);
         }
 
         /// <summary>
@@ -773,7 +787,7 @@ namespace GTA_RP
             if (IsCharacterWithIdOnline(id))
             {
                 Character character = GetCharacterWithId(id);
-                character.SetMoney(character.money+addAmount);
+                character.SetMoney(character.money + addAmount);
             }
             else
             {
@@ -786,7 +800,7 @@ namespace GTA_RP
                 .AddValue("@id", id)
                 .Execute();
 
-                DBManager.UpdateQuery("UPDATE characters SET money=@money WHERE id=@id").AddValue("@id", id).AddValue("@money", money+addAmount).Execute();
+                DBManager.UpdateQuery("UPDATE characters SET money=@money WHERE id=@id").AddValue("@id", id).AddValue("@money", money + addAmount).Execute();
             }
         }
 
@@ -801,7 +815,9 @@ namespace GTA_RP
             // Check if account exists already
 
             if (DoesPlayerHaveAccount(c))
+            {
                 return;
+            }
 
             if (!password.All(char.IsLetterOrDigit))
             {
@@ -809,15 +825,15 @@ namespace GTA_RP
                 return;
             }
 
-            if (password.Length > 20)
+            if (password.Length > maxPasswordLength)
             {
-                API.shared.sendNotificationToPlayer(c, "Password is not allowed to be longer than 20 characters!");
+                API.shared.sendNotificationToPlayer(c, String.Format("Password is not allowed to be longer than {0} characters!", maxPasswordLength));
                 return;
             }
 
-            if (password.Length < 6)
+            if (password.Length < minPasswordLength)
             {
-                API.shared.sendNotificationToPlayer(c, "Password has to be at least 6 characters long!");
+                API.shared.sendNotificationToPlayer(c, String.Format("Password has to be at least {0} characters long!", minPasswordLength));
                 return;
             }
 
@@ -863,11 +879,13 @@ namespace GTA_RP
         /// <returns>True if client is using character, otherwise false</returns>
         public Boolean IsClientUsingCharacter(Client c)
         {
-            if(this.IsPlayerLoggedIn(c))
+            if (this.IsPlayerLoggedIn(c))
             {
                 Player p = this.GetPlayerByClient(c);
                 if (p.activeCharacter != null)
+                {
                     return true;
+                }
 
                 return false;
             }
@@ -890,9 +908,7 @@ namespace GTA_RP
         /// <returns>List of active characters</returns>
         public List<Character> GetActiveCharacters()
         {
-            List<Character> characters = new List<Character>();
-            players.Where(p => p.activeCharacter != null).ToList().ForEach(x => characters.Add(x.activeCharacter));
-            return characters;
+            return players.Where(p => p.activeCharacter != null).Select(x => x.activeCharacter).ToList();
         }
 
         /// <summary>
@@ -939,29 +955,33 @@ namespace GTA_RP
         /// <param name="modelHash">Character model hash</param>
         public void RequestCreateCharacter(Client player, string firstName, string lastName, string modelHash)
         {
-            if (firstName.Length < 3 || firstName.Length > 8)
+            if (firstName.Length < firstNameMinLength || firstName.Length > firstNameMaxLength)
             {
-                API.shared.sendNotificationToPlayer(player, "First name has to be between 3 and 8 characters long!");
+                API.shared.sendNotificationToPlayer(player, String.Format("First name has to be between {0} and {1} characters long!", firstNameMinLength, firstNameMaxLength));
                 return;
             }
 
-            if (lastName.Length < 2 || lastName.Length > 10)
+            if (lastName.Length < lastNameMinLength || lastName.Length > lastNameMaxLength)
             {
-                API.shared.sendNotificationToPlayer(player, "Last name has to be between 2 and 10 characters long!");
+                API.shared.sendNotificationToPlayer(player, String.Format("Last name has to be between {0} and {1} characters long!", lastNameMinLength, lastNameMaxLength));
                 return;
             }
 
             if (!characterSelector.IsModelAllowed(modelHash))
-                return;
-
-            if (this.DoesCharacterExistWithName(firstName, lastName))
             {
-                API.shared.sendNotificationToPlayer(player, "Character with name \"" + firstName + " " + lastName + "\" exists already");
                 return;
             }
 
-            if (this.LoadCharactersForPlayer(this.GetPlayerByClient(player)).Count > 5)
-                API.shared.sendNotificationToPlayer(player, "Only 5 characters are allowed!");
+            if (this.DoesCharacterExistWithName(firstName, lastName))
+            {
+                API.shared.sendNotificationToPlayer(player, String.Format("Character with name {0} exists already", firstName + " " + lastName));
+                return;
+            }
+
+            if (this.LoadCharactersForPlayer(this.GetPlayerByClient(player)).Count > maxCharactersCount)
+            {
+                API.shared.sendNotificationToPlayer(player, String.Format("Only {0} characters are allowed!", maxCharactersCount));
+            }
 
             this.characterSelector.CreateCharacter(this.GetPlayerByClient(player), firstName, lastName, modelHash);
         }
@@ -1059,7 +1079,9 @@ namespace GTA_RP
                 Character caller = this.GetActiveCharacterForClient(client);
 
                 if (caller != null)
+                {
                     caller.phone.CallPhone(number);
+                }
             }
         }
 
@@ -1100,7 +1122,9 @@ namespace GTA_RP
             {
                 Character character = this.GetActiveCharacterForClient(client);
                 if (character.phone.HasContactForNumber(contactNumber))
+                {
                     character.phone.RemoveContactFromAddressBook(contactNumber);
+                }
             }
         }
 
@@ -1115,7 +1139,9 @@ namespace GTA_RP
             {
                 Character character = this.GetActiveCharacterForClient(client);
                 if (character.phone.HasTextMessageWithId(id))
+                {
                     character.phone.RemoveTextMessage(id);
+                }
             }
         }
 
@@ -1147,12 +1173,12 @@ namespace GTA_RP
         {
             if (IsClientUsingCharacter(client))
             {
-                // Additional checks like number length and message length
+                // Implement additional checks like number length and message length
                 if (ValidateTextMessage(client, receiverNumber, message))
                 {
                     Character c = this.GetActiveCharacterForClient(client);
                     c.phone.SendMessage(receiverNumber, message);
-                    API.shared.sendNotificationToPlayer(client, "Message sent!");
+                    c.SendNotification("Message sent!");
                 }
             }
         }
@@ -1166,8 +1192,14 @@ namespace GTA_RP
         {
             Character deliverCharacter = this.GetCharacterWithPhoneNumber(receiver);
 
-            if(deliverCharacter != null) deliverCharacter.phone.ReceiveMessage(this.textMessageId, message.senderNumber, message.message, message.time);
-            else this.DeliverOfflineTextMessage(this.textMessageId, receiver, message);
+            if (deliverCharacter != null)
+            {
+                deliverCharacter.phone.ReceiveMessage(this.textMessageId, message.senderNumber, message.message, message.time);
+            }
+            else
+            {
+                this.DeliverOfflineTextMessage(this.textMessageId, receiver, message);
+            }
 
             this.IncrementTextMessageId();
         }
@@ -1180,7 +1212,9 @@ namespace GTA_RP
         public int GetGenderForModel(String model)
         {
             if (!characterGenderDictionary.ContainsKey(model))
+            {
                 return 0;
+            }
 
             return characterGenderDictionary.Get(model);
         }
@@ -1192,35 +1226,6 @@ namespace GTA_RP
         /// <param name="c">Player</param>
         public void SetPlayerUsingPhone(Client c)
         {
-            /*if (IsPlayerLoggedIn(c))
-            {
-                if (this.phone != null)
-                {
-                    API.deleteEntity(this.phone);
-                }
-
-                this.phone = API.createObject(-1038739674, c.position, new Vector3(0, 0, 0));
-                Character character = GetActiveCharacterForClient(c);
-                character.AttachObject(this.phone, "57005", new Vector3(this.posX, this.posY, this.posZ), new Vector3(this.rotX, this.rotY, this.rotZ));
-
-                // Female rot(90, 100, 0) pos (0.1, 0, -0.021) cellphone@female
-                // Male rot(130, 100, 0) pos (0.17, 0.021, -0.009) cellphone@
-
-                API.sendNotificationToPlayer(c, "here!");
-                // Female calling phone
-                Vector3 femaleRot = new Vector3(90, 100, 0);
-                Vector3 femalePos = new Vector3(0.1, 0, -0.021);
-
-                /// private Vector3 femaleCallingPhonePosition = new Vector3(0.1, 0, -0.021);
-                //private Vector3 femaleCallingPhoneRotation = new Vector3(90, 100, 0);
-
-                // Female reading phone
-               Vector3 femaleRot1 = new Vector3(130, 115, 0);
-                Vector3 femalePos1 = new Vector3(0.14, 0, -0.021);
-
-                character.PlayAnimation((int)(AnimationFlags.AllowPlayerControl | AnimationFlags.Loop | AnimationFlags.OnlyAnimateUpperBody), "cellphone@", "cellphone_call_listen_base");
-            }*/
-
             if (IsClientUsingCharacter(c))
             {
                 Character character = GetActiveCharacterForClient(c);
@@ -1263,13 +1268,7 @@ namespace GTA_RP
         /// <returns>List of characters in this distance</returns>
         public List<Character> GetNearbyCharacters(Character character, float distance)
         {
-            List<Character> charactersNearby = new List<Character>();
-            foreach(Character c in GetActiveCharacters())
-            {
-                if (c.position.DistanceTo(character.position) <= distance)
-                    charactersNearby.Add(c);
-            }
-            return charactersNearby;
+            return GetActiveCharacters().Where(x => x.position.DistanceTo(character.position) <= distance).ToList();
         }
 
     }

@@ -149,8 +149,8 @@ namespace GTA_RP.Vehicles
                 TeleportPlayerInsideShop(character);
                 List<int> prices = new List<int>();
                 availableVehicles.ForEach(x => prices.Add(vehiclePrice[x]));
-                API.shared.triggerClientEvent(character.owner.client, "EVENT_CHARACTER_ENTER_VEHICLE_SHOP", id, availableVehicles, prices, vehiclePosition, vehicleRotation);
-                API.shared.triggerClientEvent(character.owner.client, "EVENT_SET_LOGIN_SCREEN_CAMERA", cameraPosition, cameraRotation);
+                character.TriggerEvent("EVENT_CHARACTER_ENTER_VEHICLE_SHOP", id, availableVehicles, prices, vehiclePosition, vehicleRotation);
+                character.TriggerEvent("EVENT_SET_LOGIN_SCREEN_CAMERA", cameraPosition, cameraRotation);
                 PlayerManager.Instance().ToggleMinimapForPlayer(character.client, false);
             }
         }
@@ -165,8 +165,8 @@ namespace GTA_RP.Vehicles
             {
                 characters.Remove(character);
                 TeleportPlayerOutOfShop(character);
-                API.shared.triggerClientEvent(character.owner.client, "EVENT_CHARACTER_EXIT_VEHICLE_SHOP");
-                API.shared.triggerClientEvent(character.owner.client, "EVENT_REMOVE_CAMERA");
+                character.TriggerEvent("EVENT_CHARACTER_EXIT_VEHICLE_SHOP");
+                character.TriggerEvent("EVENT_REMOVE_CAMERA");
                 PlayerManager.Instance().ToggleMinimapForPlayer(character.client, true);
             }
         }
@@ -196,12 +196,12 @@ namespace GTA_RP.Vehicles
                         string licensePlate = VehicleManager.Instance().GenerateUnusedLicensePlate();
                         int id = VehicleManager.Instance().AddVehicleToDatabase(character.ID, Factions.FactionI.CIVILIAN, model, -223.2121f, -1168.157f, 22.5882f, 0.5045538f, 0.1192265f, -91.68389f, licensePlate, 0, color1, color2);
                         VehicleManager.Instance().SendUpdatedVehicleToClient(character, id, licensePlate, false);
-                        API.shared.triggerClientEvent(character.owner.client, "EVENT_CHARACTER_EXIT_VEHICLE_SHOP");
-                        API.shared.sendNotificationToPlayer(character.owner.client, "Vehicle purchased!\nExit the shop and access the vehicle from your F1 menu");
+                        character.TriggerEvent("EVENT_CHARACTER_EXIT_VEHICLE_SHOP");
+                        character.SendNotification("Vehicle purchased!\nExit the shop and access the vehicle from your F1 menu");
                     }
                     else
                     {
-                        API.shared.sendNotificationToPlayer(character.owner.client, "You don't have enough money to buy this vehicle!");
+                        character.SendNotification("You don't have enough money to buy this vehicle!");
                     }
                 }
             }

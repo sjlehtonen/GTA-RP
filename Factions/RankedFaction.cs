@@ -14,8 +14,7 @@ namespace GTA_RP.Factions
             this.name = name;
             this.itemIds = new List<int>();
             this.salary = salary;
-            foreach (int itemId in itemIds)
-            {
+            foreach (int itemId in itemIds) {
                 this.itemIds.Add(itemId);
             }
         }
@@ -132,7 +131,9 @@ namespace GTA_RP.Factions
             foreach (int characterId in this.GetIdOfAllCharactersInFaction())
             {
                 if (PlayerManager.Instance().IsCharacterWithIdOnline(characterId))
+                {
                     PaySalaryForCharacterWithId(characterId, paySalaryString);
+                }
             }
         }
 
@@ -166,6 +167,7 @@ namespace GTA_RP.Factions
                 return rank.name;
             }
 
+            // Return empty text because no rank
             return "";
         }
 
@@ -177,7 +179,9 @@ namespace GTA_RP.Factions
             DBManager.SelectQuery("SELECT * FROM faction_ranks", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
                 if (reader.GetInt32(3) == (int)this.id)
+                {
                     AddCharacterToFaction(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2));
+                }
             }).Execute();
         }
 

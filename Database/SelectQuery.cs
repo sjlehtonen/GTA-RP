@@ -13,8 +13,14 @@ namespace GTA_RP.Database
         public override void Execute()
         {
             var reader = mysqlCommand.ExecuteReader();
+
             while (reader.Read())
-                if (code != null) code(reader);
+            {
+                if (code != null)
+                {
+                    code(reader);
+                }
+            }
             reader.Close();
         }
     }

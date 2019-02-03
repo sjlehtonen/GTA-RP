@@ -211,7 +211,10 @@ namespace GTA_RP
         /// <returns>True if owner is male, otherwise false</returns>
         private Boolean IsMale()
         {
-            if (gender == 0) { return true; }
+            if (gender == 0)
+            {
+                return true;
+            }
             return false;
         }
 
@@ -365,7 +368,7 @@ namespace GTA_RP
                 {
                     if (!IsMale()) owner.PlayAnimation((int)(AnimationFlags.AllowPlayerControl | AnimationFlags.OnlyAnimateUpperBody), "cellphone@female", "cellphone_text_out");
                     else owner.PlayAnimation((int)(AnimationFlags.AllowPlayerControl | AnimationFlags.OnlyAnimateUpperBody), "cellphone@", "cellphone_text_out");
- 
+
                 }
             }
         }
@@ -476,7 +479,7 @@ namespace GTA_RP
         public List<string> GetTextMessageSenders()
         {
             List<string> senders = new List<string>();
-            foreach(TextMessage m in receivedMessages)
+            foreach (TextMessage m in receivedMessages)
             {
                 if (HasContactForNumber(m.senderNumber))
                 {
@@ -616,7 +619,7 @@ namespace GTA_RP
         public void RemoveContactFromAddressBook(String number)
         {
             int indexToRemove = -1;
-            for(int i = 0; i < addressBook.Count; i++)
+            for (int i = 0; i < addressBook.Count; i++)
             {
                 Address a = addressBook.ElementAt(i);
                 if (a.number.Equals(number))
@@ -626,12 +629,12 @@ namespace GTA_RP
                 }
             }
 
-            if(indexToRemove != -1)
+            if (indexToRemove != -1)
             {
                 addressBook.RemoveAt(indexToRemove);
                 RemoveContactFromDatabase(number);
             }
-            
+
         }
 
         /// <summary>

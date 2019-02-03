@@ -91,7 +91,9 @@ namespace GTA_RP.Houses
             var second = obj as House;
 
             if (second == null)
+            {
                 return false;
+            }
 
             return this.id.Equals(second.id);
         }

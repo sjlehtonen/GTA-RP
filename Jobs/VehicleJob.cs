@@ -19,14 +19,17 @@ namespace GTA_RP.Jobs
         protected Vehicle workVehicle = null;
         protected Boolean cooldown = false;
 
+        private const int exitVehicleTimeInterval = 15000;
+        private const int exitJobTimeInterval = 60000;
+
         public VehicleJob(Character c) : base(c)
         {
 
             exitJobCooldownTimer.Elapsed += CoolDownElapsed;
             exitVehicleTimer.Elapsed += ExitVehicleTimerExpire;
-            exitVehicleTimer.Interval = 15000;
+            exitVehicleTimer.Interval = exitVehicleTimeInterval;
             exitVehicleTimer.AutoReset = false;
-            exitJobCooldownTimer.Interval = 600000;
+            exitJobCooldownTimer.Interval = exitJobTimeInterval;
         }
 
         /// <summary>

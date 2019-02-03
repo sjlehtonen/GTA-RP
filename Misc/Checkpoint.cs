@@ -24,7 +24,7 @@ namespace GTA_RP.Misc
         private Checkpoint(Vector3 coords, OnEnterCheckpointDelegate enterDelegate, OnExitCheckpointDelegate exitDelegate, int markerType, int dimension, float scaleX, float scaleY, float scaleZ, int alpha, int colorR, int colorG, int colorB, bool popUpAndDown)
         {
             entrance = API.shared.createMarker(markerType, coords, new Vector3(), new Vector3(), new Vector3(scaleX, scaleY, scaleZ), alpha, colorR, colorG, colorB, dimension, popUpAndDown);
-            shape = API.shared.createSphereColShape(coords, range*Math.Max(scaleX, scaleY));
+            shape = API.shared.createSphereColShape(coords, range * Math.Max(scaleX, scaleY));
             shape.onEntityEnterColShape += EntityEnteredCheckpoint;
             shape.onEntityExitColShape += EntityExitedCheckpoint;
             OnEnterCheckPointEvent += enterDelegate;
@@ -33,7 +33,7 @@ namespace GTA_RP.Misc
 
         public Checkpoint(Vector3 coordinates, OnEnterCheckpointDelegate enterDelegate, int dimension = 0)
         {
-            
+
             entrance = API.shared.createMarker(0, coordinates, new Vector3(), new Vector3(), new Vector3(1, 1, 1), 255, 255, 0, 0, dimension);
             shape = API.shared.createSphereColShape(coordinates, range);
             shape.onEntityEnterColShape += EntityEnteredCheckpoint;
@@ -93,7 +93,10 @@ namespace GTA_RP.Misc
             if (OnEnterCheckPointEvent != null)
             {
                 Player p = PlayerManager.Instance().PlayerForHandle(entity);
-                if (p != null) { OnEnterCheckPointEvent.Invoke(this, p.activeCharacter); }
+                if (p != null)
+                {
+                    OnEnterCheckPointEvent.Invoke(this, p.activeCharacter);
+                }
             }
         }
 
@@ -107,7 +110,10 @@ namespace GTA_RP.Misc
             if (OnExitCheckPointEvent != null)
             {
                 Player p = PlayerManager.Instance().PlayerForHandle(entity);
-                if (p != null) { OnExitCheckPointEvent.Invoke(this, p.activeCharacter); }
+                if (p != null)
+                {
+                    OnExitCheckPointEvent.Invoke(this, p.activeCharacter);
+                }
             }
         }
     }

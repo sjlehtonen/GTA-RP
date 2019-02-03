@@ -29,6 +29,8 @@ namespace GTA_RP
             this.id = id;
             this.exits = new List<TeleportDestination>();
             exits.ForEach(x => this.exits.Add(x));
+            // Throw custom exception if there is no exits for teleport
+            // Because every teleport has to have at least 1 exit
         }
 
         public int id { get; private set; }
@@ -41,10 +43,12 @@ namespace GTA_RP
         /// <returns>Teleport destination</returns>
         private TeleportDestination DestinationWithId(int id)
         {
-            foreach(TeleportDestination t in exits)
+            foreach (TeleportDestination t in exits)
             {
-                if(t.id == id)
+                if (t.id == id)
+                {
                     return t;
+                }
             }
 
             return exits.First();

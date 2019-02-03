@@ -44,8 +44,10 @@ namespace GTA_RP.Chat
                 string nameOrNumber = c.phone.activeCallPhone.phoneNumber;
 
                 if (c.phone.HasContactForNumber(nameOrNumber))
+                {
                     nameOrNumber = c.phone.GetNameForNumber(nameOrNumber);
-
+                }
+                
                 API.sendChatMessageToPlayer(target.owner.client, loocTextColor, modifier + "[PHONE CALL - " + nameOrNumber + "]: " + message);
             }
         }
@@ -58,7 +60,7 @@ namespace GTA_RP.Chat
         /// <param name="distance">Distance</param>
         /// <param name="modifier">Modifier</param>
         /// <param name="modifier2">Modifier 2</param>
-        private void sendDistanceChatMessage(Client player, string message, float distance, string modifier="", string modifier2="")
+        private void sendDistanceChatMessage(Client player, string message, float distance, string modifier = "", string modifier2 = "")
         {
             if (PlayerManager.Instance().IsClientUsingCharacter(player))
             {
@@ -80,7 +82,6 @@ namespace GTA_RP.Chat
         {
             if (PlayerManager.Instance().IsClientUsingCharacter(player))
             {
-                Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
                 List<Character> characters = PlayerManager.Instance().GetCharactersInDistance(player.position, distance);
                 characters.ForEach(x => API.sendChatMessageToPlayer(x.owner.client, color, message));
             }
@@ -114,7 +115,10 @@ namespace GTA_RP.Chat
         public void handleLoocCommand(Client player, string text)
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c != null) this.sendDistanceCommandMessageWithColor(player, "[LOOC] " + c.fullName + ": " + text, normalChatDistance, loocTextColor);
+            if (c != null)
+            {
+                this.sendDistanceCommandMessageWithColor(player, "[LOOC] " + c.fullName + ": " + text, normalChatDistance, loocTextColor);
+            }
         }
 
         [Command("advertisement", GreedyArg = true, Alias = "adv", Description = "Sends an advertisement for $3000")]
@@ -189,14 +193,20 @@ namespace GTA_RP.Chat
         public void handleMeCommand(Client player, string text)
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c != null) this.sendDistanceCommandMessageWithColor(player, "** " + c.fullName + " " + text, normalChatDistance, meTextColor);
+            if (c != null)
+            {
+                this.sendDistanceCommandMessageWithColor(player, "** " + c.fullName + " " + text, normalChatDistance, meTextColor);
+            }
         }
 
         [Command("it", GreedyArg = true)]
         public void handleItCommand(Client player, string text)
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c != null) this.sendDistanceCommandMessageWithColor(player, "** " + text + " **", normalChatDistance, meTextColor);
+            if (c != null)
+            {
+                this.sendDistanceCommandMessageWithColor(player, "** " + text + " **", normalChatDistance, meTextColor);
+            }
         }
     }
 }

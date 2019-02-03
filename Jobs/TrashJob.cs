@@ -17,6 +17,8 @@ namespace GTA_RP.Jobs
         private Timer finishJobTimer = new Timer();
 
         private ClientCheckpoint currentCheckPoint = null;
+        private const int salary = 5500;
+        private const int loadTrashTime = 5000;
 
         /// <summary>
         /// List of trash pickup points
@@ -134,7 +136,7 @@ namespace GTA_RP.Jobs
         private void LoadTrash(ClientCheckpoint cp)
         {
             workVehicle.freezePosition = true;
-            trashLoadTimer.Interval = 5000;
+            trashLoadTimer.Interval = loadTrashTime;
             trashLoadTimer.Enabled = true;
             currentCheckPoint = cp;
             character.SendNotification("Loading trash...");
@@ -146,7 +148,7 @@ namespace GTA_RP.Jobs
         private void UnloadTrash()
         {
             workVehicle.freezePosition = true;
-            finishJobTimer.Interval = 5000;
+            finishJobTimer.Interval = loadTrashTime;
             finishJobTimer.Enabled = true;
             character.SendNotification("Unloading trash...");
         }
@@ -196,7 +198,7 @@ namespace GTA_RP.Jobs
         {
             base.FinishJob();
             character.SendNotification("Job complete! You earned $5500!");
-            character.SetMoney(character.money + 5500);
+            character.SetMoney(character.money + salary);
             CleanUp();
         }
 

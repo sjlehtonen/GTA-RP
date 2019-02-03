@@ -63,7 +63,10 @@ namespace GTA_RP.Map
         private bool IsCharacterInAnyFishingZone(Character character)
         {
             FishingZone zone = fishingZones.SingleOrDefault(x => x.IsCharacterInZoneWithCorrectRotation(character));
-            if (zone == null) return false;
+            if (zone == null)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -84,7 +87,10 @@ namespace GTA_RP.Map
         public bool StartFishing(Character character)
         {
             FishingZone zone = GetFishingZoneWhereCharacterIsIn(character);
-            if (zone == null) return false;
+            if (zone == null)
+            {
+                return false;
+            }
             zone.StartFishing(character);
             return true;
         }
@@ -96,7 +102,10 @@ namespace GTA_RP.Map
         public void StopFishing(Character character)
         {
             FishingZone zone = GetFishingZoneWhereCharacterIsIn(character);
-            if (zone == null) return;
+            if (zone == null)
+            {
+                return;
+            }
             zone.StopFishing(character);
         }
 
@@ -119,7 +128,10 @@ namespace GTA_RP.Map
         {
             // Load loot tables from DB
             Dictionary<FishingZoneType, List<Loot>> loots = new Dictionary<FishingZoneType, List<Loot>>();
-            foreach (FishingZoneType type in Enum.GetValues(typeof(FishingZoneType))) loots[type] = new List<Loot>();
+            foreach (FishingZoneType type in Enum.GetValues(typeof(FishingZoneType)))
+            {
+                loots[type] = new List<Loot>();
+            }
 
             DBManager.SelectQuery("SELECT * FROM fishing_loot", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
@@ -133,15 +145,20 @@ namespace GTA_RP.Map
             {
                 FishingZoneType type = (FishingZoneType)reader.GetInt32(1);
                 List<Loot> loot = loots[type];
-                // edit
-                if (type != FishingZoneType.NORMAL) loot.AddRange(loots[FishingZoneType.NORMAL]);
+                if (type != FishingZoneType.NORMAL)
+                {
+                    loot.AddRange(loots[FishingZoneType.NORMAL]);
+                }
                 this.AddNewFishingZone(reader.GetInt32(0), reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4), reader.GetFloat(5), reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), type, loot.ToArray());
             }).Execute();
 
             // After initialization spawn certain number of spots
-            for(int i = 0; i < fishingZones.Count; i++)
+            for (int i = 0; i < fishingZones.Count; i++)
             {
-                if (i >= fishingZoneCount - 1) break;
+                if (i >= fishingZoneCount - 1)
+                {
+                    break;
+                }
                 fishingZones[i].Spawn();
             }
         }

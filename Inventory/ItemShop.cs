@@ -47,7 +47,10 @@ namespace GTA_RP.Items
             this.id = id;
             this.name = name;
             this.storeCheckPoint = new Checkpoint(position, OnEnterShop, OnExitShop, 25, 1.6f, 40, 186, 82);
-            if (addBlip) MapManager.Instance().AddBlipToMap(52, name, position.X, position.Y, position.Z);
+            if (addBlip)
+            {
+                MapManager.Instance().AddBlipToMap(52, name, position.X, position.Y, position.Z);
+            }
         }
 
         /// <summary>
@@ -59,13 +62,13 @@ namespace GTA_RP.Items
         {
             List<Item> items = character.GetAllItemsFromInventory();
             List<Item> both = new List<Item>();
-            foreach(BuyableItem item in sellableItems)
+            foreach (BuyableItem item in sellableItems)
             {
                 if (items.Count(x => x.id == item.id) > 0)
                 {
                     both.Add(items.Single(x => x.id == item.id));
                 }
-                    
+
             }
             return both;
         }
@@ -80,11 +83,7 @@ namespace GTA_RP.Items
             // Open shop menu
             List<Item> sellableItemsForCharacter = GetItemsThatCharacterHasAndShopBuys(character);
             List<int> sellableItemPrices = new List<int>();
-            foreach (Item item in sellableItemsForCharacter)
-            {
-                sellableItemPrices.Add(GetItemBuyPrice(item.id));
-            }
-
+            sellableItemsForCharacter.ForEach(x => sellableItemPrices.Add(GetItemBuyPrice(x.id)));
             character.TriggerEvent("EVENT_OPEN_ITEM_SHOP_MENU", id, name, stock.Select(x => x.template.id).ToList(), stock.Select(x => x.template.name).ToList(), stock.Select(x => x.template.description).ToList(), stock.Select(x => x.amount).ToList(), stock.Select(x => x.price).ToList(), sellableItemsForCharacter.Select(x => x.id).ToList(), sellableItemsForCharacter.Select(x => x.name).ToList(), sellableItemsForCharacter.Select(x => x.description).ToList(), sellableItemsForCharacter.Select(x => x.count).ToList(), sellableItemPrices);
         }
 
@@ -147,6 +146,7 @@ namespace GTA_RP.Items
                     return item.price;
                 }
             }
+            // TODO: throw custom exception
             return -1;
         }
 
@@ -164,6 +164,7 @@ namespace GTA_RP.Items
                     return item.price;
                 }
             }
+            // TODO: throw custom exception
             return -1;
         }
 
@@ -177,6 +178,7 @@ namespace GTA_RP.Items
             stock.Add(new ItemForSale(ItemManager.Instance().GetItemTemplateForId(id), price, 1));
             if (canAlsoBuy)
             {
+                // Temporarily vendor buy price is sellPrice/2
                 sellableItems.Add(new BuyableItem(id, (int)price / 2));
             }
         }
@@ -212,7 +214,8 @@ namespace GTA_RP.Items
                         character.SendNotification("Item purchased!");
                         character.PlayFrontendSound("PURCHASE", "HUD_LIQUOR_STORE_SOUNDSET");
                         character.TriggerEvent("EVENT_UPDATE_SELL_ITEM_COUNT", itemId, character.GetAmountOfItems(itemId));
-                    } else
+                    }
+                    else
                     {
                         character.SendErrorNotification("Your inventory is full!");
                     }

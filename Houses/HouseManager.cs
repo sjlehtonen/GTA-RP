@@ -57,6 +57,8 @@ namespace GTA_RP
         private HouseMarket houseMarket;
         private int entryId = 0;
 
+        private const int houseEnterTime = 2000;
+
         /// <summary>
         /// Constructor of HouseManager
         /// </summary>
@@ -77,7 +79,7 @@ namespace GTA_RP
         {
             PlayerManager.Instance().SubscribeToPlayerDisconnectEvent(this.OnPlayerDisconnect);
         }
-        
+
 
         /// <summary>
         /// Initializes names of the buildings from database
@@ -88,7 +90,8 @@ namespace GTA_RP
             DBManager.SelectQuery("SELECT * FROM buildings", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
                 this.buildingNames.Add(reader.GetInt32(0), reader.GetString(1));
-                if (reader.GetInt32(2) == 1) { // Use blip = true 
+                if (reader.GetInt32(2) == 1)
+                { // Use blip = true 
                     MapManager.Instance().AddBlipToMap(reader.GetInt32(3), reader.GetString(1), reader.GetFloat(4), reader.GetFloat(5), reader.GetFloat(6));
                 }
             }).Execute();
@@ -96,7 +99,10 @@ namespace GTA_RP
 
         private void AddHouse(int id, int ownerId, int templateId, string name)
         {
-            if (id > this.entryId) this.entryId = id;
+            if (id > this.entryId)
+            {
+                this.entryId = id;
+            }
             House h = new House(id, ownerId, templateId, name);
             ownedHouses.Add(h);
         }
@@ -203,8 +209,7 @@ namespace GTA_RP
         /// <returns>List of owned apartments by the character in specified building</returns>
         private List<House> GetOwnedApartmentsInBuilding(int buildingId, Character c)
         {
-            List<House> tempHouses = new List<House>();
-            ownedHouses.Where(h => h.ownerId == c.ID && buildingId == GetBuildingIdForTemplateId(h.templateId)).ToList().ForEach(h => tempHouses.Add(h));
+            List<House> tempHouses = ownedHouses.Where(h => h.ownerId == c.ID && buildingId == GetBuildingIdForTemplateId(h.templateId)).ToList();
             return tempHouses;
         }
 
@@ -324,7 +329,7 @@ namespace GTA_RP
                         TeleportDestination td;
                         td.id = exit.house_template_id;
                         td.location = exit.coordinates;
-                        td.name = "not used";
+                        td.name = "";
                         exitsT.Add(td);
                     }
                 }
@@ -341,16 +346,7 @@ namespace GTA_RP
         /// <returns>A house with selected id</returns>
         private House GetHouseForId(int houseId)
         {
-            try
-            {
-                House house = ownedHouses.Single(h => h.id == houseId);
-                return house;
-            }
-            catch (Exception ex)
-            {
-                API.shared.consoleOutput("Error: " + ex.Message);
-                return null;
-            }
+            return ownedHouses.SingleOrDefault(h => h.id == houseId);
         }
 
         /// <summary>
@@ -372,7 +368,7 @@ namespace GTA_RP
         {
             if (enterHouseTimers.Get(c.ID) == null)
             {
-                Timer t = new Timer(2000);
+                Timer t = new Timer(houseEnterTime);
                 t.Elapsed += StopTimer;
                 t.AutoReset = false;
                 enterHouseTimers.Add(c.ID, t);
@@ -392,7 +388,6 @@ namespace GTA_RP
         /// <returns>A place with selected character as occupant</returns>
         private House GetHouseWithCharacterAsOccupant(Character c)
         {
-            API.shared.consoleOutput(ownedHouses.Count(x => x.HasOccupant(c)).ToString());
             return ownedHouses.Single(h => h.HasOccupant(c));
         }
 
@@ -405,11 +400,13 @@ namespace GTA_RP
         {
             Timer t = enterHouseTimers.Get(c.ID);
             if (t != null)
+            {
                 return t.Enabled;
+            }
 
             return false;
         }
-        
+
         /// <summary>
         /// Gets template id for a house id
         /// </summary>
@@ -439,7 +436,6 @@ namespace GTA_RP
         /// <param name="t">Teleport used to enter the house</param>
         private void EnterHouse(Character c, House h, Teleport t)
         {
-            // Add dimension change!
             SetTimerForCharacter(c);
             t.UseTeleport(c, h.templateId);
             c.owner.client.dimension = h.id;
@@ -458,7 +454,10 @@ namespace GTA_RP
             t.UseTeleport(c, destinationId);
             c.owner.client.dimension = 0;
             House h = GetHouseWithCharacterAsOccupant(c);
-            if (h != null) h.RemoveOccupant(c);
+            if (h != null)
+            {
+                h.RemoveOccupant(c);
+            }
         }
 
         /// <summary>
@@ -470,7 +469,9 @@ namespace GTA_RP
         private Boolean IsAllowedToEnterPlace(Character c, House h)
         {
             if (h.ownerId == c.ID || h.IsInvited(c))
+            {
                 return true;
+            }
             return false;
         }
 
@@ -497,10 +498,12 @@ namespace GTA_RP
             House h = GetHouseForId(houseId);
             Teleport t = this.GetInRangeTeleportForHouseTemplate(c, h.templateId);
 
-            if(t != null)
+            if (t != null)
             {
                 if (IsAllowedToEnterPlace(c, h))
+                {
                     EnterHouse(c, h, t);
+                }
             }
         }
 
@@ -512,7 +515,9 @@ namespace GTA_RP
         public String GetBuildingName(int buildingId)
         {
             if (buildingNames.ContainsKey(buildingId))
+            {
                 return buildingNames.Get(buildingId);
+            }
             return "Building";
         }
 
@@ -568,7 +573,10 @@ namespace GTA_RP
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
             Teleport t = this.GetExitTeleportForIdAndInRange(c, teleportId);
-            if (t != null) ExitHouse(c, t, destinationId);
+            if (t != null)
+            {
+                ExitHouse(c, t, destinationId);
+            }
         }
 
         /// <summary>
@@ -591,9 +599,11 @@ namespace GTA_RP
         public Boolean IsCharacterOwnerOrRenterOfHouse(Character c, int houseId)
         {
             House house = GetHouseForId(houseId);
-            if (house == null) return false;
-            if (house.ownerId == c.ID) return true;
-            return false;
+            if (house == null || house.ownerId != c.ID)
+            {
+                return false;
+            }
+            return true;
         }
 
         public void TryBuyMarketHouseForCharacter(Character character, int houseSellId, string nameOfHouse)
@@ -696,7 +706,9 @@ namespace GTA_RP
         {
             List<Teleport> teleports = houseTeleports.Where(t => t.id == GetBuildingIdForTemplateId(houseTemplateId) && t.IsCharacterInsideTeleport(character)).ToList();
             if (teleports.Count == 0)
+            {
                 return null;
+            }
 
             return teleports.First();
         }
@@ -710,7 +722,6 @@ namespace GTA_RP
             if (PlayerManager.Instance().IsClientUsingCharacter(c))
             {
                 List<House> houses = GetOwnedHouses(PlayerManager.Instance().GetActiveCharacterForClient(c));
-                API.shared.consoleOutput("Sending " + houses.Count.ToString() + " houses");
                 API.shared.triggerClientEvent(c, "EVENT_SEND_OWNED_HOUSES", houses.Select(x => x.name).ToList<string>(), houses.Select(x => x.id).ToList<int>());
             }
         }

@@ -52,6 +52,9 @@ namespace GTA_RP.Weather
 
         /// <summary>
         /// Sets random weather
+        /// Only allows certain transitions from one weather to another
+        /// For example it's not possible to change suddenly from thunder storm into sunny
+        /// because it would be unrealistic
         /// </summary>
         private void SetRandomWeather()
         {

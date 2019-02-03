@@ -32,8 +32,14 @@ namespace GTA_RP.Items
             string[] splitString = other.Split(';');
             this.animDict = splitString[0];
 
-            if (splitString[1] == "null") animDictFemale = null;
-            else animDictFemale = splitString[1];
+            if (splitString[1] == "null")
+            {
+                animDictFemale = null;
+            }
+            else
+            {
+                animDictFemale = splitString[1];
+            }
 
             this.animName = splitString[2];
 
@@ -101,8 +107,14 @@ namespace GTA_RP.Items
                     {
                         user.PlayAnimation((int)(AnimationFlags.Loop | AnimationFlags.OnlyAnimateUpperBody), this.animDict, this.animName);
                         entity = API.shared.createObject(entityId, user.position, new Vector3(0, 0, 0));
-                        if (user.gender == 0) user.AttachObject(entity, bone.ToString(), this.usePosMan, this.useRotMan);
-                        else user.AttachObject(entity, bone.ToString(), this.usePosFemale, this.useRotFemale);
+                        if (user.gender == 0)
+                        {
+                            user.AttachObject(entity, bone.ToString(), this.usePosMan, this.useRotMan);
+                        }
+                        else
+                        {
+                            user.AttachObject(entity, bone.ToString(), this.usePosFemale, this.useRotFemale);
+                        }
                         equipped = true;
                         user.SetEquippedItem(this);
                     }

@@ -8,7 +8,7 @@ namespace GTA_RP.Admin
 {
     /// <summary>
     /// TODO: Implement all admin commands here
-    /// This file is heavily work in progress
+    /// This file is heavily work in progress and is only used for testing purposes
     /// </summary>
     class AdminCommands : Script
     {
