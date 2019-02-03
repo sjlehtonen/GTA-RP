@@ -120,7 +120,6 @@
     <Compile Include="Jobs\JobCommands.cs" />
     <Compile Include="Jobs\JobManager.cs" />
     <Compile Include="Jobs\TrashJob.cs" />
-    <Compile Include="PedManager\PedManager.cs" />
     <Compile Include="Players\CharacterSelector.cs" />
     <Compile Include="Players\Player.cs" />
     <Compile Include="Players\PlayerManager.cs" />
@@ -133,8 +132,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Client\CheckpointManager.js" />
-    <Content Include="Client\EventResponder.js" />
-    <Content Include="Client\HelpMenu.js" />
     <Content Include="Client\HouseManager.js" />
     <Content Include="Client\HouseMarketManager.js" />
     <Content Include="Client\HUDManager.js" />
