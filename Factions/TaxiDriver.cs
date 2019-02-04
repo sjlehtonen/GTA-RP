@@ -289,10 +289,10 @@ namespace GTA_RP.Factions
             UpdateTaxiFeeForCharacterInTaxi(pAndCar.Key, pAndCar.Value);
         }
 
-        public override void HandleOnDutyCommand(Character c)
+        public override void HandleOnDutyCommand(Character character)
         {
-            c.onDuty = !c.onDuty;
-            if (c.onDuty)
+            character.onDuty = !character.onDuty;
+            if (character.onDuty)
             {
                 // TODO
             }

@@ -12,8 +12,8 @@ namespace GTA_RP.Weather
     {
         private Random rdn = new Random();
         private Timer weatherTimer = new Timer();
-        private int minTime = 3600000 / 2;
-        private int maxTime = 3600000 * 3;
+        private readonly int minWeatherChangeTime = 3600000 / 2;
+        private readonly int maxWeatherChangeTime = 3600000 * 3;
 
         /// <summary>
         /// Generates a random weather id
@@ -92,7 +92,7 @@ namespace GTA_RP.Weather
         /// </summary>
         private void InitWeatherTimer()
         {
-            weatherTimer.Interval = GetRandomIntFromSelectedInts(this.minTime, this.maxTime);
+            weatherTimer.Interval = GetRandomIntFromSelectedInts(this.minWeatherChangeTime, this.maxWeatherChangeTime);
             weatherTimer.Elapsed += OnTimedEvent;
             weatherTimer.AutoReset = true;
             weatherTimer.Enabled = true;

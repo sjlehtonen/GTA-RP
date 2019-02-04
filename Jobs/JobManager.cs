@@ -350,6 +350,7 @@ namespace GTA_RP.Jobs
 
         public void Initialize()
         {
+            InitJobPickupPoints();
             InitJobs();
             InitEvents();
         }

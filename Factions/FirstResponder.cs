@@ -15,7 +15,7 @@ namespace GTA_RP.Factions
     {
         public FirstResponder(FactionEnums id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
 
-        public override void HandleOnDutyCommand(Character c)
+        public override void HandleOnDutyCommand(Character character)
         {
 
         }

@@ -14,7 +14,6 @@ namespace GTA_RP
     public class Roleplay : Script
     {
 
-
         public Roleplay()
         {
             API.onResourceStart += StartScript;
@@ -26,33 +25,24 @@ namespace GTA_RP
         public void StartScript()
         {
             API.consoleOutput("#### Script started! ####");
-            WeatherManager weatherManager = new WeatherManager();
 
             API.onVehicleDeath += VehicleManager.Instance().VehicleDestroyedEvent;
             API.onPlayerEnterVehicle += VehicleManager.Instance().VehicleEnterEvent;
             API.onPlayerExitVehicle += VehicleManager.Instance().VehicleExitEvent;
 
 
-            //API.onPlayerConnected += PlayerManager.Instance().HandlePlayerConnect;
             API.onPlayerDisconnected += PlayerManager.Instance().HandlePlayerDisconnect;
+            // When API.onPlayerConnected is fixed, change this
             API.onPlayerFinishedDownload += PlayerManager.Instance().HandlePlayerConnect;
             API.onPlayerDeath += PlayerManager.Instance().HandlePlayerDeath;
 
 
-            PlayerManager.Instance().InitAccountCreationId();
-            PlayerManager.Instance().InitTextMessagesId();
-            PlayerManager.Instance().InitCharacterCreationId();
-            PlayerManager.Instance().InitCharacterSelectorModels();
-            PlayerManager.Instance().InitPhoneNumbers();
-            PlayerManager.Instance().InitCharacterGenders();
-
-            VehicleManager.Instance().LoadVehiclesFromDB();
-            HouseManager.Instance().LoadHouseTemplates();
-            JobManager.Instance().InitJobPickupPoints();
-            ItemManager.Instance().InitializeItems();
+            PlayerManager.Instance().InitializePlayerManager();
+            VehicleManager.Instance().InitializeVehicleManager();
+            HouseManager.Instance().InitializeHouseManager();
+            ItemManager.Instance().InitializeItemManager();
             MapManager.Instance().Initialize();
             JobManager.Instance().Initialize();
-
             FactionManager.Instance().InitializeFactions();
 
             API.consoleOutput("#### Script load complete! ####");

@@ -18,7 +18,7 @@ namespace GTA_RP.Items
         /// <summary>
         /// Loads items from database
         /// </summary>
-        public void InitializeItems()
+        public void InitializeItemManager()
         {
             DBManager.SelectQuery("SELECT * FROM item_templates", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {

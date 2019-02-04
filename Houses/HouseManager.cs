@@ -128,12 +128,12 @@ namespace GTA_RP
             List<HouseEntrance> entrances = new List<HouseEntrance>();
             DBManager.SelectQuery("SELECT * FROM house_teleports", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                HouseEntrance e;
-                e.id = reader.GetInt32(0);
-                e.building_id = reader.GetInt32(1);
-                e.coordinates = new Vector3(reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
-                e.name = reader.GetString(5);
-                entrances.Add(e);
+                HouseEntrance entrance;
+                entrance.id = reader.GetInt32(0);
+                entrance.building_id = reader.GetInt32(1);
+                entrance.coordinates = new Vector3(reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
+                entrance.name = reader.GetString(5);
+                entrances.Add(entrance);
             }).Execute();
             return entrances;
         }
@@ -141,11 +141,11 @@ namespace GTA_RP
         // Check if character is in any house and if it is, then remove it upon disconnect
         private void OnPlayerDisconnect(Character character)
         {
-            foreach (House h in this.ownedHouses)
+            foreach (House house in this.ownedHouses)
             {
-                if (h.HasOccupant(character))
+                if (house.HasOccupant(character))
                 {
-                    h.RemoveOccupant(character);
+                    house.RemoveOccupant(character);
                     break;
                 }
             }
@@ -160,11 +160,11 @@ namespace GTA_RP
             List<HouseExit> exits = new List<HouseExit>();
             DBManager.SelectQuery("SELECT * FROM house_exits", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                HouseExit e;
-                e.id = reader.GetInt32(0);
-                e.house_template_id = reader.GetInt32(1);
-                e.coordinates = new Vector3(reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
-                exits.Add(e);
+                HouseExit exit;
+                exit.id = reader.GetInt32(0);
+                exit.house_template_id = reader.GetInt32(1);
+                exit.coordinates = new Vector3(reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
+                exits.Add(exit);
             }).Execute();
             return exits;
         }
@@ -236,25 +236,25 @@ namespace GTA_RP
         /// <summary>
         /// Get places in building where character is invited to
         /// </summary>
-        /// <param name="c">Character whose invitations are checked</param>
+        /// <param name="character">Character whose invitations are checked</param>
         /// <param name="buildingId">Building in which character's invitations are checked</param>
         /// <returns>Places in selected building where character is invited</returns>
-        private List<House> GetInvitedPlacesInBuilding(Character c, int buildingId)
+        private List<House> GetInvitedPlacesInBuilding(Character character, int buildingId)
         {
-            return ownedHouses.Where(h => h.IsInvited(c)).ToList();
+            return ownedHouses.Where(h => h.IsInvited(character)).ToList();
         }
 
         /// <summary>
         /// Gets all places in building where character is invited into
         /// </summary>
-        /// <param name="c">Character to check for allowed places</param>
+        /// <param name="character">Character to check for allowed places</param>
         /// <param name="buildingId">Building for which to check</param>
         /// <returns>List of places where selected character is invited into</returns>
-        private List<House> GetPlacesAllowedToEnterInBuilding(Character c, int buildingId)
+        private List<House> GetPlacesAllowedToEnterInBuilding(Character character, int buildingId)
         {
             List<House> places = new List<House>();
-            places.AddRange(GetOwnedApartmentsInBuilding(buildingId, c));
-            places.AddRange(GetInvitedPlacesInBuilding(c, buildingId));
+            places.AddRange(GetOwnedApartmentsInBuilding(buildingId, character));
+            places.AddRange(GetInvitedPlacesInBuilding(character, buildingId));
             return places;
         }
 
@@ -267,10 +267,10 @@ namespace GTA_RP
             List<HouseEntranceExit> exits = new List<HouseEntranceExit>();
             DBManager.SelectQuery("SELECT * FROM house_teleport_links", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                HouseEntranceExit e;
-                e.entrance_id = reader.GetInt32(0);
-                e.exit_id = reader.GetInt32(1);
-                exits.Add(e);
+                HouseEntranceExit entranceExit;
+                entranceExit.entrance_id = reader.GetInt32(0);
+                entranceExit.exit_id = reader.GetInt32(1);
+                exits.Add(entranceExit);
             }).Execute();
             return exits;
         }
@@ -285,13 +285,13 @@ namespace GTA_RP
             List<HouseEntrance> entrances = GetHouseEntrances();
             List<HouseEntranceExit> entranceExits = GetHouseEntranceExitPairs();
 
-            foreach (HouseExit e in exits)
+            foreach (HouseExit exit in exits)
             {
 
                 List<TeleportDestination> entrancesT = new List<TeleportDestination>();
                 foreach (HouseEntranceExit pair in entranceExits)
                 {
-                    if (pair.exit_id == e.id)
+                    if (pair.exit_id == exit.id)
                     {
                         HouseEntrance entrance = GetEntranceWithId(pair.entrance_id, entrances);
 
@@ -303,7 +303,7 @@ namespace GTA_RP
                     }
                 }
 
-                Teleport t = new Teleport(e.house_template_id, e.coordinates, 0, this.EnterHouseExitTeleport, entrancesT);
+                Teleport t = new Teleport(exit.house_template_id, exit.coordinates, 0, this.EnterHouseExitTeleport, entrancesT);
                 houseExitTeleports.Add(t);
             }
 
@@ -318,12 +318,12 @@ namespace GTA_RP
             List<HouseExit> exits = GetHouseExits();
             List<HouseEntranceExit> entranceExits = GetHouseEntranceExitPairs();
 
-            foreach (HouseEntrance e in entrances)
+            foreach (HouseEntrance entrance in entrances)
             {
                 List<TeleportDestination> exitsT = new List<TeleportDestination>();
                 foreach (HouseEntranceExit pair in entranceExits)
                 {
-                    if (pair.entrance_id == e.id)
+                    if (pair.entrance_id == entrance.id)
                     {
                         HouseExit exit = GetExitWithId(pair.exit_id, exits);
                         TeleportDestination td;
@@ -334,8 +334,8 @@ namespace GTA_RP
                     }
                 }
 
-                Teleport t = new Teleport(e.building_id, e.coordinates, 0, this.EnterHouseTeleport, exitsT);
-                houseTeleports.Add(t);
+                Teleport teleport = new Teleport(entrance.building_id, entrance.coordinates, 0, this.EnterHouseTeleport, exitsT);
+                houseTeleports.Add(teleport);
             }
         }
 
@@ -368,16 +368,16 @@ namespace GTA_RP
         {
             if (enterHouseTimers.Get(character.ID) == null)
             {
-                Timer t = new Timer(houseEnterTime);
-                t.Elapsed += StopTimer;
-                t.AutoReset = false;
-                enterHouseTimers.Add(character.ID, t);
-                t.Enabled = true;
+                Timer timer = new Timer(houseEnterTime);
+                timer.Elapsed += StopTimer;
+                timer.AutoReset = false;
+                enterHouseTimers.Add(character.ID, timer);
+                timer.Enabled = true;
             }
             else
             {
-                Timer t = enterHouseTimers.Get(character.ID);
-                t.Enabled = true;
+                Timer timer = enterHouseTimers.Get(character.ID);
+                timer.Enabled = true;
             }
         }
 
@@ -398,10 +398,10 @@ namespace GTA_RP
         /// <returns>True if the exit/entry timer is active for character, otherwise false</returns>
         private Boolean IsTimerActiveForPlayer(Character character)
         {
-            Timer t = enterHouseTimers.Get(character.ID);
-            if (t != null)
+            Timer timer = enterHouseTimers.Get(character.ID);
+            if (timer != null)
             {
-                return t.Enabled;
+                return timer.Enabled;
             }
 
             return false;
@@ -424,8 +424,8 @@ namespace GTA_RP
         /// <param name="args">Timer arguments</param>
         private void StopTimer(System.Object source, ElapsedEventArgs args)
         {
-            Timer t = (Timer)source;
-            t.Enabled = false;
+            Timer timer = (Timer)source;
+            timer.Enabled = false;
         }
 
         /// <summary>
@@ -453,10 +453,10 @@ namespace GTA_RP
             SetTimerForCharacter(character);
             teleport.UseTeleport(character, destinationId);
             character.owner.client.dimension = 0;
-            House h = GetHouseWithCharacterAsOccupant(character);
-            if (h != null)
+            House house = GetHouseWithCharacterAsOccupant(character);
+            if (house != null)
             {
-                h.RemoveOccupant(character);
+                house.RemoveOccupant(character);
             }
         }
 
@@ -494,15 +494,15 @@ namespace GTA_RP
         /// <param name="houseId">Id of the place</param>
         public void RequestEnterHouse(Client player, int houseId)
         {
-            Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            House h = GetHouseForId(houseId);
-            Teleport t = this.GetInRangeTeleportForHouseTemplate(c, h.templateId);
+            Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
+            House house = GetHouseForId(houseId);
+            Teleport teleport = this.GetInRangeTeleportForHouseTemplate(character, house.templateId);
 
-            if (t != null)
+            if (teleport != null)
             {
-                if (IsAllowedToEnterPlace(c, h))
+                if (IsAllowedToEnterPlace(character, house))
                 {
-                    EnterHouse(c, h, t);
+                    EnterHouse(character, house, teleport);
                 }
             }
         }
@@ -538,8 +538,8 @@ namespace GTA_RP
         /// <param name="character">Character</param>
         public void AddCharacterToHouseWithId(int id, Character character)
         {
-            House h = GetHouseForId(id);
-            h.AddOccupant(character);
+            House house = GetHouseForId(id);
+            house.AddOccupant(character);
         }
 
         /// <summary>
@@ -549,8 +549,8 @@ namespace GTA_RP
         /// <param name="character">Character</param>
         public void RemoveCharacterFromHouseWithId(int id, Character character)
         {
-            House h = GetHouseForId(id);
-            h.RemoveOccupant(character);
+            House house = GetHouseForId(id);
+            house.RemoveOccupant(character);
         }
 
         /// <summary>
@@ -571,11 +571,11 @@ namespace GTA_RP
         /// <param name="destinationId">Id of destination where to exit</param>
         public void RequestExitHouse(Client player, int teleportId, int destinationId)
         {
-            Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            Teleport t = this.GetExitTeleportForIdAndInRange(c, teleportId);
-            if (t != null)
+            Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
+            Teleport teleport = this.GetExitTeleportForIdAndInRange(character, teleportId);
+            if (teleport != null)
             {
-                ExitHouse(c, t, destinationId);
+                ExitHouse(character, teleport, destinationId);
             }
         }
 
@@ -677,7 +677,7 @@ namespace GTA_RP
         /// Loads everything needed for HouseManager initialization
         /// Has to be ran on script setup
         /// </summary>
-        public void LoadHouseTemplates()
+        public void InitializeHouseManager()
         {
             DBManager.SelectQuery("SELECT * FROM house_template", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {

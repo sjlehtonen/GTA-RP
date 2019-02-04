@@ -66,8 +66,6 @@ namespace GTA_RP
         private const int minPasswordLength = 6;
         private const int maxPasswordLength = 20;
 
-        DBManager dbCon = DBManager.Instance();
-
 
         public PlayerManager()
         {
@@ -233,20 +231,20 @@ namespace GTA_RP
         /// <summary>
         /// Handles player disconnect event
         /// </summary>
-        /// <param name="player">Player who disconnect</param>
+        /// <param name="client">Player who disconnect</param>
         /// <param name="reason">Disconnect reason</param>
-        public void HandlePlayerDisconnect(Client player, String reason)
+        public void HandlePlayerDisconnect(Client client, String reason)
         {
-            if (OnPlayerDisconnectEvent != null && IsClientUsingCharacter(player))
+            if (OnPlayerDisconnectEvent != null && IsClientUsingCharacter(client))
             {
-                OnPlayerDisconnectEvent.Invoke(GetActiveCharacterForClient(player));
+                OnPlayerDisconnectEvent.Invoke(GetActiveCharacterForClient(client));
             }
 
-            Player p = GetPlayerByClient(player);
+            Player player = GetPlayerByClient(client);
 
-            if (p != null)
+            if (player != null)
             {
-                this.players.Remove(GetPlayerByClient(player));
+                this.players.Remove(player);
             }
         }
 
@@ -282,12 +280,12 @@ namespace GTA_RP
         /// <returns>The loaded player object</returns>
         private Player LoadPlayerForClient(Client client)
         {
-            Player p = null;
+            Player player = null;
             DBManager.SelectQuery("SELECT * FROM players WHERE name = @name", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                p = new Player(client, reader.GetInt32(0), reader.GetInt32(3));
+                player = new Player(client, reader.GetInt32(0), reader.GetInt32(3));
             }).AddValue("@name", client.name).Execute();
-            return p;
+            return player;
         }
 
         /// <summary>
@@ -300,12 +298,12 @@ namespace GTA_RP
             List<TextMessage> messages = new List<TextMessage>();
             DBManager.SelectQuery("SELECT * FROM text_messages WHERE receiver_number = @number", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                TextMessage tm;
-                tm.id = reader.GetInt32(0);
-                tm.senderNumber = reader.GetString(1);
-                tm.time = reader.GetString(3);
-                tm.message = reader.GetString(4);
-                messages.Add(tm);
+                TextMessage textMessage;
+                textMessage.id = reader.GetInt32(0);
+                textMessage.senderNumber = reader.GetString(1);
+                textMessage.time = reader.GetString(3);
+                textMessage.message = reader.GetString(4);
+                messages.Add(textMessage);
             }).AddValue("@number", character.phone.phoneNumber).Execute();
 
             return messages;
@@ -639,15 +637,13 @@ namespace GTA_RP
         /// <param name="houseId">ID of the owned house</param>
         public void SetCharacterSpawnHouse(Client client, int houseId)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character character = GetActiveCharacterForClient(client);
                 if (HouseManager.Instance().IsCharacterOwnerOrRenterOfHouse(character, houseId))
                 {
-                    // Update spawn position for character
                     UpdateCharacterSpawnPosition(character, houseId);
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -974,6 +970,16 @@ namespace GTA_RP
             this.characterSelector.CreateCharacter(this.GetPlayerByClient(player), firstName, lastName, modelHash);
         }
 
+        public void InitializePlayerManager()
+        {
+            Instance().InitAccountCreationId();
+            Instance().InitTextMessagesId();
+            Instance().InitCharacterCreationId();
+            Instance().InitCharacterSelectorModels();
+            Instance().InitPhoneNumbers();
+            Instance().InitCharacterGenders();
+        }
+
         /// <summary>
         /// Initialize character creation ID
         /// </summary>
@@ -1062,15 +1068,10 @@ namespace GTA_RP
         /// <param name="number">Number to call to</param>
         public void TryStartPhoneCall(Client client, String number)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character caller) =>
             {
-                Character caller = this.GetActiveCharacterForClient(client);
-
-                if (caller != null)
-                {
-                    caller.phone.CallPhone(number);
-                }
-            }
+                caller.phone.CallPhone(number);
+            });
         }
 
         /// <summary>
@@ -1079,11 +1080,10 @@ namespace GTA_RP
         /// <param name="client">Client who accepts the phone call</param>
         public void TryAcceptPhoneCall(Client client)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character thisUser = this.GetActiveCharacterForClient(client);
-                thisUser.phone.PickupCall();
-            }
+                character.phone.PickupCall();
+            });
         }
 
         /// <summary>
@@ -1092,11 +1092,10 @@ namespace GTA_RP
         /// <param name="client">Client who tries to hang up the call</param>
         public void TryHangupPhoneCall(Client client)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character thisUser = this.GetActiveCharacterForClient(client);
-                thisUser.phone.HangUpCall();
-            }
+                character.phone.HangUpCall();
+            });
         }
 
         /// <summary>
@@ -1106,14 +1105,13 @@ namespace GTA_RP
         /// <param name="contactNumber">Contact number which to delete</param>
         public void TryDeleteContact(Client client, String contactNumber)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character character = this.GetActiveCharacterForClient(client);
                 if (character.phone.HasContactForNumber(contactNumber))
                 {
                     character.phone.RemoveContactFromAddressBook(contactNumber);
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -1123,14 +1121,13 @@ namespace GTA_RP
         /// <param name="id">Text message id</param>
         public void TryDeleteTextMessage(Client client, int id)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character character = this.GetActiveCharacterForClient(client);
                 if (character.phone.HasTextMessageWithId(id))
                 {
                     character.phone.RemoveTextMessage(id);
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -1141,14 +1138,13 @@ namespace GTA_RP
         /// <param name="contactNumber">Contact number</param>
         public void TryAddNewContact(Client client, String contactName, String contactNumber)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
                 if (ValidateContact(client, contactName, contactNumber))
                 {
-                    Character character = this.GetActiveCharacterForClient(client);
                     character.phone.AddNameToAddressBook(contactName, contactNumber);
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -1159,16 +1155,15 @@ namespace GTA_RP
         /// <param name="message">Message text</param>
         public void TrySendTextMessage(Client client, String receiverNumber, String message)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
                 // Implement additional checks like number length and message length
                 if (ValidateTextMessage(client, receiverNumber, message))
                 {
-                    Character character = this.GetActiveCharacterForClient(client);
                     character.phone.SendMessage(receiverNumber, message);
                     character.SendNotification("Message sent!");
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -1214,11 +1209,10 @@ namespace GTA_RP
         /// <param name="client">Player</param>
         public void SetPlayerUsingPhone(Client client)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character character = GetActiveCharacterForClient(client);
                 character.phone.SetPhoneUsing();
-            }
+            });
         }
 
         /// <summary>
@@ -1228,11 +1222,10 @@ namespace GTA_RP
         /// <param name="client">Player</param>
         public void SetPlayerPhoneCalling(Client client)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character character = GetActiveCharacterForClient(client);
                 character.phone.SetPhoneCalling();
-            }
+            });
         }
 
         /// <summary>
@@ -1241,11 +1234,10 @@ namespace GTA_RP
         /// <param name="client">Player</param>
         public void SetPlayerPhoneOut(Client client)
         {
-            if (IsClientUsingCharacter(client))
+            runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character character = GetActiveCharacterForClient(client);
                 character.phone.SetPhoneNotUsing();
-            }
+            });
         }
 
         /// <summary>
@@ -1257,6 +1249,15 @@ namespace GTA_RP
         public List<Character> GetNearbyCharacters(Character character, float distance)
         {
             return GetActiveCharacters().Where(x => x.position.DistanceTo(character.position) <= distance).ToList();
+        }
+
+        public static void runMethodIfUsingCharacter(Client player, Action<Character> action)
+        {
+            if (PlayerManager.Instance().IsClientUsingCharacter(player))
+            {
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
+                action(character);
+            }
         }
 
     }

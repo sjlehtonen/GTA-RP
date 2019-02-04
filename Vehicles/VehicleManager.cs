@@ -453,8 +453,8 @@ namespace GTA_RP.Vehicles
         /// <returns>Vehicle that the character is using, if not using vehicle then null</returns>
         public RPVehicle GetVehicleForCharacter(Character character)
         {
-            NetHandle veh = API.shared.getPlayerVehicle(character.owner.client);
-            return vehicles.SingleOrDefault(x => x.handle != null && x.handle == veh && x.spawned);
+            NetHandle vehicleHandle = API.shared.getPlayerVehicle(character.owner.client);
+            return vehicles.SingleOrDefault(x => x.handle != null && x.handle == vehicleHandle && x.spawned);
         }
 
         /// <summary>
@@ -505,14 +505,16 @@ namespace GTA_RP.Vehicles
         /// <param name="color2">Vehicle color 2</param>
         public void TryPurchaseVehicle(Client client, int id, string model, int color1, int color2)
         {
-            Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
-            VehicleShop shop = GetVehicleShopWithId(id);
-            if (shop != null)
+            PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
             {
-                shop.PurchaseVehicle(character, model, color1, color2);
-            }
+                VehicleShop shop = GetVehicleShopWithId(id);
+                if (shop != null)
+                {
+                    shop.PurchaseVehicle(character, model, color1, color2);
+                }
+            });
+            
         }
-
 
 
         /// <summary>
@@ -592,9 +594,8 @@ namespace GTA_RP.Vehicles
         /// <param name="vehicleId">Vehicle id</param>
         public void SpawnVehicleForCharacter(Client client, int vehicleId)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(client))
+            PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
                 RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
                 if (vehicle != null && character.ID == vehicle.ownerId)
                 {
@@ -607,7 +608,7 @@ namespace GTA_RP.Vehicles
                         character.SendNotification("This vehicle is already active!");
                     }
                 }
-            }
+            });
 
         }
 
@@ -618,9 +619,8 @@ namespace GTA_RP.Vehicles
         /// <param name="vehicleId">Vehicle id</param>
         public void ParkVehicle(Client client, int vehicleId)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(client))
+            PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
                 RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
                 if (vehicle != null && character.ID == vehicle.ownerId && vehicle.spawned)
                 {
@@ -640,7 +640,7 @@ namespace GTA_RP.Vehicles
                         API.shared.sendNotificationToPlayer(client, "You need to be in the vehicle you want to park!");
                     }
                 }
-            }
+            });
         }
 
         public void LockVehicleWithId(Client client, int id)
@@ -649,9 +649,8 @@ namespace GTA_RP.Vehicles
 
             if (vehicle != null && vehicle.spawned)
             {
-                if (PlayerManager.Instance().IsClientUsingCharacter(client))
+                PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
                 {
-                    Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
                     if (vehicle.ownerId == character.ID)
                     {
                         if (vehicle.position.DistanceTo(character.position) < doorLockDistance)
@@ -664,7 +663,7 @@ namespace GTA_RP.Vehicles
                             character.SendNotification("You need to be closer to the vehicle");
                         }
                     }
-                }
+                });
             }
             else
             {
@@ -716,21 +715,20 @@ namespace GTA_RP.Vehicles
         /// <param name="id">Shop id</param>
         public void TryExitVehicleShop(Client client, int id)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(client))
+            PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
             {
-                Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
                 VehicleShop shop = GetVehicleShopWithId(id);
                 if (shop != null)
                 {
                     shop.ExitShop(character);
                 }
-            }
+            });
         }
 
         /// <summary>
         /// Loads all vehicles from the database and adds them to the array
         /// </summary>
-        public void LoadVehiclesFromDB()
+        public void InitializeVehicleManager()
         {
             DBManager.SelectQuery("SELECT * FROM vehicles", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
