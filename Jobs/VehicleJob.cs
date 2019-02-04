@@ -22,7 +22,7 @@ namespace GTA_RP.Jobs
         private const int exitVehicleTimeInterval = 15000;
         private const int exitJobTimeInterval = 60000;
 
-        public VehicleJob(Character c) : base(c)
+        public VehicleJob(Character character) : base(character)
         {
 
             exitJobCooldownTimer.Elapsed += CoolDownElapsed;
@@ -36,13 +36,13 @@ namespace GTA_RP.Jobs
         /// Ends job if player is too long out of the work vehicle
         /// </summary>
         /// <param name="source">Timer</param>
-        /// <param name="e">Timer arguments</param>
-        private void ExitVehicleTimerExpire(System.Object source, ElapsedEventArgs e)
+        /// <param name="args">Timer arguments</param>
+        private void ExitVehicleTimerExpire(System.Object source, ElapsedEventArgs args)
         {
             EndJob();
         }
 
-        private void CoolDownElapsed(System.Object source, ElapsedEventArgs e)
+        private void CoolDownElapsed(System.Object source, ElapsedEventArgs args)
         {
             this.cooldown = false;
             this.exitJobCooldownTimer.Stop();
@@ -52,11 +52,11 @@ namespace GTA_RP.Jobs
         /// Ran when player exits vehicle
         /// Starts timer to enter vehicle again
         /// </summary>
-        /// <param name="c">Client who exited vehicle</param>
-        /// <param name="vHandle">Vehicle handle</param>
-        private void PlayerExitedVehicle(Client c, NetHandle vHandle, int seat)
+        /// <param name="client">Client who exited vehicle</param>
+        /// <param name="vehicleHandle">Vehicle handle</param>
+        private void PlayerExitedVehicle(Client client, NetHandle vehicleHandle, int seat)
         {
-            if (c.handle == character.owner.client.handle && vHandle == workVehicle.handle)
+            if (client.handle == character.owner.client.handle && vehicleHandle == workVehicle.handle)
             {
                 character.SendNotification("You have 15 seconds to get back into the work vehicle!");
                 exitVehicleTimer.Start();
@@ -68,11 +68,11 @@ namespace GTA_RP.Jobs
         /// Ran when player enters vehicle
         /// Stops the timer to enter vehicle
         /// </summary>
-        /// <param name="c">Client who entered vehicle</param>
-        /// <param name="vHandle">Vehicle handle</param>
-        private void PlayerEnteredVehicle(Client c, NetHandle vHandle, int seat)
+        /// <param name="client">Client who entered vehicle</param>
+        /// <param name="vehicleHandle">Vehicle handle</param>
+        private void PlayerEnteredVehicle(Client client, NetHandle vehicleHandle, int seat)
         {
-            if (c.handle == character.owner.client.handle && vHandle == workVehicle.handle)
+            if (client.handle == character.owner.client.handle && vehicleHandle == workVehicle.handle)
             {
                 exitVehicleTimer.Stop();
                 this.CharacterEnteredWorkVehicle();
@@ -82,10 +82,10 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Ran when the work vehicle is destroyed
         /// </summary>
-        /// <param name="vHandle">Vehicle handle</param>
-        private void JobVehicleDestroyed(NetHandle vHandle)
+        /// <param name="vehicleHandle">Vehicle handle</param>
+        private void JobVehicleDestroyed(NetHandle vehicleHandle)
         {
-            if (workVehicle.handle == vHandle)
+            if (workVehicle.handle == vehicleHandle)
             {
                 character.SendNotification("Vehicle destroyed! Task failed!");
                 EndJob();

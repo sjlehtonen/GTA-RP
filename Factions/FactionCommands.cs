@@ -8,7 +8,7 @@ namespace GTA_RP.Factions
 {
     class FactionCommands : Script
     {
-        protected bool IsCharacterValid(Character character, FactionI faction)
+        protected bool IsCharacterValid(Character character, FactionEnums faction)
         {
             if (character != null && character.factionID == faction)
             {
@@ -17,7 +17,7 @@ namespace GTA_RP.Factions
             return false;
         }
 
-        protected bool IsCharacterValid(Client client, FactionI faction)
+        protected bool IsCharacterValid(Client client, FactionEnums faction)
         {
             Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
             return IsCharacterValid(character, faction);

@@ -80,30 +80,30 @@ namespace GTA_RP
         /// <summary>
         /// Sets active character for player
         /// </summary>
-        /// <param name="c">Character to set as active character</param>
-        public void SetActiveCharacter(Character c)
+        /// <param name="character">Character to set as active character</param>
+        public void SetActiveCharacter(Character character)
         {
-            activeCharacter = c;
+            activeCharacter = character;
             client.nametag = activeCharacter.ID.ToString() + " " + activeCharacter.fullName;
-            client.nametagColor = new Color(c.faction.colorR, c.faction.colorG, c.faction.colorB);
-            client.setSkin(API.shared.pedNameToModel(c.model));
+            client.nametagColor = new Color(character.faction.colorR, character.faction.colorG, character.faction.colorB);
+            client.setSkin(API.shared.pedNameToModel(character.model));
 
-            JobInfo i = JobManager.Instance().GetInfoForJobWithId(c.job);
-            Faction f = FactionManager.Instance().GetFactionWithId(c.factionID);
+            JobInfo i = JobManager.Instance().GetInfoForJobWithId(character.job);
+            Faction f = FactionManager.Instance().GetFactionWithId(character.factionID);
 
-            List<RPVehicle> vehicles = VehicleManager.Instance().GetVehiclesForCharacter(c);
-            List<Item> items = c.GetAllItemsFromInventory();
+            List<RPVehicle> vehicles = VehicleManager.Instance().GetVehiclesForCharacter(character);
+            List<Item> items = character.GetAllItemsFromInventory();
 
-            API.shared.triggerClientEvent(c.owner.client, "EVENT_INIT_HUD", i.name, i.colorR, i.colorG, i.colorB, f.name, f.colorR, f.colorG, f.colorB, c.money.ToString(), c.fullName, c.phone.phoneNumber, c.phone.GetTextMessageIds(), c.phone.GetTextMessageSenders(), c.phone.GetTextMessageTimes(), c.phone.GetTextMessageTexts(), c.phone.GetContactNames(), c.phone.GetContactNumbers(), vehicles.Select(x => x.id).ToList(), vehicles.Select(x => x.licensePlateText).ToList(), vehicles.Select(x => x.spawned).ToList(), items.Select(x => x.id).ToList(), items.Select(x => x.name).ToList(), items.Select(x => x.count).ToList(), items.Select(x => x.description).ToList());
-            API.shared.triggerClientEvent(c.owner.client, "EVENT_CLOSE_CHARACTER_SELECT_MENU");
+            API.shared.triggerClientEvent(character.owner.client, "EVENT_INIT_HUD", i.name, i.colorR, i.colorG, i.colorB, f.name, f.colorR, f.colorG, f.colorB, character.money.ToString(), character.fullName, character.phone.phoneNumber, character.phone.GetTextMessageIds(), character.phone.GetTextMessageSenders(), character.phone.GetTextMessageTimes(), character.phone.GetTextMessageTexts(), character.phone.GetContactNames(), character.phone.GetContactNumbers(), vehicles.Select(x => x.id).ToList(), vehicles.Select(x => x.licensePlateText).ToList(), vehicles.Select(x => x.spawned).ToList(), items.Select(x => x.id).ToList(), items.Select(x => x.name).ToList(), items.Select(x => x.count).ToList(), items.Select(x => x.description).ToList());
+            API.shared.triggerClientEvent(character.owner.client, "EVENT_CLOSE_CHARACTER_SELECT_MENU");
 
-            HouseManager.Instance().SendListOfOwnedHousesToClient(c.owner.client);
+            HouseManager.Instance().SendListOfOwnedHousesToClient(character.owner.client);
 
             // Check faction, if is part of faction, then get text
-            if (c.factionID != FactionI.CIVILIAN) c.UpdateFactionRankText(FactionManager.Instance().GetRankTextForCharacter(c), 255, 255, 255);
+            if (character.factionID != FactionEnums.CIVILIAN) character.UpdateFactionRankText(FactionManager.Instance().GetRankTextForCharacter(character), 255, 255, 255);
 
-            API.shared.triggerClientEvent(c.owner.client, "EVENT_TOGGLE_HUD_ON");
-            PlayerManager.Instance().ToggleMinimapForPlayer(c.owner.client, true);
+            API.shared.triggerClientEvent(character.owner.client, "EVENT_TOGGLE_HUD_ON");
+            PlayerManager.Instance().SetMinimapForPlayer(character);
         }
     }
 }

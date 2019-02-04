@@ -7,7 +7,7 @@ namespace GTA_RP.Factions
     /// </summary>
     class FireDepartment : RankedFaction
     {
-        public FireDepartment(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
+        public FireDepartment(FactionEnums id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
 
         public override void HandleOnDutyCommand(Character c)
         {

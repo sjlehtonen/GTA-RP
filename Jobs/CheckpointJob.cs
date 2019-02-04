@@ -10,9 +10,9 @@ namespace GTA_RP.Jobs
     abstract class CheckpointJob : Job
     {
         private List<ClientCheckpoint> checkpoints = new List<ClientCheckpoint>();
-        private int id2 = 0;
+        private int checkpointId = 0;
 
-        public CheckpointJob(Character c) : base(c)
+        public CheckpointJob(Character character) : base(character)
         {
 
         }
@@ -24,9 +24,9 @@ namespace GTA_RP.Jobs
         /// <param name="type">Type of the checkpoint to add</param>
         protected void AddCheckpoint(Vector3 coords, int type)
         {
-            ClientCheckpoint c = new ClientCheckpoint(id2, character.owner.client, coords, type, this.OnEnterCheckpoint, this.OnExitCheckpoint);
-            checkpoints.Add(c);
-            id2++;
+            ClientCheckpoint checkpoint = new ClientCheckpoint(checkpointId, character.owner.client, coords, type, this.OnEnterCheckpoint, this.OnExitCheckpoint);
+            checkpoints.Add(checkpoint);
+            checkpointId++;
         }
 
         /// <summary>
@@ -41,11 +41,11 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Removes a checkpoint
         /// </summary>
-        /// <param name="cp">Checkpoint to remove</param>
-        protected void RemoveCheckpoint(ClientCheckpoint cp)
+        /// <param name="checkpoint">Checkpoint to remove</param>
+        protected void RemoveCheckpoint(ClientCheckpoint checkpoint)
         {
-            checkpoints.Remove(cp);
-            cp.Destroy();
+            checkpoints.Remove(checkpoint);
+            checkpoint.Destroy();
         }
 
         /// <summary>
@@ -55,21 +55,21 @@ namespace GTA_RP.Jobs
         {
             checkpoints.ForEach(c => c.Destroy());
             checkpoints.Clear();
-            id2 = 0;
+            checkpointId = 0;
         }
 
         /// <summary>
         /// Is triggered when player enters a checkpoint
         /// </summary>
-        /// <param name="cp">Checkpoint where player(or vehicle) entered</param>
-        /// <param name="e">Handle of entered object</param>
-        virtual public void OnEnterCheckpoint(ClientCheckpoint cp, NetHandle e) { }
+        /// <param name="checkpoint">Checkpoint where player(or vehicle) entered</param>
+        /// <param name="handle">Handle of entered object</param>
+        virtual public void OnEnterCheckpoint(ClientCheckpoint checkpoint, NetHandle handle) { }
 
         /// <summary>
         /// Is triggered when player exits a checkpoint
         /// </summary>
-        /// <param name="cp">Checkpoint that player(or vehicle) exited</param>
-        /// <param name="e">Handle of object that exited</param>
-        virtual public void OnExitCheckpoint(ClientCheckpoint cp, NetHandle e) { }
+        /// <param name="checkpoint">Checkpoint that player(or vehicle) exited</param>
+        /// <param name="handle">Handle of object that exited</param>
+        virtual public void OnExitCheckpoint(ClientCheckpoint checkpoint, NetHandle handle) { }
     }
 }

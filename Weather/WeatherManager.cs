@@ -44,8 +44,8 @@ namespace GTA_RP.Weather
         /// Sets random even after random time
         /// </summary>
         /// <param name="source">Timer</param>
-        /// <param name="e">Timer arguments</param>
-        private void OnTimedEvent(System.Object source, ElapsedEventArgs e)
+        /// <param name="args">Timer arguments</param>
+        private void OnTimedEvent(System.Object source, ElapsedEventArgs args)
         {
             SetRandomWeather();
         }

@@ -28,7 +28,7 @@ namespace GTA_RP.Factions
         public void ArrestCharacter(Client client, int characterId, int time, string reason)
         {
             Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
-            if (IsCharacterValid(character, FactionI.LAW_ENFORCEMENT))
+            if (IsCharacterValid(character, FactionEnums.LAW_ENFORCEMENT))
             {
                 FactionManager.Instance().LawEnforcement().ArrestCharacter(character, characterId, time, reason);
             }
@@ -45,7 +45,7 @@ namespace GTA_RP.Factions
         public void GiveTicketToCharacter(Client client, int characterId, int fee, string reason)
         {
             Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
-            if (IsCharacterValid(character, FactionI.LAW_ENFORCEMENT))
+            if (IsCharacterValid(character, FactionEnums.LAW_ENFORCEMENT))
             {
                 FactionManager.Instance().LawEnforcement().FineCharacter(character, characterId, reason, fee);
             }

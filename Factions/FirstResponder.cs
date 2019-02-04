@@ -13,7 +13,7 @@ namespace GTA_RP.Factions
     /// </summary>
     class FirstResponder : RankedFaction
     {
-        public FirstResponder(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
+        public FirstResponder(FactionEnums id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
 
         public override void HandleOnDutyCommand(Character c)
         {

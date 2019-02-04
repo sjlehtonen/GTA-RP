@@ -205,11 +205,11 @@ namespace GTA_RP
         /// Gets apartments in building that are owned by certain character
         /// </summary>
         /// <param name="buildingId">The building to search apartments in</param>
-        /// <param name="c">Character whose apartments are searched</param>
+        /// <param name="character">Character whose apartments are searched</param>
         /// <returns>List of owned apartments by the character in specified building</returns>
-        private List<House> GetOwnedApartmentsInBuilding(int buildingId, Character c)
+        private List<House> GetOwnedApartmentsInBuilding(int buildingId, Character character)
         {
-            List<House> tempHouses = ownedHouses.Where(h => h.ownerId == c.ID && buildingId == GetBuildingIdForTemplateId(h.templateId)).ToList();
+            List<House> tempHouses = ownedHouses.Where(h => h.ownerId == character.ID && buildingId == GetBuildingIdForTemplateId(h.templateId)).ToList();
             return tempHouses;
         }
 
@@ -363,20 +363,20 @@ namespace GTA_RP
         /// <summary>
         /// Sets a timer for character in which the enter/exit house menu is not displayed until the timer runs out
         /// </summary>
-        /// <param name="c">Character for which to set the timer</param>
-        private void SetTimerForCharacter(Character c)
+        /// <param name="character">Character for which to set the timer</param>
+        private void SetTimerForCharacter(Character character)
         {
-            if (enterHouseTimers.Get(c.ID) == null)
+            if (enterHouseTimers.Get(character.ID) == null)
             {
                 Timer t = new Timer(houseEnterTime);
                 t.Elapsed += StopTimer;
                 t.AutoReset = false;
-                enterHouseTimers.Add(c.ID, t);
+                enterHouseTimers.Add(character.ID, t);
                 t.Enabled = true;
             }
             else
             {
-                Timer t = enterHouseTimers.Get(c.ID);
+                Timer t = enterHouseTimers.Get(character.ID);
                 t.Enabled = true;
             }
         }
@@ -384,21 +384,21 @@ namespace GTA_RP
         /// <summary>
         /// Gets the place where character is inside
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <returns>A place with selected character as occupant</returns>
-        private House GetHouseWithCharacterAsOccupant(Character c)
+        private House GetHouseWithCharacterAsOccupant(Character character)
         {
-            return ownedHouses.Single(h => h.HasOccupant(c));
+            return ownedHouses.Single(h => h.HasOccupant(character));
         }
 
         /// <summary>
         /// Checks if house exit/entry timer is active for character
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <returns>True if the exit/entry timer is active for character, otherwise false</returns>
-        private Boolean IsTimerActiveForPlayer(Character c)
+        private Boolean IsTimerActiveForPlayer(Character character)
         {
-            Timer t = enterHouseTimers.Get(c.ID);
+            Timer t = enterHouseTimers.Get(character.ID);
             if (t != null)
             {
                 return t.Enabled;
@@ -431,44 +431,44 @@ namespace GTA_RP
         /// <summary>
         /// Makes character to enter a house
         /// </summary>
-        /// <param name="c">Character who enters the house</param>
-        /// <param name="h">House to which enter</param>
-        /// <param name="t">Teleport used to enter the house</param>
-        private void EnterHouse(Character c, House h, Teleport t)
+        /// <param name="character">Character who enters the house</param>
+        /// <param name="house">House to which enter</param>
+        /// <param name="teleport">Teleport used to enter the house</param>
+        private void EnterHouse(Character character, House house, Teleport teleport)
         {
-            SetTimerForCharacter(c);
-            t.UseTeleport(c, h.templateId);
-            c.owner.client.dimension = h.id;
-            h.AddOccupant(c);
+            SetTimerForCharacter(character);
+            teleport.UseTeleport(character, house.templateId);
+            character.owner.client.dimension = house.id;
+            house.AddOccupant(character);
         }
 
         /// <summary>
         /// Makes character to exit a house
         /// </summary>
-        /// <param name="c">Character who exits the house</param>
-        /// <param name="t">House that the character will exit</param>
+        /// <param name="character">Character who exits the house</param>
+        /// <param name="teleport">House that the character will exit</param>
         /// <param name="destinationId">Entrance id</param>
-        private void ExitHouse(Character c, Teleport t, int destinationId)
+        private void ExitHouse(Character character, Teleport teleport, int destinationId)
         {
-            SetTimerForCharacter(c);
-            t.UseTeleport(c, destinationId);
-            c.owner.client.dimension = 0;
-            House h = GetHouseWithCharacterAsOccupant(c);
+            SetTimerForCharacter(character);
+            teleport.UseTeleport(character, destinationId);
+            character.owner.client.dimension = 0;
+            House h = GetHouseWithCharacterAsOccupant(character);
             if (h != null)
             {
-                h.RemoveOccupant(c);
+                h.RemoveOccupant(character);
             }
         }
 
         /// <summary>
         /// Checks if character is allowed to enter a place
         /// </summary>
-        /// <param name="c">Character to check</param>
-        /// <param name="h">House to check whether character is allowed to enter</param>
+        /// <param name="character">Character to check</param>
+        /// <param name="house">House to check whether character is allowed to enter</param>
         /// <returns>True if character is allowed to enter the house, otherwise false</returns>
-        private Boolean IsAllowedToEnterPlace(Character c, House h)
+        private Boolean IsAllowedToEnterPlace(Character character, House house)
         {
-            if (h.ownerId == c.ID || h.IsInvited(c))
+            if (house.ownerId == character.ID || house.IsInvited(character))
             {
                 return true;
             }
@@ -478,11 +478,11 @@ namespace GTA_RP
         /// <summary>
         /// Returns all the places that the character owns
         /// </summary>
-        /// <param name="c">Character whose places are returned</param>
+        /// <param name="character">Character whose places are returned</param>
         /// <returns>All owned places for character</returns>
-        private List<House> GetOwnedHouses(Character c)
+        private List<House> GetOwnedHouses(Character character)
         {
-            return ownedHouses.Where(x => x.ownerId == c.ID).ToList();
+            return ownedHouses.Where(x => x.ownerId == character.ID).ToList();
         }
 
         // Public functions
@@ -596,10 +596,10 @@ namespace GTA_RP
         /// </summary>
         /// <param name="houseId">House id</param>
         /// <returns>True if character is renter or owner, otherwise false</returns>
-        public Boolean IsCharacterOwnerOrRenterOfHouse(Character c, int houseId)
+        public Boolean IsCharacterOwnerOrRenterOfHouse(Character character, int houseId)
         {
             House house = GetHouseForId(houseId);
-            if (house == null || house.ownerId != c.ID)
+            if (house == null || house.ownerId != character.ID)
             {
                 return false;
             }
@@ -632,25 +632,25 @@ namespace GTA_RP
         /// <summary>
         /// Is triggered when character walks into teleport
         /// </summary>
-        /// <param name="t">Teleport walked into</param>
-        /// <param name="c">Character who walked into the teleport</param>
-        public void EnterHouseTeleport(Checkpoint t, Character c)
+        /// <param name="teleport">Teleport walked into</param>
+        /// <param name="character">Character who walked into the teleport</param>
+        public void EnterHouseTeleport(Checkpoint teleport, Character character)
         {
-            if (!IsTimerActiveForPlayer(c))
+            if (!IsTimerActiveForPlayer(character))
             {
-                Teleport tele = t as Teleport;
+                Teleport tele = teleport as Teleport;
                 // Make list of all houses the player can enter to (either own house, rents or is invited to house)
-                List<House> apartments = GetPlacesAllowedToEnterInBuilding(c, tele.id); // currently only can enter apartments that he/she owns and where invited
+                List<House> apartments = GetPlacesAllowedToEnterInBuilding(character, tele.id); // currently only can enter apartments that he/she owns and where invited
 
                 if (apartments.Count != 0)
                 {
                     List<string> names = GetApartmentNames(apartments);
                     List<int> ids = GetApartmentIds(apartments);
-                    API.shared.triggerClientEvent(c.owner.client, "EVENT_DISPLAY_ENTER_HOUSE_MENU", names, ids, GetBuildingName(tele.id));
+                    API.shared.triggerClientEvent(character.owner.client, "EVENT_DISPLAY_ENTER_HOUSE_MENU", names, ids, GetBuildingName(tele.id));
                 }
                 else
                 {
-                    API.shared.sendNotificationToPlayer(c.owner.client, "There are no places you can enter in this building");
+                    API.shared.sendNotificationToPlayer(character.owner.client, "There are no places you can enter in this building");
                 }
             }
         }
@@ -658,18 +658,18 @@ namespace GTA_RP
         /// <summary>
         /// Is triggered when character walks into exit teleport
         /// </summary>
-        /// <param name="t">Exit teleport walked into</param>
-        /// <param name="c">Character who walked into the exit teleport</param>
-        public void EnterHouseExitTeleport(Checkpoint t, Character c)
+        /// <param name="teleport">Exit teleport walked into</param>
+        /// <param name="character">Character who walked into the exit teleport</param>
+        public void EnterHouseExitTeleport(Checkpoint teleport, Character character)
         {
-            if (!IsTimerActiveForPlayer(c))
+            if (!IsTimerActiveForPlayer(character))
             {
-                Teleport tele = t as Teleport;
+                Teleport tele = teleport as Teleport;
                 List<string> destNames = tele.GetDestinationNames();
                 int teleportId = tele.id;
                 List<int> destIds = tele.GetDestinationIds();
 
-                API.shared.triggerClientEvent(c.owner.client, "EVENT_DISPLAY_EXIT_HOUSE_MENU", teleportId, destNames, destIds, GetBuildingName(tele.id));
+                API.shared.triggerClientEvent(character.owner.client, "EVENT_DISPLAY_EXIT_HOUSE_MENU", teleportId, destNames, destIds, GetBuildingName(tele.id));
             }
         }
 
@@ -716,13 +716,13 @@ namespace GTA_RP
         /// <summary>
         /// Send list of owned places to client
         /// </summary>
-        /// <param name="c">Character whose owned places are sent</param>
-        public void SendListOfOwnedHousesToClient(Client c)
+        /// <param name="client">Character whose owned places are sent</param>
+        public void SendListOfOwnedHousesToClient(Client client)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(c))
+            if (PlayerManager.Instance().IsClientUsingCharacter(client))
             {
-                List<House> houses = GetOwnedHouses(PlayerManager.Instance().GetActiveCharacterForClient(c));
-                API.shared.triggerClientEvent(c, "EVENT_SEND_OWNED_HOUSES", houses.Select(x => x.name).ToList<string>(), houses.Select(x => x.id).ToList<int>());
+                List<House> houses = GetOwnedHouses(PlayerManager.Instance().GetActiveCharacterForClient(client));
+                API.shared.triggerClientEvent(client, "EVENT_SEND_OWNED_HOUSES", houses.Select(x => x.name).ToList<string>(), houses.Select(x => x.id).ToList<int>());
             }
         }
     }

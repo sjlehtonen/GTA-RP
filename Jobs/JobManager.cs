@@ -91,13 +91,13 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Creates a job for character based on the id
         /// </summary>
-        /// <param name="c">Character for which to initialize job</param>
+        /// <param name="character">Character for which to initialize job</param>
         /// <returns>Created Job or null if there is no such job</returns>
-        private Job CreateJobForId(Character c)
+        private Job CreateJobForId(Character character)
         {
-            if (jobInfo.ContainsKey(c.job) && c.job != 0)
+            if (jobInfo.ContainsKey(character.job) && character.job != 0)
             {
-                return Activator.CreateInstance(jobInfo.Get(c.job).job, c) as Job;
+                return Activator.CreateInstance(jobInfo.Get(character.job).job, character) as Job;
             }
 
             return null;
@@ -126,11 +126,11 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Checks if character has a job
         /// </summary>
-        /// <param name="c">Character to check</param>
+        /// <param name="character">Character to check</param>
         /// <returns>True if character has a job, otherwise false</returns>
-        public Boolean DoesCharacterHaveJob(Character c)
+        public Boolean DoesCharacterHaveJob(Character character)
         {
-            if (c.job != 0)
+            if (character.job != 0)
             {
                 return true;
             }
@@ -140,34 +140,34 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Checks if job is set for character
         /// </summary>
-        /// <param name="c">Character to check</param>
+        /// <param name="character">Character to check</param>
         /// <returns>True if job is set, false otherwise</returns>
-        private Boolean IsJobSetForCharacter(Character c)
+        private Boolean IsJobSetForCharacter(Character character)
         {
-            return jobsForCharacterId.ContainsKey(c.ID);
+            return jobsForCharacterId.ContainsKey(character.ID);
         }
 
         /// <summary>
         /// Creates a job object for character if it doesn't exist yet
         /// </summary>
-        /// <param name="c">Character to create job for</param>
-        private void CreateJobForCharacter(Character c)
+        /// <param name="character">Character to create job for</param>
+        private void CreateJobForCharacter(Character character)
         {
-            if (!IsJobSetForCharacter(c))
+            if (!IsJobSetForCharacter(character))
             {
-                jobsForCharacterId.Add(c.ID, this.CreateJobForId(c));
+                jobsForCharacterId.Add(character.ID, this.CreateJobForId(character));
             }
         }
 
         /// <summary>
         /// Removes a job from character
         /// </summary>
-        /// <param name="c">Character</param>
-        private void RemoveJobFromCharacter(Character c)
+        /// <param name="character">Character</param>
+        private void RemoveJobFromCharacter(Character character)
         {
-            if (IsJobSetForCharacter(c))
+            if (IsJobSetForCharacter(character))
             {
-                jobsForCharacterId.Remove(c.ID);
+                jobsForCharacterId.Remove(character.ID);
             }
         }
 
@@ -263,7 +263,7 @@ namespace GTA_RP.Jobs
                 return;
             }
 
-            if (character.factionID != Factions.FactionI.CIVILIAN)
+            if (character.factionID != Factions.FactionEnums.CIVILIAN)
             {
                 character.SendErrorNotification("Only civilians can take up jobs!");
                 character.PlayFrontendSound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
@@ -286,13 +286,13 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Checks if job is active for some character
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <returns>True if job is active, otherwise false</returns>
-        private bool IsJobActiveForCharacter(Character c)
+        private bool IsJobActiveForCharacter(Character character)
         {
-            if (DoesCharacterHaveJob(c))
+            if (DoesCharacterHaveJob(character))
             {
-                Job j = jobsForCharacterId.Get(c.ID);
+                Job j = jobsForCharacterId.Get(character.ID);
                 if (j == null) { return false; }
                 if (j.isActive) { return true; }
             }
@@ -320,25 +320,25 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Starts a job for character
         /// </summary>
-        /// <param name="c">Character to start job for</param>
-        public void StartJobForCharacter(Character c)
+        /// <param name="character">Character to start job for</param>
+        public void StartJobForCharacter(Character character)
         {
-            if (DoesCharacterHaveJob(c))
+            if (DoesCharacterHaveJob(character))
             {
-                CreateJobForCharacter(c);
-                jobsForCharacterId.Get(c.ID).StartJob();
+                CreateJobForCharacter(character);
+                jobsForCharacterId.Get(character.ID).StartJob();
             }
         }
 
         /// <summary>
         /// Stops job for character
         /// </summary>
-        /// <param name="c">Character to stop job for</param>
-        public void StopJobForCharacter(Character c)
+        /// <param name="character">Character to stop job for</param>
+        public void StopJobForCharacter(Character character)
         {
-            if (IsJobActiveForCharacter(c))
+            if (IsJobActiveForCharacter(character))
             {
-                Job j = jobsForCharacterId.Get(c.ID);
+                Job j = jobsForCharacterId.Get(character.ID);
                 if (j.isActive)
                 {
                     j.EndJob();

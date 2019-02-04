@@ -48,7 +48,7 @@ namespace GTA_RP.Factions
         protected string paySalaryString = "You were paid ${0} by the Los Santos Government";
 
 
-        public RankedFaction(FactionI id, String name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
+        public RankedFaction(FactionEnums id, String name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
 
         /// <summary>
         /// Adds a new rank to the faction

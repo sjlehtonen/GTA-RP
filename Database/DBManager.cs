@@ -12,13 +12,6 @@ namespace GTA_RP
     {
         public DBManager() { }
 
-        private string databaseName = string.Empty;
-        public string DatabaseName
-        {
-            get { return databaseName; }
-            set { databaseName = value; }
-        }
-
         public string Password { get; set; }
         private MySqlConnection connection = null;
         public MySqlConnection Connection
@@ -109,7 +102,8 @@ namespace GTA_RP
             string username = ConfigManager.ReadStringValue("database", "username");
             string password = ConfigManager.ReadStringValue("database", "password");
             string server = ConfigManager.ReadStringValue("database", "server");
-            return "Server=" + server + "; database=" + dbName + "; UID=" + username + "; password=" + password;
+            return String.Format("Server={0}; database={1}; UID={2}; password={3}", server, dbName, username, password);
+            //return "Server=" + server + "; database=" + dbName + "; UID=" + username + "; password=" + password;
         }
         
         /// <summary>

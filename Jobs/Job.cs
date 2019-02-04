@@ -30,15 +30,15 @@ namespace GTA_RP.Jobs
         abstract public void FinishJob();
 
 
-        public Job(Character c)
+        public Job(Character character)
         {
-            this.character = c;
+            this.character = character;
             PlayerManager.Instance().SubscribeToPlayerDisconnectEvent(this.PlayerDisconnected);
         }
 
-        private void PlayerDisconnected(Character c)
+        private void PlayerDisconnected(Character character)
         {
-            if (c == character)
+            if (character == this.character)
             {
                 EndJob();
                 PlayerManager.Instance().UnsubscribeFromPlayerDisconnectEvent(this.PlayerDisconnected);
@@ -71,9 +71,9 @@ namespace GTA_RP.Jobs
         /// <returns>VehicleHash for vehicle player is in</returns>
         protected VehicleHash GetPlayerVehicleHash()
         {
-            NetHandle h = API.shared.getPlayerVehicle(character.owner.client);
-            Vehicle v = API.shared.getEntityFromHandle<Vehicle>(h);
-            return (VehicleHash)v.model;
+            NetHandle handle = API.shared.getPlayerVehicle(character.owner.client);
+            Vehicle vehicle = API.shared.getEntityFromHandle<Vehicle>(handle);
+            return (VehicleHash)vehicle.model;
         }
 
     }

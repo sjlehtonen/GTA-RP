@@ -28,27 +28,27 @@ namespace GTA_RP
         /// <summary>
         /// Is ran when player disconnects
         /// </summary>
-        /// <param name="c">Client who disconnected</param>
-        private void PlayerDisconnected(Character c)
+        /// <param name="character">Client who disconnected</param>
+        private void PlayerDisconnected(Character character)
         {
-            RemovePlayerFromCharacterSelector(c);
+            RemovePlayerFromCharacterSelector(character);
         }
 
         /// <summary>
         /// Gets a character with name
         /// </summary>
-        /// <param name="p">Player whose character is being searched</param>
+        /// <param name="player">Player whose character is being searched</param>
         /// <param name="name">Character name</param>
         /// <returns>A player's character with a certain name</returns>
-        private Character GetCharacterForName(Player p, string name)
+        private Character GetCharacterForName(Player player, string name)
         {
             List<Character> characters;
-            playerCharacters.TryGetValue(p.id, out characters);
-            foreach (Character c in characters)
+            playerCharacters.TryGetValue(player.id, out characters);
+            foreach (Character character in characters)
             {
-                if (c.fullName.Equals(name))
+                if (character.fullName.Equals(name))
                 {
-                    return c;
+                    return character;
                 }
             }
             return null;
@@ -57,13 +57,13 @@ namespace GTA_RP
         /// <summary>
         /// Adds a new character for player
         /// </summary>
-        /// <param name="p">Player on who to add</param>
-        /// <param name="c">New character</param>
-        private void AddCharacterForPlayer(Player p, Character c)
+        /// <param name="player">Player on who to add</param>
+        /// <param name="character">New character</param>
+        private void AddCharacterForPlayer(Player player, Character character)
         {
             List<Character> characters;
-            playerCharacters.TryGetValue(p.id, out characters);
-            characters.Add(c);
+            playerCharacters.TryGetValue(player.id, out characters);
+            characters.Add(character);
         }
 
         /// <summary>
@@ -115,19 +115,19 @@ namespace GTA_RP
         /// <summary>
         /// Adds a new player to character selection mode
         /// </summary>
-        /// <param name="p">Player to add to character selection</param>
+        /// <param name="player">Player to add to character selection</param>
         /// <param name="characters">Player's characters</param>
-        public void AddPlayerToCharacterSelector(Player p, List<Character> characters)
+        public void AddPlayerToCharacterSelector(Player player, List<Character> characters)
         {
-            players.Add(p);
-            playerCharacters.Add(p.id, characters);
+            players.Add(player);
+            playerCharacters.Add(player.id, characters);
 
-            p.client.freezePosition = true;
-            p.client.dimension = p.id;
+            player.client.freezePosition = true;
+            player.client.dimension = player.id;
 
             // Teleport to the selection room
-            p.client.position = characterSelectionPosition;
-            p.client.rotation = characterSelectionRotation;
+            player.client.position = characterSelectionPosition;
+            player.client.rotation = characterSelectionRotation;
 
             List<string> characterNames = new List<string>();
             List<string> characterModels = new List<string>();
@@ -135,65 +135,65 @@ namespace GTA_RP
             characters.ForEach(x => characterNames.Add(x.fullName));
             characters.ForEach(x => characterModels.Add(x.model));
 
-            API.shared.triggerClientEvent(p.client, "EVENT_OPEN_CHARACTER_SELECT_MENU", characterNames, characterModels, characterSelectionCameraPosition, characterSelectionCameraRotation, allowedCharacterCreatorModels, characterSelectionPosition, characterSelectionRotation);
+            API.shared.triggerClientEvent(player.client, "EVENT_OPEN_CHARACTER_SELECT_MENU", characterNames, characterModels, characterSelectionCameraPosition, characterSelectionCameraRotation, allowedCharacterCreatorModels, characterSelectionPosition, characterSelectionRotation);
         }
 
         /// <summary>
         /// Removes player from character selection
         /// </summary>
-        /// <param name="p">Player to remove</param>
-        public void RemovePlayerFromCharacterSelector(Player p)
+        /// <param name="player">Player to remove</param>
+        public void RemovePlayerFromCharacterSelector(Player player)
         {
-            playerCharacters.Remove(p.id);
-            p.client.dimension = 0;
-            players.Remove(p);
+            playerCharacters.Remove(player.id);
+            player.client.dimension = 0;
+            players.Remove(player);
         }
 
         /// <summary>
         /// Removes a player from the character selector
         /// </summary>
-        /// <param name="c">Client to remove</param>
-        public void RemovePlayerFromCharacterSelector(Client c)
+        /// <param name="client">Client to remove</param>
+        public void RemovePlayerFromCharacterSelector(Client client)
         {
-            Player p = PlayerManager.Instance().GetPlayerByClient(c);
-            c.dimension = 0;
-            RemovePlayerFromCharacterSelector(p);
+            Player player = PlayerManager.Instance().GetPlayerByClient(client);
+            client.dimension = 0;
+            RemovePlayerFromCharacterSelector(player);
         }
 
-        public void RemovePlayerFromCharacterSelector(Character c)
+        public void RemovePlayerFromCharacterSelector(Character character)
         {
-            RemovePlayerFromCharacterSelector(c.owner);
-        }
-
-        /// <summary>
-        /// Checks if player is in character selection
-        /// </summary>
-        /// <param name="p">Player to check</param>
-        /// <returns>True if player is in character selection, false if not</returns>
-        public Boolean IsPlayerInCharacterSelection(Player p)
-        {
-            return players.Contains(p);
+            RemovePlayerFromCharacterSelector(character.owner);
         }
 
         /// <summary>
         /// Checks if player is in character selection
         /// </summary>
-        /// <param name="c">Client to check</param>
+        /// <param name="player">Player to check</param>
         /// <returns>True if player is in character selection, false if not</returns>
-        public Boolean IsPlayerInCharacterSelection(Client c)
+        public Boolean IsPlayerInCharacterSelection(Player player)
         {
-            return players.Exists(p => p.client == c);
+            return players.Contains(player);
+        }
+
+        /// <summary>
+        /// Checks if player is in character selection
+        /// </summary>
+        /// <param name="client">Client to check</param>
+        /// <returns>True if player is in character selection, false if not</returns>
+        public Boolean IsPlayerInCharacterSelection(Client client)
+        {
+            return players.Exists(p => p.client == client);
         }
 
         /// <summary>
         /// Opens character creation menu for player
         /// </summary>
-        /// <param name="p">Player to open menu for</param>
-        public void OpenCharacterCreationMenu(Player p)
+        /// <param name="player">Player to open menu for</param>
+        public void OpenCharacterCreationMenu(Player player)
         {
-            if (IsPlayerInCharacterSelection(p))
+            if (IsPlayerInCharacterSelection(player))
             {
-                API.shared.triggerClientEvent(p.client, "EVENT_OPEN_CHARACTER_CREATION_MENU");
+                API.shared.triggerClientEvent(player.client, "EVENT_OPEN_CHARACTER_CREATION_MENU");
             }
         }
 
@@ -210,11 +210,11 @@ namespace GTA_RP
         /// <summary>
         /// Creates a new character
         /// </summary>
-        /// <param name="p">Player to create character for</param>
+        /// <param name="player">Player to create character for</param>
         /// <param name="firstName">Character's first name</param>
         /// <param name="lastName">Character's last name</param>
         /// <param name="model">Character's model</param>
-        public void CreateCharacter(Player p, string firstName, string lastName, string model)
+        public void CreateCharacter(Player player, string firstName, string lastName, string model)
         {
             String phoneNumber = this.GenerateRandomPhoneNumber();
 
@@ -223,7 +223,7 @@ namespace GTA_RP
 
             DBManager.InsertQuery("INSERT INTO characters VALUES (@id, @player_id, @first_name, @last_name, @faction_id, @player_model, @money, @job, @phone_number, @spawn_house_id)")
                 .AddValue("@id", characterCreationId)
-                .AddValue("@player_id", p.id)
+                .AddValue("@player_id", player.id)
                 .AddValue("@first_name", firstName)
                 .AddValue("@last_name", lastName)
                 .AddValue("@faction_id", 0)
@@ -234,46 +234,46 @@ namespace GTA_RP
                 .AddValue("@spawn_house_id", -1)
                 .Execute();
 
-            Character c = new Character(p, characterCreationId, firstName, lastName, 0, model, 200, 0, phoneNumber, -1);
-            this.AddCharacterForPlayer(p, c);
+            Character character = new Character(player, characterCreationId, firstName, lastName, 0, model, 200, 0, phoneNumber, -1);
+            this.AddCharacterForPlayer(player, character);
             characterCreationId++;
-            this.SelectCharacter(p, c.fullName);
+            this.SelectCharacter(player, character.fullName);
         }
 
         /// <summary>
         /// Selects a character
         /// </summary>
-        /// <param name="p">Player to select character for</param>
+        /// <param name="player">Player to select character for</param>
         /// <param name="characterName">Character's name</param>
-        public void SelectCharacter(Player p, string characterName)
+        public void SelectCharacter(Player player, string characterName)
         {
-            if (IsPlayerInCharacterSelection(p))
+            if (IsPlayerInCharacterSelection(player))
             {
-                Character c = this.GetCharacterForName(p, characterName);
+                Character character = this.GetCharacterForName(player, characterName);
 
-                if (c != null)
+                if (character != null)
                 {
 
-                    p.client.dimension = 0;
-                    p.client.freezePosition = false;
+                    player.client.dimension = 0;
+                    player.client.freezePosition = false;
 
-                    if (PlayerManager.Instance().TeleportPlayerToJailIfTimeLeft(c))
+                    if (PlayerManager.Instance().TeleportPlayerToJailIfTimeLeft(character))
                     {
-                        c.SendNotification("You have " + PlayerManager.Instance().GetTimeLeftInJailForCharacter(c) + " minutes of jail time left");
+                        character.SendNotification("You have " + PlayerManager.Instance().GetTimeLeftInJailForCharacter(character) + " minutes of jail time left");
                     }
-                    else if (c.spawnHouseId != -1)
+                    else if (character.spawnHouseId != -1)
                     {
-                        HouseManager.Instance().AddCharacterToHouseWithId(c.spawnHouseId, c);
-                        p.client.position = HouseManager.Instance().GetSpawnLocationOfHouseWithId(c.spawnHouseId);
+                        HouseManager.Instance().AddCharacterToHouseWithId(character.spawnHouseId, character);
+                        player.client.position = HouseManager.Instance().GetSpawnLocationOfHouseWithId(character.spawnHouseId);
                     }
                     else
                     {
                         // Default spawn
-                        p.client.position = new Vector3(-692.194, 295.9935, 82.83133);
+                        player.client.position = new Vector3(-692.194, 295.9935, 82.83133);
                     }
 
-                    p.SetActiveCharacter(c);
-                    this.RemovePlayerFromCharacterSelector(p);
+                    player.SetActiveCharacter(character);
+                    this.RemovePlayerFromCharacterSelector(player);
                 }
             }
         }

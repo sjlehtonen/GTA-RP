@@ -15,7 +15,7 @@ namespace GTA_RP.Factions
         public void StartTaxiMeterForCharacterWithId(Client client, int id)
         {
             Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
-            if (IsCharacterValid(character, FactionI.TAXI_DRIVER) && PlayerManager.Instance().IsCharacterWithIdOnline(id))
+            if (IsCharacterValid(character, FactionEnums.TAXI_DRIVER) && PlayerManager.Instance().IsCharacterWithIdOnline(id))
             {
                 FactionManager.Instance().TaxiDriver().SetTaxiMeterForCharacter(character, PlayerManager.Instance().GetCharacterWithId(id));
             }
@@ -35,7 +35,7 @@ namespace GTA_RP.Factions
         public void StopMeterForCharacterWithId(Client client, int id)
         {
             Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
-            if (IsCharacterValid(character, FactionI.TAXI_DRIVER) && PlayerManager.Instance().IsCharacterWithIdOnline(id))
+            if (IsCharacterValid(character, FactionEnums.TAXI_DRIVER) && PlayerManager.Instance().IsCharacterWithIdOnline(id))
             {
                 FactionManager.Instance().TaxiDriver().StopTaxiMeterForCharacter(character, PlayerManager.Instance().GetCharacterWithId(id));
             }

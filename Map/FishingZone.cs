@@ -217,10 +217,10 @@ namespace GTA_RP.Map
             if (item == null) character.SendNotification("You failed to catch fish");
             else
             {
-                bool ret = character.AddItemToInventory(item, true);
-                if (ret)
+                bool success = character.AddItemToInventory(item, true);
+                if (success)
                 {
-                    character.SendNotification("You caught a " + item.name);
+                    character.SendNotification(String.Format("You caught a {0}", item.name));
                     this.ReduceFish();
                 }
                 else

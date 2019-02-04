@@ -6,8 +6,8 @@ using GrandTheftMultiplayer.Shared.Math;
 
 namespace GTA_RP
 {
-    public delegate void OnEnterCheckpointDelegate(ClientCheckpoint cp, NetHandle entity);
-    public delegate void OnExitCheckpointDelegate(ClientCheckpoint cp, NetHandle entity);
+    public delegate void OnEnterCheckpointDelegate(ClientCheckpoint checkpoint, NetHandle entity);
+    public delegate void OnExitCheckpointDelegate(ClientCheckpoint checkpoint, NetHandle entity);
 
     /// <summary>
     /// Clientsided checkpoint

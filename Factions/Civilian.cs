@@ -7,7 +7,7 @@ namespace GTA_RP.Factions
     /// </summary>
     class Civilian : Faction
     {
-        public Civilian(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
+        public Civilian(FactionEnums id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
 
         public override void Initialize() { }
 

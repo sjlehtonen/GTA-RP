@@ -49,10 +49,10 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Is ran when player disconnects
         /// </summary>
-        /// <param name="c"></param>
-        private void CharacterDisconnected(Character c)
+        /// <param name="character"></param>
+        private void CharacterDisconnected(Character character)
         {
-             ExitShop(c);
+             ExitShop(character);
         }
 
        
@@ -60,12 +60,12 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Teleports player inside the vehicle shop
         /// </summary>
-        /// <param name="c">Character</param>
-        private void TeleportPlayerInsideShop(Character c)
+        /// <param name="character">Character</param>
+        private void TeleportPlayerInsideShop(Character character)
         {
-            c.position = characterShopPosition;
-            c.owner.client.freezePosition = true;
-            c.owner.client.dimension = 1;
+            character.position = characterShopPosition;
+            character.owner.client.freezePosition = true;
+            character.owner.client.dimension = 1;
         }
 
         /// <summary>
@@ -91,13 +91,13 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Teleports player out of the vehicle shop
         /// </summary>
-        /// <param name="c"></param>
-        private void TeleportPlayerOutOfShop(Character c)
+        /// <param name="character"></param>
+        private void TeleportPlayerOutOfShop(Character character)
         {
-            c.position = exitPos;
-            c.owner.client.rotation = exitRot;
-            c.owner.client.freezePosition = false;
-            c.owner.client.dimension = 0;
+            character.position = exitPos;
+            character.owner.client.rotation = exitRot;
+            character.owner.client.freezePosition = false;
+            character.owner.client.dimension = 0;
         }
 
         /// <summary>
@@ -120,11 +120,11 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Checks whether character is inside the shop
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <returns>True if character is in the shop, otherwise false</returns>
-        public Boolean IsCharacterInShop(Character c)
+        public Boolean IsCharacterInShop(Character character)
         {
-            return characters.Contains(c);
+            return characters.Contains(character);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace GTA_RP.Vehicles
                 availableVehicles.ForEach(x => prices.Add(vehiclePrice[x]));
                 character.TriggerEvent("EVENT_CHARACTER_ENTER_VEHICLE_SHOP", id, availableVehicles, prices, vehiclePosition, vehicleRotation);
                 character.TriggerEvent("EVENT_SET_LOGIN_SCREEN_CAMERA", cameraPosition, cameraRotation);
-                PlayerManager.Instance().ToggleMinimapForPlayer(character.client, false);
+                PlayerManager.Instance().RemoveMinimapFromPlayer(character);
             }
         }
 
@@ -167,7 +167,7 @@ namespace GTA_RP.Vehicles
                 TeleportPlayerOutOfShop(character);
                 character.TriggerEvent("EVENT_CHARACTER_EXIT_VEHICLE_SHOP");
                 character.TriggerEvent("EVENT_REMOVE_CAMERA");
-                PlayerManager.Instance().ToggleMinimapForPlayer(character.client, true);
+                PlayerManager.Instance().SetMinimapForPlayer(character);
             }
         }
 
@@ -194,7 +194,7 @@ namespace GTA_RP.Vehicles
 
                         character.SetMoney(character.money - price);
                         string licensePlate = VehicleManager.Instance().GenerateUnusedLicensePlate();
-                        int id = VehicleManager.Instance().AddVehicleToDatabase(character.ID, Factions.FactionI.CIVILIAN, model, -223.2121f, -1168.157f, 22.5882f, 0.5045538f, 0.1192265f, -91.68389f, licensePlate, 0, color1, color2);
+                        int id = VehicleManager.Instance().AddVehicleToDatabase(character.ID, Factions.FactionEnums.CIVILIAN, model, -223.2121f, -1168.157f, 22.5882f, 0.5045538f, 0.1192265f, -91.68389f, licensePlate, 0, color1, color2);
                         VehicleManager.Instance().SendUpdatedVehicleToClient(character, id, licensePlate, false);
                         character.TriggerEvent("EVENT_CHARACTER_EXIT_VEHICLE_SHOP");
                         character.SendNotification("Vehicle purchased!\nExit the shop and access the vehicle from your F1 menu");

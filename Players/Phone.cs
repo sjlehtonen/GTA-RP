@@ -87,9 +87,9 @@ namespace GTA_RP
 
 
 
-        public Phone(Character c, String phoneNumber)
+        public Phone(Character character, String phoneNumber)
         {
-            owner = c;
+            owner = character;
             this.phoneNumber = phoneNumber;
 
             this.isCalling = false;
@@ -106,11 +106,11 @@ namespace GTA_RP
         /// <summary>
         /// Ran when owner of the phone entered vehicle
         /// </summary>
-        /// <param name="c">Client</param>
+        /// <param name="client">Client</param>
         /// <param name="vehicle">Vehicle</param>
-        private void OwnerEnteredVehicle(Client c, NetHandle vehicle, int seat)
+        private void OwnerEnteredVehicle(Client client, NetHandle vehicle, int seat)
         {
-            if (c == this.owner.owner.client)
+            if (client == this.owner.owner.client)
             {
                 if (phoneState == PhoneState.PHONE_CALLING)
                 {
@@ -126,11 +126,11 @@ namespace GTA_RP
         /// <summary>
         /// Ran when owner of the phone exits vehicle
         /// </summary>
-        /// <param name="c"></param>
+        /// <param name="client"></param>
         /// <param name="vehicle"></param>
-        private void OwnerExitedVehicle(Client c, NetHandle vehicle, int seat)
+        private void OwnerExitedVehicle(Client client, NetHandle vehicle, int seat)
         {
-            if (c == this.owner.owner.client)
+            if (client == this.owner.owner.client)
             {
                 if (phoneState == PhoneState.PHONE_CALLING)
                 {
@@ -148,8 +148,8 @@ namespace GTA_RP
         /// Closes the fake call
         /// </summary>
         /// <param name="source">Timer</param>
-        /// <param name="e">Timer arguments</param>
-        private void TimerElapsed(System.Object source, ElapsedEventArgs e)
+        /// <param name="args">Timer arguments</param>
+        private void TimerElapsed(System.Object source, ElapsedEventArgs args)
         {
             secondAnimationTimer.Enabled = false;
             DeletePhone();
@@ -282,8 +282,8 @@ namespace GTA_RP
         /// Is ran when the fake call timer expires
         /// </summary>
         /// <param name="source">Timer</param>
-        /// <param name="e">Timer arguments</param>
-        private void SimulatePhoneCallTimerEvent(System.Object source, ElapsedEventArgs e)
+        /// <param name="args">Timer arguments</param>
+        private void SimulatePhoneCallTimerEvent(System.Object source, ElapsedEventArgs args)
         {
             simulateCallTimer.Enabled = false;
             this.isCalling = false;
@@ -376,10 +376,10 @@ namespace GTA_RP
         /// <summary>
         /// Stops the phone call when player disconnects
         /// </summary>
-        /// <param name="c">Client</param>
-        private void PlayerDisconnectedEvent(Character c)
+        /// <param name="character">Client</param>
+        private void PlayerDisconnectedEvent(Character character)
         {
-            if (c == this.owner) // ?
+            if (character == this.owner) // ?
             {
                 if (this.phoneCallActive || this.isCalling)
                 {

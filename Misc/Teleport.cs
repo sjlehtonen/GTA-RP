@@ -59,20 +59,20 @@ namespace GTA_RP
         /// <summary>
         /// Teleports character
         /// </summary>
-        /// <param name="c">Character to teleport</param>
-        public void UseTeleport(Character c)
+        /// <param name="character">Character to teleport</param>
+        public void UseTeleport(Character character)
         {
-            c.position = exits.First().location;
+            character.position = exits.First().location;
         }
 
         /// <summary>
         /// Teleports character to selected destination
         /// </summary>
-        /// <param name="c">Character to teleport</param>
+        /// <param name="character">Character to teleport</param>
         /// <param name="id">Destination to teleport to</param>
-        public void UseTeleport(Character c, int id)
+        public void UseTeleport(Character character, int id)
         {
-            c.position = DestinationWithId(id).location;
+            character.position = DestinationWithId(id).location;
         }
 
         /// <summary>
@@ -96,11 +96,11 @@ namespace GTA_RP
         /// <summary>
         /// Checks if character is inside teleport
         /// </summary>
-        /// <param name="c">Character to check</param>
+        /// <param name="character">Character to check</param>
         /// <returns>True if character is inside teleport, otherwise false</returns>
-        public Boolean IsCharacterInsideTeleport(Character c)
+        public Boolean IsCharacterInsideTeleport(Character character)
         {
-            return IsCharacterInsideCheckpoint(c);
+            return IsCharacterInsideCheckpoint(character);
         }
     }
 

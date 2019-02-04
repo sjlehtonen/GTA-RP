@@ -60,7 +60,7 @@ namespace GTA_RP.Factions
         private float prisonEntranceCircleSize = 5.0f;
         ///
 
-        public LawEnforcement(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB)
+        public LawEnforcement(FactionEnums id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB)
         {
         }
 
@@ -142,7 +142,7 @@ namespace GTA_RP.Factions
         /// <param name="character">Character</param>
         private void OnEnterCheckpoint(Checkpoint point, Character character)
         {
-            if (character.factionID == FactionI.LAW_ENFORCEMENT)
+            if (character.factionID == FactionEnums.LAW_ENFORCEMENT)
             {
                 character.PlayFrontendSound("SELECT", "HUD_LIQUOR_STORE_SOUNDSET");
                 character.SendChatMessage("[NOTE]: Arrest a player in this zone by using /arrest [id] [time] [reason]");
@@ -331,7 +331,7 @@ namespace GTA_RP.Factions
                 {
                     Ticket ticket = new Ticket(currentTicketId, sender.fullName, reason, fineAmount, character.ID);
                     AddTicket(ticket, true);
-                    character.SendNotification("You were given a ticket by " + sender.fullName + " with a fine of $" + fineAmount.ToString());
+                    character.SendNotification(String.Format("You were given a ticket by {0} with a fine of ${1}", sender.fullName, fineAmount.ToString()));
                     character.PlayFrontendSound("SELECT", "HUD_LIQUOR_STORE_SOUNDSET");
                 }
                 else
@@ -341,7 +341,7 @@ namespace GTA_RP.Factions
             }
             else
             {
-                sender.SendNotification("Character with ID " + characterToFine.ToString() + " is not online!");
+                sender.SendNotification(String.Format("Character with ID {0} is not online!", characterToFine.ToString()));
             }
         }
 
@@ -349,18 +349,18 @@ namespace GTA_RP.Factions
         /// <summary>
         /// Handles on duty command for law enforcement players
         /// </summary>
-        /// <param name="c">Character object</param>
-        public override void HandleOnDutyCommand(Character c)
+        /// <param name="character">Character object</param>
+        public override void HandleOnDutyCommand(Character character)
         {
-            if (IsCharacterPartOfFaction(c))
+            if (IsCharacterPartOfFaction(character))
             {
-                if (!c.onDuty)
+                if (!character.onDuty)
                 {
-                    CharacterInfo info = GetInfoForCharacter(c);
+                    CharacterInfo info = GetInfoForCharacter(character);
                     //Rank rank = GetRank(info.rank);
 
-                    c.onDuty = true;
-                    c.SetModel(info.onDutyModel);
+                    character.onDuty = true;
+                    character.SetModel(info.onDutyModel);
 
                     // Determine what to do based on rank
                     // Add weapons, items etc
@@ -368,8 +368,8 @@ namespace GTA_RP.Factions
                 }
                 else
                 {
-                    c.onDuty = false;
-                    c.SetModel(c.model);
+                    character.onDuty = false;
+                    character.SetModel(character.model);
                 }
             }
         }

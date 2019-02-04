@@ -54,96 +54,96 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Announce player exiting vehicle to subscribers
         /// </summary>
-        /// <param name="c">Client who exited vehicle</param>
+        /// <param name="client">Client who exited vehicle</param>
         /// <param name="vehicle">Vehicle from which client exited</param>
-        public void VehicleExitEvent(Client c, NetHandle vehicle, int seat)
+        public void VehicleExitEvent(Client client, NetHandle vehicle, int seat)
         {
-            RunVehicleExitEvents(c, vehicle, seat);
+            RunVehicleExitEvents(client, vehicle, seat);
         }
 
         /// <summary>
         /// Announce player entering vehicle to subscribers
         /// </summary>
-        /// <param name="c">Client who entered vehicle</param>
+        /// <param name="client">Client who entered vehicle</param>
         /// <param name="vehicle">Vehicle that client entered into</param>
-        public void VehicleEnterEvent(Client c, NetHandle vehicle, int seat)
+        public void VehicleEnterEvent(Client client, NetHandle vehicle, int seat)
         {
-            RunVehicleEnterEvents(c, vehicle, seat);
+            RunVehicleEnterEvents(client, vehicle, seat);
         }
 
 
         /// <summary>
         /// Subscribes a delegate to vehicle destroyed event
         /// </summary>
-        /// <param name="d">Delegate</param>
-        public void SubscribeToVehicleDestroyedEvent(OnVehicleDestroyedDelegate d)
+        /// <param name="delegateMethod">Delegate</param>
+        public void SubscribeToVehicleDestroyedEvent(OnVehicleDestroyedDelegate delegateMethod)
         {
-            this.OnVehicleDestroyedEvent += d;
+            this.OnVehicleDestroyedEvent += delegateMethod;
         }
 
         /// <summary>
         /// Subscribes a delegate to enter vehicle event
         /// </summary>
-        /// <param name="d">Delegate</param>
-        public void SubscribeToVehicleEnterEvent(OnVehicleEnteredDelegate d)
+        /// <param name="delegateMethod">Delegate</param>
+        public void SubscribeToVehicleEnterEvent(OnVehicleEnteredDelegate delegateMethod)
         {
-            this.OnVehicleEnterEvent += d;
+            this.OnVehicleEnterEvent += delegateMethod;
         }
 
-        public void SubscribeToVehicleEnterEvent(OnVehicleEnteredDelegateCharacter d)
+        public void SubscribeToVehicleEnterEvent(OnVehicleEnteredDelegateCharacter delegateMethod)
         {
-            this.OnVehicleEnterEventCharacter += d;
+            this.OnVehicleEnterEventCharacter += delegateMethod;
         }
 
-        public void UnsubscribeFromVehicleEnterEvent(OnVehicleEnteredDelegateCharacter d)
+        public void UnsubscribeFromVehicleEnterEvent(OnVehicleEnteredDelegateCharacter delegateMethod)
         {
-            this.OnVehicleEnterEventCharacter -= d;
+            this.OnVehicleEnterEventCharacter -= delegateMethod;
         }
 
-        public void SubscribeToVehicleExitEvent(OnVehicleExitedDelegateCharacter d)
+        public void SubscribeToVehicleExitEvent(OnVehicleExitedDelegateCharacter delegateMethod)
         {
-            this.OnVehicleExitedEventCharacter += d;
+            this.OnVehicleExitedEventCharacter += delegateMethod;
         }
 
-        public void UnsubscribeFromVehicleExitEvent(OnVehicleExitedDelegateCharacter d)
+        public void UnsubscribeFromVehicleExitEvent(OnVehicleExitedDelegateCharacter delegateMethod)
         {
-            this.OnVehicleExitedEventCharacter -= d;
+            this.OnVehicleExitedEventCharacter -= delegateMethod;
         }
 
         /// <summary>
         /// Subscribes a delegate to exit vehicle event
         /// </summary>
-        /// <param name="d">Delegate</param>
-        public void SubscribeToVehicleExitEvent(OnVehicleExitedDelegate d)
+        /// <param name="delegateMethod">Delegate</param>
+        public void SubscribeToVehicleExitEvent(OnVehicleExitedDelegate delegateMethod)
         {
-            this.OnVehicleExitedEvent += d;
+            this.OnVehicleExitedEvent += delegateMethod;
         }
 
         /// <summary>
         /// Unsubscribes from vehicle destroyed event
         /// </summary>
-        /// <param name="d">Delegate</param>
-        public void UnsubscribeFromVehicleDestroyedEvent(OnVehicleDestroyedDelegate d)
+        /// <param name="delegateMethod">Delegate</param>
+        public void UnsubscribeFromVehicleDestroyedEvent(OnVehicleDestroyedDelegate delegateMethod)
         {
-            this.OnVehicleDestroyedEvent -= d;
+            this.OnVehicleDestroyedEvent -= delegateMethod;
         }
 
         /// <summary>
         /// Unsubscribes from enter vehicle event
         /// </summary>
-        /// <param name="d">Delegate</param>
-        public void UnsubscribeFromVehicleEnterEvent(OnVehicleEnteredDelegate d)
+        /// <param name="delegateMethod">Delegate</param>
+        public void UnsubscribeFromVehicleEnterEvent(OnVehicleEnteredDelegate delegateMethod)
         {
-            this.OnVehicleEnterEvent -= d;
+            this.OnVehicleEnterEvent -= delegateMethod;
         }
 
         /// <summary>
         /// Unsubscribes from exit vehicle event
         /// </summary>
-        /// <param name="d">Delegate</param>
-        public void UnsubscribeFromVehicleExitEvent(OnVehicleExitedDelegate d)
+        /// <param name="delegateMethod">Delegate</param>
+        public void UnsubscribeFromVehicleExitEvent(OnVehicleExitedDelegate delegateMethod)
         {
-            this.OnVehicleExitedEvent -= d;
+            this.OnVehicleExitedEvent -= delegateMethod;
         }
 
         /// <summary>
@@ -162,14 +162,14 @@ namespace GTA_RP.Vehicles
         /// Runs all subscriber methods for enter vehicle event
         /// </summary>
         /// <param name="vehicle">Vehicle handle</param>
-        private void RunVehicleEnterEvents(Client c, NetHandle vehicle, int seat)
+        private void RunVehicleEnterEvents(Client client, NetHandle vehicle, int seat)
         {
             if (this.OnVehicleEnterEvent != null)
             {
-                this.OnVehicleEnterEvent.Invoke(c, vehicle, seat);
-                if (PlayerManager.Instance().IsClientUsingCharacter(c))
+                this.OnVehicleEnterEvent.Invoke(client, vehicle, seat);
+                if (PlayerManager.Instance().IsClientUsingCharacter(client))
                 {
-                    this.OnVehicleEnterEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(c), vehicle, seat);
+                    this.OnVehicleEnterEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(client), vehicle, seat);
                 }
             }
         }
@@ -266,14 +266,14 @@ namespace GTA_RP.Vehicles
         /// Runs all subscriber methods for exit vehicle event
         /// </summary>
         /// <param name="vehicle">Vehicle handle</param>
-        private void RunVehicleExitEvents(Client c, NetHandle vehicle, int seat)
+        private void RunVehicleExitEvents(Client client, NetHandle vehicle, int seat)
         {
             if (this.OnVehicleExitedEvent != null)
             {
-                this.OnVehicleExitedEvent.Invoke(c, vehicle, seat);
-                if (PlayerManager.Instance().IsClientUsingCharacter(c))
+                this.OnVehicleExitedEvent.Invoke(client, vehicle, seat);
+                if (PlayerManager.Instance().IsClientUsingCharacter(client))
                 {
-                    this.OnVehicleExitedEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(c), vehicle, seat);
+                    this.OnVehicleExitedEventCharacter.Invoke(PlayerManager.Instance().GetActiveCharacterForClient(client), vehicle, seat);
                 }
             }
         }
@@ -308,13 +308,13 @@ namespace GTA_RP.Vehicles
         /// Checks if character is in given vehicle
         /// </summary>
         /// <param name="character">Character</param>
-        /// <param name="veh">Vehicle</param>
+        /// <param name="vehicle">Vehicle</param>
         /// <returns>True if character is in vehicle, otherwise false</returns>
-        private bool IsCharacterInVehicle(Character character, RPVehicle veh)
+        private bool IsCharacterInVehicle(Character character, RPVehicle vehicle)
         {
             if (API.shared.isPlayerInAnyVehicle(character.owner.client))
             {
-                if (API.shared.getPlayerVehicle(character.owner.client) == veh.handle)
+                if (API.shared.getPlayerVehicle(character.owner.client) == vehicle.handle)
                 {
                     return true;
                 }
@@ -338,7 +338,7 @@ namespace GTA_RP.Vehicles
         /// <param name="plateText">Vehicle license plate text</param>
         /// <param name="color1">Vehicle primary color</param>
         /// <param name="color2">Vehicle secondary color</param>
-        private void AddVehicleToManager(int id, int ownerId, FactionI faction, string model, float parkX, float parkY, float parkZ, float parkRotX, float parkRotY, float parkRotZ, string plateText, int color1, int color2)
+        private void AddVehicleToManager(int id, int ownerId, FactionEnums faction, string model, float parkX, float parkY, float parkZ, float parkRotX, float parkRotY, float parkRotZ, string plateText, int color1, int color2)
         {
             RPVehicle v = new RPVehicle(id, ownerId, faction, API.shared.vehicleNameToModel(model), parkX, parkY, parkZ, parkRotX, parkRotY, parkRotZ, color1, color2, plateText, false);
             vehicles.Add(v);
@@ -407,7 +407,7 @@ namespace GTA_RP.Vehicles
         /// <param name="color1">Primary color of the vehicle</param>
         /// <param name="color2">Secondary color of the vehicle</param>
         /// <returns></returns>
-        public int AddVehicleToDatabase(int ownerId, FactionI faction, string model, float parkX, float parkY, float parkZ, float parkRotX, float parkRotY, float parkRotZ, string plateText, int plateStyle, int color1, int color2)
+        public int AddVehicleToDatabase(int ownerId, FactionEnums faction, string model, float parkX, float parkY, float parkZ, float parkRotX, float parkRotY, float parkRotZ, string plateText, int plateStyle, int color1, int color2)
         {
             var cmd = DBManager.SimpleQuery("INSERT INTO vehicles VALUES (@id, @ownerId, @faction, @model, @park_x, @park_y, @park_z, @park_rot_x, @park_rot_y, @park_rot_z, @platetxt, @style, @color1, @color2)");
             cmd.Parameters.AddWithValue("@id", this.vehicleInsertId);
@@ -449,11 +449,11 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Return the vehicle that the character is currently using
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <returns>Vehicle that the character is using, if not using vehicle then null</returns>
-        public RPVehicle GetVehicleForCharacter(Character c)
+        public RPVehicle GetVehicleForCharacter(Character character)
         {
-            NetHandle veh = API.shared.getPlayerVehicle(c.owner.client);
+            NetHandle veh = API.shared.getPlayerVehicle(character.owner.client);
             return vehicles.SingleOrDefault(x => x.handle != null && x.handle == veh && x.spawned);
         }
 
@@ -499,13 +499,13 @@ namespace GTA_RP.Vehicles
         /// Tries to purchase a vehicle for client
         /// Is called from event handler
         /// </summary>
-        /// <param name="c">Client</param>
+        /// <param name="client">Client</param>
         /// <param name="model">Vehicle model</param>
         /// <param name="color1">Vehicle color 1</param>
         /// <param name="color2">Vehicle color 2</param>
-        public void TryPurchaseVehicle(Client c, int id, string model, int color1, int color2)
+        public void TryPurchaseVehicle(Client client, int id, string model, int color1, int color2)
         {
-            Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+            Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
             VehicleShop shop = GetVehicleShopWithId(id);
             if (shop != null)
             {
@@ -553,10 +553,10 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Attempts to purchase a parking spot for a vehicle
         /// </summary>
-        /// <param name="c">Client</param>
-        public void TryPurchasePark(Client c, int vehicleId)
+        /// <param name="client">Client</param>
+        public void TryPurchasePark(Client client, int vehicleId)
         {
-            Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+            Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
             RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
             if (vehicle != null)
             {
@@ -588,13 +588,13 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Spawns a vehicle for player with certain id
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="client">Character</param>
         /// <param name="vehicleId">Vehicle id</param>
-        public void SpawnVehicleForCharacter(Client c, int vehicleId)
+        public void SpawnVehicleForCharacter(Client client, int vehicleId)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(c))
+            if (PlayerManager.Instance().IsClientUsingCharacter(client))
             {
-                Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
                 RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
                 if (vehicle != null && character.ID == vehicle.ownerId)
                 {
@@ -614,17 +614,17 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Parks a vehicle with selected id
         /// </summary>
-        /// <param name="c">Client</param>
+        /// <param name="client">Client</param>
         /// <param name="vehicleId">Vehicle id</param>
-        public void ParkVehicle(Client c, int vehicleId)
+        public void ParkVehicle(Client client, int vehicleId)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(c))
+            if (PlayerManager.Instance().IsClientUsingCharacter(client))
             {
-                Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
                 RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
                 if (vehicle != null && character.ID == vehicle.ownerId && vehicle.spawned)
                 {
-                    if (vehicle.handle == API.shared.getPlayerVehicle(c))
+                    if (vehicle.handle == API.shared.getPlayerVehicle(client))
                     {
                         if (vehicle.position.DistanceTo(vehicle.parkPosition) <= parkDistance)
                         {
@@ -632,12 +632,12 @@ namespace GTA_RP.Vehicles
                         }
                         else
                         {
-                            API.shared.sendNotificationToPlayer(c, "You have to close to the parking spot in order to park the vehicle!");
+                            API.shared.sendNotificationToPlayer(client, "You have to close to the parking spot in order to park the vehicle!");
                         }
                     }
                     else
                     {
-                        API.shared.sendNotificationToPlayer(c, "You need to be in the vehicle you want to park!");
+                        API.shared.sendNotificationToPlayer(client, "You need to be in the vehicle you want to park!");
                     }
                 }
             }
@@ -712,13 +712,13 @@ namespace GTA_RP.Vehicles
         /// <summary>
         /// Character attempts to exit a vehicle shop
         /// </summary>
-        /// <param name="c">Client</param>
+        /// <param name="client">Client</param>
         /// <param name="id">Shop id</param>
-        public void TryExitVehicleShop(Client c, int id)
+        public void TryExitVehicleShop(Client client, int id)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(c))
+            if (PlayerManager.Instance().IsClientUsingCharacter(client))
             {
-                Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
                 VehicleShop shop = GetVehicleShopWithId(id);
                 if (shop != null)
                 {
@@ -734,7 +734,7 @@ namespace GTA_RP.Vehicles
         {
             DBManager.SelectQuery("SELECT * FROM vehicles", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                RPVehicle v = new RPVehicle(reader.GetInt32(0), reader.GetInt32(1), (FactionI)reader.GetInt32(2), (VehicleHash)reader.GetInt32(3), reader.GetFloat(4), reader.GetFloat(5), reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9), reader.GetInt32(12), reader.GetInt32(13), reader.GetString(10), true);
+                RPVehicle v = new RPVehicle(reader.GetInt32(0), reader.GetInt32(1), (FactionEnums)reader.GetInt32(2), (VehicleHash)reader.GetInt32(3), reader.GetFloat(4), reader.GetFloat(5), reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9), reader.GetInt32(12), reader.GetInt32(13), reader.GetString(10), true);
                 vehicles.Add(v);
             }).Execute();
         }

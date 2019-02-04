@@ -90,18 +90,17 @@ namespace GTA_RP
         {
             get
             {
-                // Confirm working
                 return API.shared.getVehicleClass((VehicleHash)API.shared.getEntityModel(API.shared.getPlayerVehicle(this.owner.client)));
             }
 
         }
 
-        public FactionI factionID { get; private set; }
+        public FactionEnums factionID { get; private set; }
         public Boolean onDuty { get; set; }
         private List<StatusEffect> statusEffects = new List<StatusEffect>();
 
 
-        public Character(Player owner, int ID, String firstName, String lastName, FactionI factionID, string model, int money, int job, String phoneNumber, int spawnHouseId)
+        public Character(Player owner, int ID, String firstName, String lastName, FactionEnums factionID, string model, int money, int job, String phoneNumber, int spawnHouseId)
         {
             this.owner = owner;
             this.model = model;
@@ -165,11 +164,11 @@ namespace GTA_RP
         /// <summary>
         /// Checks if character has a status effect
         /// </summary>
-        /// <param name="e">Status effect to check</param>
+        /// <param name="effect">Status effect to check</param>
         /// <returns>True if player has the status effect, otherwise false</returns>
-        public Boolean HasStatusEffect(StatusEffect e)
+        public Boolean HasStatusEffect(StatusEffect effect)
         {
-            return statusEffects.Contains(e);
+            return statusEffects.Contains(effect);
         }
 
         public void UseItemInInventory(int itemId)
@@ -180,19 +179,19 @@ namespace GTA_RP
         /// <summary>
         /// Adds status effect to player
         /// </summary>
-        /// <param name="e">Status effect to add</param>
-        public void AddStatusEffect(StatusEffect e)
+        /// <param name="effect">Status effect to add</param>
+        public void AddStatusEffect(StatusEffect effect)
         {
-            statusEffects.Add(e);
+            statusEffects.Add(effect);
         }
 
         /// <summary>
         /// Removes status effect from player
         /// </summary>
-        /// <param name="e">Status effect to remove</param>
-        public void RemoveStatusEffect(StatusEffect e)
+        /// <param name="effect">Status effect to remove</param>
+        public void RemoveStatusEffect(StatusEffect effect)
         {
-            statusEffects.Remove(e);
+            statusEffects.Remove(effect);
         }
 
         /// <summary>

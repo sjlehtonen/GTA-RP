@@ -12,18 +12,18 @@ namespace GTA_RP.Factions
     /// </summary>
     class FactionManager : Singleton<FactionManager>
     {
-        private Dictionary<FactionI, Faction> factions = new Dictionary<FactionI, Faction>();
+        private Dictionary<FactionEnums, Faction> factions = new Dictionary<FactionEnums, Faction>();
 
         /// <summary>
         /// Register all new factions here, otherwise they won't be added to the game.
         /// </summary>
         public FactionManager()
         {
-            RegisterFaction(new Civilian(FactionI.CIVILIAN, "Civilian", 50, 205, 50));
-            RegisterFaction(new LawEnforcement(FactionI.LAW_ENFORCEMENT, "Law Enforcement", 0, 102, 204));
-            RegisterFaction(new FireDepartment(FactionI.FIREMAN, "Fire Department", 209, 33, 56));
-            RegisterFaction(new FirstResponder(FactionI.FIRST_RESPONDER, "First Responder", 219, 107, 141));
-            RegisterFaction(new TaxiDriver(FactionI.TAXI_DRIVER, "Los Santos Taxi", 244, 191, 66));
+            RegisterFaction(new Civilian(FactionEnums.CIVILIAN, "Civilian", 50, 205, 50));
+            RegisterFaction(new LawEnforcement(FactionEnums.LAW_ENFORCEMENT, "Law Enforcement", 0, 102, 204));
+            RegisterFaction(new FireDepartment(FactionEnums.FIREMAN, "Fire Department", 209, 33, 56));
+            RegisterFaction(new FirstResponder(FactionEnums.FIRST_RESPONDER, "First Responder", 219, 107, 141));
+            RegisterFaction(new TaxiDriver(FactionEnums.TAXI_DRIVER, "Los Santos Taxi", 244, 191, 66));
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace GTA_RP.Factions
         {
             foreach (Faction faction in factions.Values)
             {
-                API.shared.consoleOutput("[Factions] Initialized faction \"" + faction.name + "\"");
+                API.shared.consoleOutput(String.Format("[Factions] Initialized faction \"{0}\"", faction.name));
                 faction.Initialize();
             }
 
@@ -59,10 +59,10 @@ namespace GTA_RP.Factions
         /// Registers a new faction on the server
         /// This method has to be called for all factions that are added to the server
         /// </summary>
-        /// <param name="f">The faction to register</param>
-        private void RegisterFaction(Faction f)
+        /// <param name="faction">The faction to register</param>
+        private void RegisterFaction(Faction faction)
         {
-            factions.Add(f.id, f);
+            factions.Add(faction.id, faction);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace GTA_RP.Factions
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A faction with id</returns>
-        public Faction GetFactionWithId(FactionI id)
+        public Faction GetFactionWithId(FactionEnums id)
         {
             return factions.Get(id);
         }
@@ -88,10 +88,10 @@ namespace GTA_RP.Factions
         /// Accessor methods for different factions
         /// If you create a new faction, you can add an accessor method here so it's easier
         /// to access the faction from the faction manager.
-        public LawEnforcement LawEnforcement() { return factions.Get(FactionI.LAW_ENFORCEMENT) as LawEnforcement; }
-        public FireDepartment FireDepartment() { return factions.Get(FactionI.FIREMAN) as FireDepartment;  }
-        public FirstResponder FirstResponder() { return factions.Get(FactionI.FIRST_RESPONDER) as FirstResponder;  }
-        public TaxiDriver TaxiDriver() { return factions.Get(FactionI.TAXI_DRIVER) as TaxiDriver; }
+        public LawEnforcement LawEnforcement() { return factions.Get(FactionEnums.LAW_ENFORCEMENT) as LawEnforcement; }
+        public FireDepartment FireDepartment() { return factions.Get(FactionEnums.FIREMAN) as FireDepartment;  }
+        public FirstResponder FirstResponder() { return factions.Get(FactionEnums.FIRST_RESPONDER) as FirstResponder;  }
+        public TaxiDriver TaxiDriver() { return factions.Get(FactionEnums.TAXI_DRIVER) as TaxiDriver; }
 
         /// <summary>
         /// Handles the on duty command for character's faction

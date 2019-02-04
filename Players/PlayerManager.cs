@@ -40,13 +40,17 @@ namespace GTA_RP
         private int accountCreationId = 0;
         public int textMessageId { get; private set; }
 
+        private Position[] startCameraPositions =
+        {
+            new Position(new Vector3(-1136.09, -58.34853, 44.20825), new Vector3(0, 0, -134.8262)),
+            new Position(new Vector3(3346.998, 5183.969, 15.35839), new Vector3(0, 0, -86.46388)),
+            new Position(new Vector3(465.9247, 5594.497, 781.0376), new Vector3(0, 0, 13.70422)),
+            new Position(new Vector3(-545.1541, 4471.583, 60.59504), new Vector3(0, 0, 112.1356))
+        };
+
         private List<Player> players = new List<Player>();
-        private List<Position> startCameraPositions = new List<Position>();
         private Dictionary<string, int> characterGenderDictionary = new Dictionary<string, int>();
         private CharacterSelector characterSelector = new CharacterSelector();
-
-        // Death things
-        private Dictionary<int, GTRPTimer> characterDeathTimers = new Dictionary<int, GTRPTimer>();
 
         // Constants
         // At some point move these to server config files
@@ -68,53 +72,27 @@ namespace GTA_RP
         public PlayerManager()
         {
             textMessageId = 0;
-            dbCon.DatabaseName = "gta_rp";
-            InitStartCameraPositions();
-
         }
 
-
-        /// <summary>
-        /// Sets camera to starting screen for client who connects
-        /// </summary>
-        /// <param name="player">Client who connected</param>
-        /// <param name="state">To set or remove start camera state</param>
-        private void SetClientStartCameraMode(Client player, Boolean state)
+        private void SetLoginScreenCamera(Client player)
         {
-            if (state)
-            {
-                Position p = GetRandomStartCameraPosition();
-                player.position = p.pos;
-                player.rotation = p.rot;
-                player.dimension = 1;
-                player.transparency = 0;
-                player.freezePosition = true;
-                API.shared.triggerClientEvent(player, "EVENT_SET_LOGIN_SCREEN_CAMERA", p.pos, p.rot);
-            }
-            else
-            {
-                player.dimension = 0;
-                player.transparency = 255;
-                player.freezePosition = false;
-                API.shared.triggerClientEvent(player, "EVENT_REMOVE_CAMERA");
-            }
+            Position p = GetRandomStartCameraPosition();
+            player.position = p.pos;
+            player.rotation = p.rot;
+            player.dimension = 1;
+            player.transparency = 0;
+            player.freezePosition = true;
+            API.shared.triggerClientEvent(player, "EVENT_SET_LOGIN_SCREEN_CAMERA", p.pos, p.rot);
         }
 
-        /// <summary>
-        /// Initializes all possible starting camera positions
-        /// </summary>
-        private void InitStartCameraPositions()
+        private void RemoveLoginScreenCamera(Client player)
         {
-            Position p = new Position(new Vector3(-1136.09, -58.34853, 44.20825), new Vector3(0, 0, -134.8262));
-            Position p2 = new Position(new Vector3(3346.998, 5183.969, 15.35839), new Vector3(0, 0, -86.46388));
-            Position p3 = new Position(new Vector3(465.9247, 5594.497, 781.0376), new Vector3(0, 0, 13.70422));
-            Position p5 = new Position(new Vector3(-545.1541, 4471.583, 60.59504), new Vector3(0, 0, 112.1356));
-
-            startCameraPositions.Add(p);
-            startCameraPositions.Add(p2);
-            startCameraPositions.Add(p3);
-            startCameraPositions.Add(p5);
+            player.dimension = 0;
+            player.transparency = 255;
+            player.freezePosition = false;
+            API.shared.triggerClientEvent(player, "EVENT_REMOVE_CAMERA");
         }
+
 
         /// <summary>
         /// Gets random starting camera position
@@ -123,7 +101,7 @@ namespace GTA_RP
         private Position GetRandomStartCameraPosition()
         {
             Random rnd = new Random();
-            return startCameraPositions.ElementAt(rnd.Next(0, startCameraPositions.Count));
+            return startCameraPositions.ElementAt(rnd.Next(0, startCameraPositions.Length));
         }
 
         /// <summary>
@@ -218,9 +196,24 @@ namespace GTA_RP
             return true;
         }
 
-        public void ToggleMinimapForPlayer(Client player, bool hide)
+        public void SetMinimapForPlayer(Client player)
         {
-            API.shared.triggerClientEvent(player, "EVENT_TOGGLE_MINIMAP", hide);
+            API.shared.triggerClientEvent(player, "EVENT_TOGGLE_MINIMAP", false);
+        }
+
+        public void SetMinimapForPlayer(Character character)
+        {
+            SetMinimapForPlayer(character.owner.client);
+        }
+
+        public void RemoveMinimapFromPlayer(Client player)
+        {
+            API.shared.triggerClientEvent(player, "EVENT_TOGGLE_MINIMAP", true);
+        }
+
+        public void RemoveMinimapFromPlayer(Character player)
+        {
+            RemoveMinimapFromPlayer(player.owner.client);
         }
 
         /// <summary>
@@ -229,8 +222,8 @@ namespace GTA_RP
         /// <param name="player">Player who connected</param>
         public void HandlePlayerConnect(Client player)
         {
-            ToggleMinimapForPlayer(player, false);
-            SetClientStartCameraMode(player, true);
+            RemoveMinimapFromPlayer(player);
+            SetLoginScreenCamera(player);
             if (!DoesPlayerHaveAccount(player))
             {
                 OpenCreateAccountMenu(player);
@@ -257,19 +250,14 @@ namespace GTA_RP
             }
         }
 
-        private void HandleCharacterDeathTimerExpire(GTRPTimer timer)
-        {
-            // TODO
-        }
-
-        private void HandleCharacterDeath(Character c, NetHandle entityKiller, int weapon)
+        private void HandleCharacterDeath(Character character, NetHandle entityKiller, int weapon)
         {
             // Override the character death to block spawning to hospital
             // Create death timer
             // This is not yet implemented in GTA-MP so commented out meanwhile
             // characterDeathTimers[c.ID] = new GTRPTimer(HandleCharacterDeathTimerExpire, (int)TimeSpan.FromMinutes(3).TotalMilliseconds);
 
-            OnCharacterDeathEvent.Invoke(c, entityKiller, weapon);
+            OnCharacterDeathEvent.Invoke(character, entityKiller, weapon);
         }
 
         /// <summary>
@@ -305,9 +293,9 @@ namespace GTA_RP
         /// <summary>
         /// Loads text messages for given character
         /// </summary>
-        /// <param name="c">Character for which to load text messages</param>
+        /// <param name="character">Character for which to load text messages</param>
         /// <returns>Loaded text messages</returns>
-        private List<TextMessage> LoadTextMessagesForCharacter(Character c)
+        private List<TextMessage> LoadTextMessagesForCharacter(Character character)
         {
             List<TextMessage> messages = new List<TextMessage>();
             DBManager.SelectQuery("SELECT * FROM text_messages WHERE receiver_number = @number", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
@@ -318,7 +306,7 @@ namespace GTA_RP
                 tm.time = reader.GetString(3);
                 tm.message = reader.GetString(4);
                 messages.Add(tm);
-            }).AddValue("@number", c.phone.phoneNumber).Execute();
+            }).AddValue("@number", character.phone.phoneNumber).Execute();
 
             return messages;
         }
@@ -326,9 +314,9 @@ namespace GTA_RP
         /// <summary>
         /// Loads phone contacts for given character
         /// </summary>
-        /// <param name="c">Character for which to load phone contacts</param>
+        /// <param name="character">Character for which to load phone contacts</param>
         /// <returns>Loaded contacts</returns>
-        private List<Address> LoadPhoneContactsForCharacter(Character c)
+        private List<Address> LoadPhoneContactsForCharacter(Character character)
         {
             List<Address> contacts = new List<Address>();
             DBManager.SelectQuery("SELECT * FROM phone_contacts WHERE owner = @owner", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
@@ -337,7 +325,7 @@ namespace GTA_RP
                 address.name = reader.GetString(1);
                 address.number = reader.GetString(2);
                 contacts.Add(address);
-            }).AddValue("@owner", c.ID).Execute();
+            }).AddValue("@owner", character.ID).Execute();
 
 
             return contacts;
@@ -353,7 +341,7 @@ namespace GTA_RP
             List<Character> characters = new List<Character>();
             DBManager.SelectQuery("SELECT * FROM characters WHERE player_id = @id", (MySql.Data.MySqlClient.MySqlDataReader reader) =>
             {
-                Character c = new Character(player, reader.GetInt32(0), reader.GetString(2), reader.GetString(3), (Factions.FactionI)reader.GetInt32(4), reader.GetString(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetString(8), reader.GetInt32(9));
+                Character c = new Character(player, reader.GetInt32(0), reader.GetString(2), reader.GetString(3), (Factions.FactionEnums)reader.GetInt32(4), reader.GetString(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetString(8), reader.GetInt32(9));
                 characters.Add(c);
             }).AddValue("@id", player.id).Execute();
 
@@ -472,8 +460,8 @@ namespace GTA_RP
                 Player newPlayer = LoadPlayerForClient(player);
                 List<Character> characters = LoadCharactersForPlayer(newPlayer);
 
-                PlayerManager.Instance().AddNewPlayerToPool(newPlayer);
-                SetClientStartCameraMode(player, false);
+                AddNewPlayerToPool(newPlayer);
+                RemoveLoginScreenCamera(player);
 
                 this.OpenCharacterSelectionForPlayer(newPlayer, characters);
             }
@@ -486,10 +474,10 @@ namespace GTA_RP
         /// <summary>
         /// Creates an account with given info
         /// </summary>
-        /// <param name="c">Client for which to create account</param>
+        /// <param name="client">Client for which to create account</param>
         /// <param name="accountName">Account name</param>
         /// <param name="password">Account password</param>
-        private void CreateAccount(Client c, String accountName, String password)
+        private void CreateAccount(Client client, String accountName, String password)
         {
             // Create player to database
             // Create player object
@@ -503,40 +491,40 @@ namespace GTA_RP
                 .AddValue("@admin_level", 0)
                 .Execute();
 
-            Player p = new Player(c, this.accountCreationId, 0);
+            Player createdPlayer = new Player(client, this.accountCreationId, 0);
             this.accountCreationId++;
-            this.AddNewPlayerToPool(p);
+            this.AddNewPlayerToPool(createdPlayer);
 
-            API.shared.triggerClientEvent(c, "EVENT_CLOSE_CREATE_ACCOUNT_MENU");
-            SetClientStartCameraMode(c, false);
-            this.OpenCharacterSelectionForPlayer(p, new List<Character>());
+            API.shared.triggerClientEvent(client, "EVENT_CLOSE_CREATE_ACCOUNT_MENU");
+            RemoveLoginScreenCamera(client);
+            this.OpenCharacterSelectionForPlayer(createdPlayer, new List<Character>());
         }
 
         /// <summary>
         /// Validate text message
         /// Message length, receiver number etc
         /// </summary>
-        /// <param name="c">Client who sends the message</param>
+        /// <param name="client">Client who sends the message</param>
         /// <param name="receiver">Receiver phone number</param>
         /// <param name="message">Message text</param>
         /// <returns>True if validated, otherwise false</returns>
-        private Boolean ValidateTextMessage(Client c, String receiver, String message)
+        private Boolean ValidateTextMessage(Client client, String receiver, String message)
         {
             if (receiver.Length != phoneNumberLength)
             {
-                API.shared.sendNotificationToPlayer(c, String.Format("Phone number has to be {0} digits long", phoneNumberLength));
+                API.shared.sendNotificationToPlayer(client, String.Format("Phone number has to be {0} digits long", phoneNumberLength));
                 return false;
             }
 
             if (message.Length == 0)
             {
-                API.shared.sendNotificationToPlayer(c, "Text message content is not allowed to be empty");
+                API.shared.sendNotificationToPlayer(client, "Text message content is not allowed to be empty");
                 return false;
             }
 
             if (!receiver.All(char.IsDigit))
             {
-                API.shared.sendNotificationToPlayer(c, "Phone number can contain only numbers");
+                API.shared.sendNotificationToPlayer(client, "Phone number can contain only numbers");
                 return false;
             }
 
@@ -547,34 +535,34 @@ namespace GTA_RP
         /// Validate phone contact
         /// Contact name, number etc
         /// </summary>
-        /// <param name="c">Client who adds the contact</param>
+        /// <param name="client">Client who adds the contact</param>
         /// <param name="name">Contact name</param>
         /// <param name="number">Contact number</param>
         /// <returns>True if validated, otherwise false</returns>
-        private Boolean ValidateContact(Client c, String name, String number)
+        private Boolean ValidateContact(Client client, String name, String number)
         {
             if (name.Length == 0)
             {
-                API.shared.sendChatMessageToPlayer(c, "Contact name can't be empty!");
+                API.shared.sendChatMessageToPlayer(client, "Contact name can't be empty!");
                 return false;
             }
 
             if (number.Length != phoneNumberLength)
             {
-                API.shared.sendChatMessageToPlayer(c, String.Format("Phone number has to {0} digits long!", phoneNumberLength));
+                API.shared.sendChatMessageToPlayer(client, String.Format("Phone number has to {0} digits long!", phoneNumberLength));
                 return false;
             }
 
             if (name.Length > phoneBookNameMaxLength)
             {
-                API.shared.sendChatMessageToPlayer(c, String.Format("Name can't be longer than {0} characters!", phoneBookNameMaxLength));
+                API.shared.sendChatMessageToPlayer(client, String.Format("Name can't be longer than {0} characters!", phoneBookNameMaxLength));
                 return false;
             }
 
-            Character character = this.GetActiveCharacterForClient(c);
+            Character character = this.GetActiveCharacterForClient(client);
             if (character != null && character.phone.HasContactForNumber(number))
             {
-                API.shared.sendNotificationToPlayer(c, "You already have a contact for number " + number);
+                API.shared.sendNotificationToPlayer(client, "You already have a contact for number " + number);
                 return false;
             }
 
@@ -584,14 +572,14 @@ namespace GTA_RP
         /// <summary>
         /// Updates player spawn position to a certain house
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <param name="houseId">House id</param>
-        private void UpdateCharacterSpawnPosition(Character c, int houseId)
+        private void UpdateCharacterSpawnPosition(Character character, int houseId)
         {
             // NOTE: When selling a house that player currently lives in, the spawn position has to be reset
             DBManager.UpdateQuery("UPDATE characters SET spawn_house_id=@house_id WHERE id=@id")
                 .AddValue("@house_id", houseId)
-                .AddValue("@id", c.ID)
+                .AddValue("@id", character.ID)
                 .Execute();
         }
 
@@ -647,13 +635,13 @@ namespace GTA_RP
         /// <summary>
         /// Sets a new spawn position for player inside a house that is owned by him/her
         /// </summary>
-        /// <param name="c">Client</param>
+        /// <param name="client">Client</param>
         /// <param name="houseId">ID of the owned house</param>
-        public void SetCharacterSpawnHouse(Client c, int houseId)
+        public void SetCharacterSpawnHouse(Client client, int houseId)
         {
-            if (IsClientUsingCharacter(c))
+            if (IsClientUsingCharacter(client))
             {
-                Character character = GetActiveCharacterForClient(c);
+                Character character = GetActiveCharacterForClient(client);
                 if (HouseManager.Instance().IsCharacterOwnerOrRenterOfHouse(character, houseId))
                 {
                     // Update spawn position for character
@@ -665,56 +653,56 @@ namespace GTA_RP
         /// <summary>
         /// Subscribes delegate to player disconnected event
         /// </summary>
-        /// <param name="d">Delegate</param>
-        public void SubscribeToPlayerDisconnectEvent(OnPlayerDisconnectDelegate d)
+        /// <param name="delegateMethod">Delegate</param>
+        public void SubscribeToPlayerDisconnectEvent(OnPlayerDisconnectDelegate delegateMethod)
         {
-            OnPlayerDisconnectEvent += d;
+            OnPlayerDisconnectEvent += delegateMethod;
         }
 
         /// <summary>
         /// Unsubscribes delegate from player disconnected event
         /// </summary>
-        /// <param name="d">Delegate</param>
-        public void UnsubscribeFromPlayerDisconnectEvent(OnPlayerDisconnectDelegate d)
+        /// <param name="delegateMethod">Delegate</param>
+        public void UnsubscribeFromPlayerDisconnectEvent(OnPlayerDisconnectDelegate delegateMethod)
         {
-            OnPlayerDisconnectEvent -= d;
+            OnPlayerDisconnectEvent -= delegateMethod;
         }
 
-        public void SubscribeToCharacterDeathEvent(OnCharacterDeathDelegate d)
+        public void SubscribeToCharacterDeathEvent(OnCharacterDeathDelegate delegateMethod)
         {
-            OnCharacterDeathEvent += d;
+            OnCharacterDeathEvent += delegateMethod;
         }
 
-        public void UnsubcsriveFromCharacterDeathEvent(OnCharacterDeathDelegate d)
+        public void UnsubcsriveFromCharacterDeathEvent(OnCharacterDeathDelegate delegateMethod)
         {
-            OnCharacterDeathEvent -= d;
+            OnCharacterDeathEvent -= delegateMethod;
         }
 
         /// <summary>
         /// Gets player client for nethandle
         /// </summary>
-        /// <param name="e">Handle</param>
+        /// <param name="handle">Handle</param>
         /// <returns>Client object</returns>
-        public Client ClientForHandle(NetHandle e)
+        public Client ClientForHandle(NetHandle handle)
         {
-            Client c = API.shared.getPlayerFromHandle(e);
-            return c;
+            Client client = API.shared.getPlayerFromHandle(handle);
+            return client;
         }
 
         /// <summary>
         /// Gets player object for nethandle
         /// </summary>
-        /// <param name="e">Handle</param>
+        /// <param name="handle">Handle</param>
         /// <returns>Player object</returns>
-        public Player PlayerForHandle(NetHandle e)
+        public Player PlayerForHandle(NetHandle handle)
         {
-            Client c = ClientForHandle(e);
-            if (c == null)
+            Client client = ClientForHandle(handle);
+            if (client == null)
             {
                 return null;
             }
 
-            return this.GetPlayerByClient(c);
+            return this.GetPlayerByClient(client);
         }
 
         /// <summary>
@@ -753,10 +741,10 @@ namespace GTA_RP
         /// <summary>
         /// Opens account creation menu for client
         /// </summary>
-        /// <param name="c">Client to which for open the menu</param>
-        public void OpenCreateAccountMenu(Client c)
+        /// <param name="client">Client to which for open the menu</param>
+        public void OpenCreateAccountMenu(Client client)
         {
-            API.shared.triggerClientEvent(c, "EVENT_OPEN_CREATE_ACCOUNT_MENU", c.name);
+            API.shared.triggerClientEvent(client, "EVENT_OPEN_CREATE_ACCOUNT_MENU", client.name);
         }
 
         /// <summary>
@@ -807,37 +795,37 @@ namespace GTA_RP
         /// <summary>
         /// Request creating an account
         /// </summary>
-        /// <param name="c">Client for which to create the account</param>
+        /// <param name="client">Client for which to create the account</param>
         /// <param name="accountName">Account name</param>
         /// <param name="password">Account password</param>
-        public void RequestCreateAccount(Client c, string accountName, string password)
+        public void RequestCreateAccount(Client client, string accountName, string password)
         {
             // Check if account exists already
 
-            if (DoesPlayerHaveAccount(c))
+            if (DoesPlayerHaveAccount(client))
             {
                 return;
             }
 
             if (!password.All(char.IsLetterOrDigit))
             {
-                API.shared.sendNotificationToPlayer(c, "Password can only contain characters and numerals!");
+                API.shared.sendNotificationToPlayer(client, "Password can only contain characters and numerals!");
                 return;
             }
 
             if (password.Length > maxPasswordLength)
             {
-                API.shared.sendNotificationToPlayer(c, String.Format("Password is not allowed to be longer than {0} characters!", maxPasswordLength));
+                API.shared.sendNotificationToPlayer(client, String.Format("Password is not allowed to be longer than {0} characters!", maxPasswordLength));
                 return;
             }
 
             if (password.Length < minPasswordLength)
             {
-                API.shared.sendNotificationToPlayer(c, String.Format("Password has to be at least {0} characters long!", minPasswordLength));
+                API.shared.sendNotificationToPlayer(client, String.Format("Password has to be at least {0} characters long!", minPasswordLength));
                 return;
             }
 
-            this.CreateAccount(c, accountName, password);
+            this.CreateAccount(client, accountName, password);
         }
 
         /// <summary>
@@ -854,35 +842,35 @@ namespace GTA_RP
         /// <summary>
         /// Opens character selection menu for player
         /// </summary>
-        /// <param name="p">Player</param>
+        /// <param name="player">Player</param>
         /// <param name="characters">Character to select from</param>
-        public void OpenCharacterSelectionForPlayer(Player p, List<Character> characters)
+        public void OpenCharacterSelectionForPlayer(Player player, List<Character> characters)
         {
-            this.characterSelector.AddPlayerToCharacterSelector(p, characters);
+            this.characterSelector.AddPlayerToCharacterSelector(player, characters);
         }
 
         /// <summary>
         /// Request to select character
         /// </summary>
-        /// <param name="c">Client who makes the request</param>
+        /// <param name="client">Client who makes the request</param>
         /// <param name="characterName">Character to choose</param>
-        public void RequestSelectCharacter(Client c, string characterName)
+        public void RequestSelectCharacter(Client client, string characterName)
         {
-            Player p = this.GetPlayerByClient(c);
-            this.characterSelector.SelectCharacter(p, characterName);
+            Player player = this.GetPlayerByClient(client);
+            this.characterSelector.SelectCharacter(player, characterName);
         }
 
         /// <summary>
         /// Checks if client is using a character
         /// </summary>
-        /// <param name="c">Client</param>
+        /// <param name="client">Client</param>
         /// <returns>True if client is using character, otherwise false</returns>
-        public Boolean IsClientUsingCharacter(Client c)
+        public Boolean IsClientUsingCharacter(Client client)
         {
-            if (this.IsPlayerLoggedIn(c))
+            if (this.IsPlayerLoggedIn(client))
             {
-                Player p = this.GetPlayerByClient(c);
-                if (p.activeCharacter != null)
+                Player player = this.GetPlayerByClient(client);
+                if (player.activeCharacter != null)
                 {
                     return true;
                 }
@@ -896,10 +884,10 @@ namespace GTA_RP
         /// <summary>
         /// Adds a new player to the player pool
         /// </summary>
-        /// <param name="p">Player to add</param>
-        public void AddNewPlayerToPool(Player p)
+        /// <param name="player">Player to add</param>
+        public void AddNewPlayerToPool(Player player)
         {
-            this.players.Add(p);
+            this.players.Add(player);
         }
 
         /// <summary>
@@ -1176,9 +1164,9 @@ namespace GTA_RP
                 // Implement additional checks like number length and message length
                 if (ValidateTextMessage(client, receiverNumber, message))
                 {
-                    Character c = this.GetActiveCharacterForClient(client);
-                    c.phone.SendMessage(receiverNumber, message);
-                    c.SendNotification("Message sent!");
+                    Character character = this.GetActiveCharacterForClient(client);
+                    character.phone.SendMessage(receiverNumber, message);
+                    character.SendNotification("Message sent!");
                 }
             }
         }
@@ -1223,12 +1211,12 @@ namespace GTA_RP
         /// Sets player using phone
         /// Phone out in hand
         /// </summary>
-        /// <param name="c">Player</param>
-        public void SetPlayerUsingPhone(Client c)
+        /// <param name="client">Player</param>
+        public void SetPlayerUsingPhone(Client client)
         {
-            if (IsClientUsingCharacter(c))
+            if (IsClientUsingCharacter(client))
             {
-                Character character = GetActiveCharacterForClient(c);
+                Character character = GetActiveCharacterForClient(client);
                 character.phone.SetPhoneUsing();
             }
         }
@@ -1237,12 +1225,12 @@ namespace GTA_RP
         /// Sets player calling with phone
         /// Phone on ear
         /// </summary>
-        /// <param name="c">Player</param>
-        public void SetPlayerPhoneCalling(Client c)
+        /// <param name="client">Player</param>
+        public void SetPlayerPhoneCalling(Client client)
         {
-            if (IsClientUsingCharacter(c))
+            if (IsClientUsingCharacter(client))
             {
-                Character character = GetActiveCharacterForClient(c);
+                Character character = GetActiveCharacterForClient(client);
                 character.phone.SetPhoneCalling();
             }
         }
@@ -1250,12 +1238,12 @@ namespace GTA_RP
         /// <summary>
         /// Sets phone out for player
         /// </summary>
-        /// <param name="c">Player</param>
-        public void SetPlayerPhoneOut(Client c)
+        /// <param name="client">Player</param>
+        public void SetPlayerPhoneOut(Client client)
         {
-            if (IsClientUsingCharacter(c))
+            if (IsClientUsingCharacter(client))
             {
-                Character character = GetActiveCharacterForClient(c);
+                Character character = GetActiveCharacterForClient(client);
                 character.phone.SetPhoneNotUsing();
             }
         }

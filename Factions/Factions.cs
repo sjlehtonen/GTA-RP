@@ -3,7 +3,7 @@
     /// <summary>
     /// Faction id's mapped to more readable names
     /// </summary>
-    public enum FactionI
+    public enum FactionEnums
     {
         CIVILIAN = 0,
         LAW_ENFORCEMENT = 1,

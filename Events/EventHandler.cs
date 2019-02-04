@@ -104,27 +104,27 @@ namespace GTA_RP.Events
         /// <summary>
         /// Creates the function parameter list for the method that is delegated to some event
         /// </summary>
-        /// <param name="e">Event</param>
-        /// <param name="c">Client</param>
+        /// <param name="rpEvent">Event</param>
+        /// <param name="client">Client</param>
         /// <param name="arguments">Arguments</param>
         /// <returns>Argument list for some event</returns>
-        private object[] GetArgumentParametersForEvent(RPEvent e, Client c, params object[] arguments)
+        private object[] GetArgumentParametersForEvent(RPEvent rpEvent, Client client, params object[] arguments)
         {
             List<object> paramList = new List<object>();
 
-            if (e.options.Contains(Option.OPTION_INCLUDE_EVENT))
+            if (rpEvent.options.Contains(Option.OPTION_INCLUDE_EVENT))
             {
-                paramList.Add(e.eventName);
+                paramList.Add(rpEvent.eventName);
             }
 
-            if (e.options.Contains(Option.OPTION_USES_CHARACTER))
+            if (rpEvent.options.Contains(Option.OPTION_USES_CHARACTER))
             {
-                Character character = PlayerManager.Instance().GetActiveCharacterForClient(c);
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
                 paramList.Add(character);
             }
             else
             {
-                paramList.Add(c);
+                paramList.Add(client);
             }
 
             for (int i = 0; i < arguments.Length; i++)

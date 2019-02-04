@@ -52,6 +52,16 @@ namespace GTA_RP.Chat
             }
         }
 
+
+        private void doIfUsingCharacter(Client player, Action<Character> action)
+        {
+            if (PlayerManager.Instance().IsClientUsingCharacter(player))
+            {
+                Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
+                action.Invoke(character);
+            }
+        }
+
         /// <summary>
         /// Sends a distance chat message
         /// </summary>
@@ -62,13 +72,12 @@ namespace GTA_RP.Chat
         /// <param name="modifier2">Modifier 2</param>
         private void sendDistanceChatMessage(Client player, string message, float distance, string modifier = "", string modifier2 = "")
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(player))
+            doIfUsingCharacter(player, (Character character) =>
             {
-                Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-                List<Character> characters = PlayerManager.Instance().GetCharactersInDistance(player.position, distance);
-                characters.ForEach(x => API.sendChatMessageToPlayer(x.owner.client, c.faction.GetChatColor() + modifier + c.fullName + modifier2 + ": " + "~s~" + message));
-                sendPhoneChatMessage(c, modifier + modifier2 + message);
-            }
+                List<Character> characters = PlayerManager.Instance().GetCharactersInDistance(character.owner.client.position, distance);
+                characters.ForEach(x => API.sendChatMessageToPlayer(x.owner.client, character.faction.GetChatColor() + modifier + character.fullName + modifier2 + ": " + "~s~" + message));
+                sendPhoneChatMessage(character, modifier + modifier2 + message);
+            });
         }
 
         /// <summary>
@@ -80,11 +89,11 @@ namespace GTA_RP.Chat
         /// <param name="color">Message color</param>
         private void sendDistanceCommandMessageWithColor(Client player, string message, float distance, string color)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(player))
+            doIfUsingCharacter(player, (Character character) =>
             {
-                List<Character> characters = PlayerManager.Instance().GetCharactersInDistance(player.position, distance);
+                List<Character> characters = PlayerManager.Instance().GetCharactersInDistance(character.owner.client.position, distance);
                 characters.ForEach(x => API.sendChatMessageToPlayer(x.owner.client, color, message));
-            }
+            });
         }
 
         /// <summary>
@@ -92,10 +101,10 @@ namespace GTA_RP.Chat
         /// </summary>
         /// <param name="player"></param>
         /// <param name="message"></param>
-        /// <param name="e"></param>
-        private void handleChatMessage(Client player, string message, CancelEventArgs e)
+        /// <param name="eventArgs"></param>
+        private void handleChatMessage(Client player, string message, CancelEventArgs eventArgs)
         {
-            e.Cancel = true;
+            eventArgs.Cancel = true;
             sendDistanceChatMessage(player, message, normalChatDistance, "");
         }
 
@@ -114,31 +123,29 @@ namespace GTA_RP.Chat
         [Command("looc", GreedyArg = true, Alias = "lo")]
         public void handleLoocCommand(Client player, string text)
         {
-            Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c != null)
+            doIfUsingCharacter(player, (Character character) =>
             {
-                this.sendDistanceCommandMessageWithColor(player, "[LOOC] " + c.fullName + ": " + text, normalChatDistance, loocTextColor);
-            }
+                this.sendDistanceCommandMessageWithColor(player, "[LOOC] " + character.fullName + ": " + text, normalChatDistance, loocTextColor);
+            });
         }
 
         [Command("advertisement", GreedyArg = true, Alias = "adv", Description = "Sends an advertisement for $3000")]
         public void handleAdvertisementCommand(Client player, string text)
         {
-            if (PlayerManager.Instance().IsClientUsingCharacter(player))
+            doIfUsingCharacter(player, (Character character) =>
             {
-                Character sender = PlayerManager.Instance().GetActiveCharacterForClient(player);
-                if (sender.money >= advertisementPrice)
+                if (character.money >= advertisementPrice)
                 {
                     List<Character> activeCharacters = PlayerManager.Instance().GetActiveCharacters();
                     activeCharacters.ForEach(x => API.sendChatMessageToPlayer(x.client, advertisementTextColor, "[ADVERTISEMENT] " + text));
-                    sender.SetMoney(sender.money - advertisementPrice);
-                    sender.SendSuccessNotification("Advertisement sent!");
+                    character.SetMoney(character.money - advertisementPrice);
+                    character.SendSuccessNotification("Advertisement sent!");
                 }
                 else
                 {
-                    sender.SendErrorNotification("You don't have enough money to send a notification.");
+                    character.SendErrorNotification("You don't have enough money to send a notification.");
                 }
-            }
+            });
         }
 
 
@@ -147,12 +154,11 @@ namespace GTA_RP.Chat
         {
             if (this.oocEnabled)
             {
-                Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-                if (c != null)
+                doIfUsingCharacter(player, (Character character) =>
                 {
                     List<Client> clients = API.getAllPlayers();
-                    clients.ForEach(x => API.sendChatMessageToPlayer(x, oocTextColor, "[OOC] " + c.fullName + ": " + text));
-                }
+                    clients.ForEach(x => API.sendChatMessageToPlayer(x, oocTextColor, "[OOC] " + character.fullName + ": " + text));
+                });
             }
             else
             {
@@ -164,49 +170,52 @@ namespace GTA_RP.Chat
         public void handleToggleOocCommand(Client player)
         {
             Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c != null && c.owner.adminLevel != 0)
+            doIfUsingCharacter(player, (Character character) =>
             {
-                this.oocEnabled = !this.oocEnabled;
-                if (this.oocEnabled)
+                if (character.owner.adminLevel != 0)
                 {
-                    API.sendChatMessageToAll("[NOTE] OOC was enabled by " + c.fullName);
+                    this.oocEnabled = !this.oocEnabled;
+                    if (this.oocEnabled)
+                    {
+                        API.sendChatMessageToAll("[NOTE] OOC was enabled by " + c.fullName);
+                    }
+                    else
+                    {
+                        API.sendChatMessageToAll("[NOTE] OOC was disabled by " + c.fullName);
+                    }
                 }
-                else
-                {
-                    API.sendChatMessageToAll("[NOTE] OOC was disabled by " + c.fullName);
-                }
-            }
+            });
         }
 
         [Command("announce", GreedyArg = true)]
         public void handleAnnounceCommand(Client player, string text)
         {
-            Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c != null && c.owner.adminLevel != 0)
+            doIfUsingCharacter(player, (Character character) =>
             {
-                List<Client> clients = API.getAllPlayers();
-                clients.ForEach(x => API.sendChatMessageToPlayer(x, announcementTextColor, "[ANNOUNCEMENT] " + text));
-            }
+                if (character.owner.adminLevel != 0)
+                {
+                    List<Client> clients = API.getAllPlayers();
+                    clients.ForEach(x => API.sendChatMessageToPlayer(x, announcementTextColor, "[ANNOUNCEMENT] " + text));
+                }
+            });
         }
 
         [Command("me", GreedyArg = true)]
         public void handleMeCommand(Client player, string text)
         {
-            Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c != null)
+            doIfUsingCharacter(player, (Character character) =>
             {
-                this.sendDistanceCommandMessageWithColor(player, "** " + c.fullName + " " + text, normalChatDistance, meTextColor);
-            }
+                this.sendDistanceCommandMessageWithColor(player, "** " + character.fullName + " " + text, normalChatDistance, meTextColor);
+            });
         }
 
         [Command("it", GreedyArg = true)]
         public void handleItCommand(Client player, string text)
         {
-            Character c = PlayerManager.Instance().GetActiveCharacterForClient(player);
-            if (c != null)
+            doIfUsingCharacter(player, (Character character) =>
             {
                 this.sendDistanceCommandMessageWithColor(player, "** " + text + " **", normalChatDistance, meTextColor);
-            }
+            });
         }
     }
 }

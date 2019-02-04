@@ -37,7 +37,7 @@ namespace GTA_RP.Jobs
             new Vector3(529.3144, -3145.132, -1.2811469)
         };
 
-        public UnderwaterScavengerJob(Character c) : base(c) { this.searchTimer = new GTRPTimer(this.TryToFindMaterial, (int)TimeSpan.FromSeconds(10).TotalMilliseconds, true); }
+        public UnderwaterScavengerJob(Character character) : base(character) { this.searchTimer = new GTRPTimer(this.TryToFindMaterial, (int)TimeSpan.FromSeconds(10).TotalMilliseconds, true); }
 
         /// <summary>
         /// Tries to find hazardous material.

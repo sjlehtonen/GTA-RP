@@ -93,9 +93,9 @@ namespace GTA_RP.Map
             minuteTimer.Enabled = true;
         }
 
-        public void SubscribeToOnMinuteChange(OnTimeMinuteChangedEvent e)
+        public void SubscribeToOnMinuteChange(OnTimeMinuteChangedEvent minuteChangedEvent)
         {
-            OnMinuteChangeEvent += e;
+            OnMinuteChangeEvent += minuteChangedEvent;
         }
     }
 }

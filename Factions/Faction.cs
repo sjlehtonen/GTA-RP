@@ -7,7 +7,7 @@ namespace GTA_RP.Factions
     /// </summary>
     abstract public class Faction
     {
-        public FactionI id { get; private set; }
+        public FactionEnums id { get; private set; }
         public String name { get; private set; }
         public int colorR { get; private set; }
         public int colorG { get; private set; }
@@ -35,8 +35,8 @@ namespace GTA_RP.Factions
         /// <summary>
         /// A method that defines what to do when player uses /duty command
         /// </summary>
-        /// <param name="c">Character who used the command</param>
-        public abstract void HandleOnDutyCommand(Character c);
+        /// <param name="character">Character who used the command</param>
+        public abstract void HandleOnDutyCommand(Character character);
 
         /// <summary>
         /// A method that returns the color that this faction's character's name displays in chat
@@ -46,7 +46,7 @@ namespace GTA_RP.Factions
 
         public virtual void PaySalary() { }
 
-        public Faction(FactionI id, String name, int colorR, int colorG, int colorB)
+        public Faction(FactionEnums id, String name, int colorR, int colorG, int colorB)
         {
             this.id = id;
             this.name = name;

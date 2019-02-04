@@ -16,7 +16,7 @@ namespace GTA_RP.Vehicles
         public int id { get; private set; }
         public int ownerId { get; private set; }
         public Vehicle handle { get; private set; }
-        public FactionI factionID { get; private set; }
+        public FactionEnums factionID { get; private set; }
         public VehicleHash model { get; private set; }
         public Vector3 parkPosition { get; private set; }
         public Vector3 parkRotation { get; private set; }
@@ -52,7 +52,7 @@ namespace GTA_RP.Vehicles
             private set { }
         }
 
-        public RPVehicle(int id, int ownerId, FactionI factionID, VehicleHash model, float parkx, float parky, float parkz, float parkrotationx, float parkrotationy, float parkrotationz, int color1, int color2, String licensePlateText = "", Boolean spawn = true)
+        public RPVehicle(int id, int ownerId, FactionEnums factionID, VehicleHash model, float parkx, float parky, float parkz, float parkrotationx, float parkrotationy, float parkrotationz, int color1, int color2, String licensePlateText = "", Boolean spawn = true)
         {
             this.id = id;
             this.ownerId = ownerId;

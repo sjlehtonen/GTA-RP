@@ -66,8 +66,8 @@ namespace GTA_RP.Jobs
         /// Ends job if player is too long out of the work vehicle
         /// </summary>
         /// <param name="source">Timer</param>
-        /// <param name="e">Timer arguments</param>
-        private void ExitVehicleTimerExpire(System.Object source, ElapsedEventArgs e)
+        /// <param name="eventArgs">Timer arguments</param>
+        private void ExitVehicleTimerExpire(System.Object source, ElapsedEventArgs eventArgs)
         {
             EndJob();
         }
@@ -84,10 +84,10 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Ran when the work vehicle is destroyed
         /// </summary>
-        /// <param name="vHandle">Vehicle handle</param>
-        private void JobVehicleDestroyed(NetHandle vHandle)
+        /// <param name="vehicleHandle">Vehicle handle</param>
+        private void JobVehicleDestroyed(NetHandle vehicleHandle)
         {
-            if (workVehicle.handle == vHandle)
+            if (workVehicle.handle == vehicleHandle)
             {
                 character.SendNotification("Vehicle destroyed! Task failed!");
                 EndJob();
@@ -132,13 +132,13 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Loads trash from a trash collection point
         /// </summary>
-        /// <param name="cp">Trash collection point</param>
-        private void LoadTrash(ClientCheckpoint cp)
+        /// <param name="checkpoint">Trash collection point</param>
+        private void LoadTrash(ClientCheckpoint checkpoint)
         {
             workVehicle.freezePosition = true;
             trashLoadTimer.Interval = loadTrashTime;
             trashLoadTimer.Enabled = true;
-            currentCheckPoint = cp;
+            currentCheckPoint = checkpoint;
             character.SendNotification("Loading trash...");
         }
 
@@ -222,13 +222,13 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Is ran when player enters checkpoint
         /// </summary>
-        /// <param name="cp">Checkpoint entered</param>
-        /// <param name="e">Handle of entered thing, for example vehicle or player</param>
-        public override void OnEnterCheckpoint(ClientCheckpoint cp, NetHandle e)
+        /// <param name="checkpoint">Checkpoint entered</param>
+        /// <param name="handle">Handle of entered thing, for example vehicle or player</param>
+        public override void OnEnterCheckpoint(ClientCheckpoint checkpoint, NetHandle handle)
         {
             if (IsPlayerInWorkVehicle())
             {
-                if (jobStage == 0) { LoadTrash(cp); }
+                if (jobStage == 0) { LoadTrash(checkpoint); }
                 else if (jobStage == 1) { UnloadTrash(); }
             }
 
@@ -237,8 +237,8 @@ namespace GTA_RP.Jobs
         /// <summary>
         /// Is ran when player exits checkpoint
         /// </summary>
-        /// <param name="cp">Checkpoint exited</param>
-        /// <param name="e">Handle of exited thing, for example vehicle or player</param>
-        public override void OnExitCheckpoint(ClientCheckpoint cp, NetHandle e) { }
+        /// <param name="checkpoint">Checkpoint exited</param>
+        /// <param name="handle">Handle of exited thing, for example vehicle or player</param>
+        public override void OnExitCheckpoint(ClientCheckpoint checkpoint, NetHandle handle) { }
     }
 }

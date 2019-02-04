@@ -26,59 +26,59 @@ namespace GTA_RP.Houses
         /// <summary>
         /// Adds an occupant to the building
         /// </summary>
-        /// <param name="c">Character to be added inside</param>
-        public void AddOccupant(Character c)
+        /// <param name="character">Character to be added inside</param>
+        public void AddOccupant(Character character)
         {
-            occupants.Add(c);
+            occupants.Add(character);
         }
 
         /// <summary>
         /// Removes an occupant from the building
         /// </summary>
-        /// <param name="c">Character to be removed</param>
-        public void RemoveOccupant(Character c)
+        /// <param name="character">Character to be removed</param>
+        public void RemoveOccupant(Character character)
         {
-            occupants.Remove(c);
+            occupants.Remove(character);
         }
 
         /// <summary>
         /// Adds a character to the invited persons list of the building
         /// Now the invited character can access the building
         /// </summary>
-        /// <param name="c">Character to be added to the list</param>
-        public void AddInvitation(Character c)
+        /// <param name="character">Character to be added to the list</param>
+        public void AddInvitation(Character character)
         {
-            invitedPersons.Add(c);
+            invitedPersons.Add(character);
         }
 
         /// <summary>
         /// Removes a character from the invited persons list
         /// Now the uninvited character can no longer access the building
         /// </summary>
-        /// <param name="c">Character to be uninvited from the building</param>
-        public void RemoveInvitation(Character c)
+        /// <param name="character">Character to be uninvited from the building</param>
+        public void RemoveInvitation(Character character)
         {
-            invitedPersons.Remove(c);
+            invitedPersons.Remove(character);
         }
 
         /// <summary>
         /// Checks if a character is invited to the building
         /// </summary>
-        /// <param name="c">Character that is checked</param>
+        /// <param name="character">Character that is checked</param>
         /// <returns>True if character is on the invited list, otherwise false</returns>
-        public Boolean IsInvited(Character c)
+        public Boolean IsInvited(Character character)
         {
-            return invitedPersons.Contains(c);
+            return invitedPersons.Contains(character);
         }
 
         /// <summary>
         /// Checks if character is inside the building
         /// </summary>
-        /// <param name="c"></param>
+        /// <param name="character"></param>
         /// <returns>True if character is inside the building, otherwise false</returns>
-        public Boolean HasOccupant(Character c)
+        public Boolean HasOccupant(Character character)
         {
-            return occupants.Contains(c);
+            return occupants.Contains(character);
         }
 
         /// <summary>

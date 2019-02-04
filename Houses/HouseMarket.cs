@@ -32,14 +32,14 @@ namespace GTA_RP.Houses
         public int sellerId;
         public int templateId;
 
-        public static bool operator ==(HouseForSale a, HouseForSale b)
+        public static bool operator ==(HouseForSale houseA, HouseForSale houseB)
         {
-            return a.entryId == b.entryId;
+            return houseA.entryId == houseB.entryId;
         }
 
-        public static bool operator !=(HouseForSale a, HouseForSale b)
+        public static bool operator !=(HouseForSale houseA, HouseForSale houseB)
         {
-            return !(a == b);
+            return !(houseA == houseB);
         }
 
         public override bool Equals(object obj)
@@ -166,8 +166,8 @@ namespace GTA_RP.Houses
         /// Ran on certain intervals
         /// </summary>
         /// <param name="source">Timer</param>
-        /// <param name="e">Arguments</param>
-        private void TimerEvent(System.Object source, ElapsedEventArgs e)
+        /// <param name="eventArgs">Arguments</param>
+        private void TimerEvent(System.Object source, ElapsedEventArgs eventArgs)
         {
             RefreshNonPlayerHouseListings();
             refreshHouseTimer.Enabled = true;
@@ -237,13 +237,13 @@ namespace GTA_RP.Houses
                         PlayerManager.Instance().AddMoneyForCharacterWithId(house.sellerId, house.price);
                         if (PlayerManager.Instance().IsCharacterWithIdOnline(house.sellerId))
                         {
-                            PlayerManager.Instance().SendNotificationToCharacterWithid(sellEntryId, "Your house " + house.name + " was just sold for " + house.price + "!");
+                            PlayerManager.Instance().SendNotificationToCharacterWithid(sellEntryId, String.Format("Your house {0} was just sold for {1}!", house.name, house.price));
                         }
                     }
                     this.RemoveHouseFromSale(house);
                     this.CloseHouseMarketMenuForCharacter(character);
                     character.PlayFrontendSound("LOCAL_PLYR_CASH_COUNTER_COMPLETE", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS");
-                    character.SendNotification("Congratulations! You have bought a house at " + HouseManager.Instance().GetBuildingNameForHouseTemplateId(house.templateId) + " for $" + house.price.ToString());
+                    character.SendNotification(String.Format("Congratulations! You have bought a house at {0} for ${1}", HouseManager.Instance().GetBuildingNameForHouseTemplateId(house.templateId), house.price.ToString()));
                 }
                 else
                 {

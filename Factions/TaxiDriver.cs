@@ -33,7 +33,7 @@ namespace GTA_RP.Factions
     class TaxiDriver : RankedFaction
     {
         private Dictionary<int, Dictionary<int, TaxiMeter>> taxiMeters = new Dictionary<int, Dictionary<int, TaxiMeter>>(); // Car ID maps to character ids
-        public TaxiDriver(FactionI id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
+        public TaxiDriver(FactionEnums id, string name, int colorR, int colorG, int colorB) : base(id, name, colorR, colorG, colorB) { }
 
         // TODO: Switch so that each taxi driver can adjust there individually
         private int taxiFeeInterval = (int)TimeSpan.FromSeconds(60).TotalMilliseconds;
@@ -90,17 +90,17 @@ namespace GTA_RP.Factions
         /// <summary>
         /// When character enters taxi, this is ran
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <param name="vehicleHandle">Vehicle handle</param>
         /// <param name="seat">Seat</param>
-        private void CharacterEnteredTaxi(Character c, NetHandle vehicleHandle, int seat)
+        private void CharacterEnteredTaxi(Character character, NetHandle vehicleHandle, int seat)
         {
             if (VehicleManager.Instance().DoesVehicleHandleHaveRPVehicle(vehicleHandle))
             {
                 RPVehicle vehicle = VehicleManager.Instance().GetVehicleForHandle(vehicleHandle);
-                if (IsTaxiMeterSetForCharacterOnCar(c, vehicle.id))
+                if (IsTaxiMeterSetForCharacterOnCar(character, vehicle.id))
                 {
-                    SetTaxiMeterHUDForCharacter(c, vehicle.id);
+                    SetTaxiMeterHUDForCharacter(character, vehicle.id);
                 }
             }
         }
@@ -108,17 +108,17 @@ namespace GTA_RP.Factions
         /// <summary>
         /// When character exits taxi, this is ran
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <param name="vehicleHandle">Vehicle handle</param>
         /// <param name="seat">Seat</param>
-        private void CharacterExitedTaxi(Character c, NetHandle vehicleHandle, int seat)
+        private void CharacterExitedTaxi(Character character, NetHandle vehicleHandle, int seat)
         {
             if (VehicleManager.Instance().DoesVehicleHandleHaveRPVehicle(vehicleHandle))
             {
                 RPVehicle vehicle = VehicleManager.Instance().GetVehicleForHandle(vehicleHandle);
-                if (IsTaxiMeterSetForCharacterOnCar(c, vehicle.id))
+                if (IsTaxiMeterSetForCharacterOnCar(character, vehicle.id))
                 {
-                    DisableTaxiMeterHUDForCharacter(c);
+                    DisableTaxiMeterHUDForCharacter(character);
                 }
             }
         }
@@ -126,27 +126,27 @@ namespace GTA_RP.Factions
         /// <summary>
         /// Gets taxi meter for character in a taxi
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <param name="taxiId">Taxi id</param>
         /// <returns></returns>
-        private TaxiMeter GetTaxiMeterForCharacterInTaxi(Character c, int taxiId)
+        private TaxiMeter GetTaxiMeterForCharacterInTaxi(Character character, int taxiId)
         {
-            if (!taxiMeters.ContainsKey(taxiId) || !taxiMeters[taxiId].ContainsKey(c.ID))
+            if (!taxiMeters.ContainsKey(taxiId) || !taxiMeters[taxiId].ContainsKey(character.ID))
             {
                 return null;
             }
-            return taxiMeters[taxiId][c.ID];
+            return taxiMeters[taxiId][character.ID];
         }
 
         /// <summary>
         /// Gets taxi fee for character in car
         /// </summary>
-        /// <param name="c">Character</param>
+        /// <param name="character">Character</param>
         /// <param name="taxiId">Taxi id</param>
         /// <returns></returns>
-        private int GetTaxiFeeForCharacterInTaxi(Character c, int taxiId)
+        private int GetTaxiFeeForCharacterInTaxi(Character character, int taxiId)
         {
-            return taxiMeters[taxiId][c.ID].money;
+            return taxiMeters[taxiId][character.ID].money;
         }
 
         public override string GetChatColor()
@@ -180,8 +180,8 @@ namespace GTA_RP.Factions
 
                 payer.SetMoney(payer.money - meter.money);
                 meter.setter.SetMoney(meter.setter.money + meter.money);
-                payer.SendSuccessNotification("You payed a taxi fee of $" + meter.money);
-                meter.setter.SendNotification("You received taxi fee payment of $" + meter.money + " from " + payer.fullName);
+                payer.SendSuccessNotification(String.Format("You payed a taxi fee of ${0}", meter.money));
+                meter.setter.SendNotification(String.Format("You received taxi fee payment of ${0} from {1}", meter.money, payer.fullName));
                 // Destroy the taxi meter
                 RemoveTaxiMeterFromCharacterInTaxi(payer, v.id);
 
@@ -249,7 +249,7 @@ namespace GTA_RP.Factions
 
             taxiMeters[taxiVehicle.id][character.ID] = new TaxiMeter(setter.ID, 200, new GTRPTimer(RPTimerEvent, taxiFeeInterval, new KeyValuePair<int, int>(taxiVehicle.id, character.ID), true)); // Starting money
             SetTaxiMeterHUDForCharacter(character, taxiVehicle.id);
-            setter.SendNotification("Taxi meter set for customer " + character.fullName);
+            setter.SendNotification(String.Format("Taxi meter set for customer {0}", character.fullName));
             taxiMeters[taxiVehicle.id][character.ID].taxiTimer.Start();
         }
 
@@ -267,7 +267,7 @@ namespace GTA_RP.Factions
                 return;
             }
             GetTaxiMeterForCharacterInTaxi(character, v.id).taxiTimer.Stop();
-            setter.SendNotification("Taxi meter stopped for " + character.fullName);
+            setter.SendNotification(String.Format("Taxi meter stopped for {0}", character.fullName));
         }
 
         /// <summary>
