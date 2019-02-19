@@ -52,40 +52,36 @@ namespace GTA_RP.Events
         /// </summary>
         private void InitEvents()
         {
-            // TODO: change to use the new format with character
-            RegisterEvent("EVENT_REQUEST_ENTER_HOUSE", HouseManager.Instance(), "RequestEnterHouse");
-            RegisterEvent("EVENT_REQUEST_EXIT_HOUSE", HouseManager.Instance(), "RequestExitHouse");
             RegisterEvent("EVENT_REQUEST_CREATE_ACCOUNT", PlayerManager.Instance(), "RequestCreateAccount");
             RegisterEvent("EVENT_REQUEST_SELECT_CHARACTER", PlayerManager.Instance(), "RequestSelectCharacter");
             RegisterEvent("EVENT_REQUEST_CREATE_CHARACTER_MENU", PlayerManager.Instance(), "RequestCreateCharacterMenu");
             RegisterEvent("EVENT_REQUEST_CREATE_CHARACTER", PlayerManager.Instance(), "RequestCreateCharacter");
             RegisterEvent("EVENT_REQUEST_OWNED_HOUSES", HouseManager.Instance(), "SendListOfOwnedHousesToClient");
-            RegisterEvent("EVENT_SET_PLAYER_USING_PHONE", PlayerManager.Instance(), "SetPlayerUsingPhone");
-            RegisterEvent("EVENT_SET_PLAYER_NOT_USING_PHONE", PlayerManager.Instance(), "SetPlayerPhoneOut");
-            RegisterEvent("EVENT_SEND_TEXT_MESSAGE", PlayerManager.Instance(), "TrySendTextMessage");
-            RegisterEvent("EVENT_ADD_PHONE_CONTACT", PlayerManager.Instance(), "TryAddNewContact");
-            RegisterEvent("EVENT_REMOVE_PHONE_CONTACT", PlayerManager.Instance(), "TryDeleteContact");
-            RegisterEvent("EVENT_REMOVE_TEXT_MESSAGE", PlayerManager.Instance(), "TryDeleteTextMessage");
-            RegisterEvent("EVENT_START_PHONE_CALL", PlayerManager.Instance(), "TryStartPhoneCall");
-            RegisterEvent("EVENT_ACCEPT_PHONE_CALL", PlayerManager.Instance(), "TryAcceptPhoneCall");
-            RegisterEvent("EVENT_END_PHONE_CALL", PlayerManager.Instance(), "TryHangupPhoneCall");
-            RegisterEvent("EVENT_EXIT_VEHICLE_SHOP", VehicleManager.Instance(), "TryExitVehicleShop");
-            RegisterEvent("EVENT_BUY_VEHICLE", VehicleManager.Instance(), "TryPurchaseVehicle");
-            RegisterEvent("EVENT_TRY_SPAWN_VEHICLE", VehicleManager.Instance(), "SpawnVehicleForCharacter");
-            RegisterEvent("EVENT_TRY_PARK_VEHICLE", VehicleManager.Instance(), "ParkVehicle");
-            RegisterEvent("EVENT_TRY_LOCK_VEHICLE", VehicleManager.Instance(), "LockVehicleWithId");
-            RegisterEvent("EVENT_TRY_BUY_PARKING_SPOT", VehicleManager.Instance(), "TryPurchasePark");
-            RegisterEvent("EVENT_TRY_SET_SPAWN_LOCATION", PlayerManager.Instance(), "SetCharacterSpawnHouse");
 
-            // There events are in the new format and pass the character directly, if the user hasn't chosen a character
-            // then the event is not called.
+            RegisterEvent("EVENT_REQUEST_ENTER_HOUSE", HouseManager.Instance(), "RequestEnterHouse", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_REQUEST_EXIT_HOUSE", HouseManager.Instance(), "RequestExitHouse", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_SET_PLAYER_USING_PHONE", PlayerManager.Instance(), "SetPlayerUsingPhone", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_SET_PLAYER_NOT_USING_PHONE", PlayerManager.Instance(), "SetPlayerPhoneOut", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_SEND_TEXT_MESSAGE", PlayerManager.Instance(), "TrySendTextMessage", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_ADD_PHONE_CONTACT", PlayerManager.Instance(), "TryAddNewContact", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_REMOVE_PHONE_CONTACT", PlayerManager.Instance(), "TryDeleteContact", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_REMOVE_TEXT_MESSAGE", PlayerManager.Instance(), "TryDeleteTextMessage", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_START_PHONE_CALL", PlayerManager.Instance(), "TryStartPhoneCall", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_ACCEPT_PHONE_CALL", PlayerManager.Instance(), "TryAcceptPhoneCall", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_END_PHONE_CALL", PlayerManager.Instance(), "TryHangupPhoneCall", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_EXIT_VEHICLE_SHOP", VehicleManager.Instance(), "TryExitVehicleShop", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_BUY_VEHICLE", VehicleManager.Instance(), "TryPurchaseVehicle", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_TRY_SPAWN_VEHICLE", VehicleManager.Instance(), "SpawnVehicleForCharacter", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_TRY_PARK_VEHICLE", VehicleManager.Instance(), "ParkVehicle", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_TRY_LOCK_VEHICLE", VehicleManager.Instance(), "LockVehicleWithId", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_TRY_BUY_PARKING_SPOT", VehicleManager.Instance(), "TryPurchasePark", Option.OPTION_USES_CHARACTER);
+            RegisterEvent("EVENT_TRY_SET_SPAWN_LOCATION", PlayerManager.Instance(), "SetCharacterSpawnHouse", Option.OPTION_USES_CHARACTER);
             RegisterEvent("EVENT_ACCEPT_JOB", JobManager.Instance(), "TakeJobForClient", Option.OPTION_USES_CHARACTER);
             RegisterEvent("EVENT_TRY_BUY_PROPERTY", HouseManager.Instance(), "TryBuyMarketHouseForCharacter", Option.OPTION_USES_CHARACTER);
             RegisterEvent("EVENT_TRY_USE_ITEM", ItemManager.Instance(), "TryUseItemForCharacter", Option.OPTION_USES_CHARACTER);
             RegisterEvent("EVENT_TRY_BUY_ITEM", ItemManager.Instance(), "TryBuyItemForCharacter", Option.OPTION_USES_CHARACTER);
             RegisterEvent("EVENT_TRY_SELL_ITEM", ItemManager.Instance(), "TrySellItemForCharacter", Option.OPTION_USES_CHARACTER);
 
-            /// Faction events
             RegisterEvent("EVENT_ARREST_CHARACTER", FactionManager.Instance().LawEnforcement(), "ArrestCharacter", Option.OPTION_USES_CHARACTER);
         }
 

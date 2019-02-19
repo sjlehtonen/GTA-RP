@@ -503,16 +503,13 @@ namespace GTA_RP.Vehicles
         /// <param name="model">Vehicle model</param>
         /// <param name="color1">Vehicle color 1</param>
         /// <param name="color2">Vehicle color 2</param>
-        public void TryPurchaseVehicle(Client client, int id, string model, int color1, int color2)
+        public void TryPurchaseVehicle(Character character, int id, string model, int color1, int color2)
         {
-            PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
+            VehicleShop shop = GetVehicleShopWithId(id);
+            if (shop != null)
             {
-                VehicleShop shop = GetVehicleShopWithId(id);
-                if (shop != null)
-                {
-                    shop.PurchaseVehicle(character, model, color1, color2);
-                }
-            });
+                shop.PurchaseVehicle(character, model, color1, color2);
+            }
             
         }
 
@@ -556,9 +553,8 @@ namespace GTA_RP.Vehicles
         /// Attempts to purchase a parking spot for a vehicle
         /// </summary>
         /// <param name="client">Client</param>
-        public void TryPurchasePark(Client client, int vehicleId)
+        public void TryPurchasePark(Character character, int vehicleId)
         {
-            Character character = PlayerManager.Instance().GetActiveCharacterForClient(client);
             RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
             if (vehicle != null)
             {
@@ -592,23 +588,20 @@ namespace GTA_RP.Vehicles
         /// </summary>
         /// <param name="client">Character</param>
         /// <param name="vehicleId">Vehicle id</param>
-        public void SpawnVehicleForCharacter(Client client, int vehicleId)
+        public void SpawnVehicleForCharacter(Character character, int vehicleId)
         {
-            PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
+            RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
+            if (vehicle != null && character.ID == vehicle.ownerId)
             {
-                RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
-                if (vehicle != null && character.ID == vehicle.ownerId)
+                if (!vehicle.spawned)
                 {
-                    if (!vehicle.spawned)
-                    {
-                        vehicle.Spawn();
-                    }
-                    else
-                    {
-                        character.SendNotification("This vehicle is already active!");
-                    }
+                    vehicle.Spawn();
                 }
-            });
+                else
+                {
+                    character.SendNotification("This vehicle is already active!");
+                }
+            }
 
         }
 
@@ -617,57 +610,51 @@ namespace GTA_RP.Vehicles
         /// </summary>
         /// <param name="client">Client</param>
         /// <param name="vehicleId">Vehicle id</param>
-        public void ParkVehicle(Client client, int vehicleId)
+        public void ParkVehicle(Character character, int vehicleId)
         {
-            PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
+            RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
+            if (vehicle != null && character.ID == vehicle.ownerId && vehicle.spawned)
             {
-                RPVehicle vehicle = VehicleManager.Instance().GetVehicleWithId(vehicleId);
-                if (vehicle != null && character.ID == vehicle.ownerId && vehicle.spawned)
+                if (vehicle.handle == API.shared.getPlayerVehicle(character.client))
                 {
-                    if (vehicle.handle == API.shared.getPlayerVehicle(client))
+                    if (vehicle.position.DistanceTo(vehicle.parkPosition) <= parkDistance)
                     {
-                        if (vehicle.position.DistanceTo(vehicle.parkPosition) <= parkDistance)
-                        {
-                            vehicle.Park();
-                        }
-                        else
-                        {
-                            API.shared.sendNotificationToPlayer(client, "You have to close to the parking spot in order to park the vehicle!");
-                        }
+                        vehicle.Park();
                     }
                     else
                     {
-                        API.shared.sendNotificationToPlayer(client, "You need to be in the vehicle you want to park!");
+                        character.SendNotification("You have to close to the parking spot in order to park the vehicle!");
                     }
                 }
-            });
+                else
+                {
+                    character.SendNotification("You have to close to the parking spot in order to park the vehicle!");
+                }
+            }
         }
 
-        public void LockVehicleWithId(Client client, int id)
+        public void LockVehicleWithId(Character character, int id)
         {
             RPVehicle vehicle = GetVehicleWithId(id);
 
             if (vehicle != null && vehicle.spawned)
             {
-                PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
+                if (vehicle.ownerId == character.ID)
                 {
-                    if (vehicle.ownerId == character.ID)
+                    if (vehicle.position.DistanceTo(character.position) < doorLockDistance)
                     {
-                        if (vehicle.position.DistanceTo(character.position) < doorLockDistance)
-                        {
-                            vehicle.ToggleDoorLock();
-                            this.SendVehicleLockedMessage(client, vehicle.locked);
-                        }
-                        else
-                        {
-                            character.SendNotification("You need to be closer to the vehicle");
-                        }
+                        vehicle.ToggleDoorLock();
+                        this.SendVehicleLockedMessage(character.client, vehicle.locked);
                     }
-                });
+                    else
+                    {
+                        character.SendNotification("You need to be closer to the vehicle");
+                    }
+                }
             }
             else
             {
-                API.shared.sendNotificationToPlayer(client, "Vehicle needs to be active!");
+                character.SendNotification("Vehicle needs to be active!");
             }
         }
 
@@ -713,16 +700,13 @@ namespace GTA_RP.Vehicles
         /// </summary>
         /// <param name="client">Client</param>
         /// <param name="id">Shop id</param>
-        public void TryExitVehicleShop(Client client, int id)
+        public void TryExitVehicleShop(Character character, int id)
         {
-            PlayerManager.runMethodIfUsingCharacter(client, (Character character) =>
+            VehicleShop shop = GetVehicleShopWithId(id);
+            if (shop != null)
             {
-                VehicleShop shop = GetVehicleShopWithId(id);
-                if (shop != null)
-                {
-                    shop.ExitShop(character);
-                }
-            });
+                shop.ExitShop(character);
+            }
         }
 
         /// <summary>

@@ -492,9 +492,8 @@ namespace GTA_RP
         /// </summary>
         /// <param name="player">Sender of the request</param>
         /// <param name="houseId">Id of the place</param>
-        public void RequestEnterHouse(Client player, int houseId)
+        public void RequestEnterHouse(Character character, int houseId)
         {
-            Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
             House house = GetHouseForId(houseId);
             Teleport teleport = this.GetInRangeTeleportForHouseTemplate(character, house.templateId);
 
@@ -569,9 +568,8 @@ namespace GTA_RP
         /// <param name="player">Sender of the request</param>
         /// <param name="teleportId">Id of teleport that is used</param>
         /// <param name="destinationId">Id of destination where to exit</param>
-        public void RequestExitHouse(Client player, int teleportId, int destinationId)
+        public void RequestExitHouse(Character character, int teleportId, int destinationId)
         {
-            Character character = PlayerManager.Instance().GetActiveCharacterForClient(player);
             Teleport teleport = this.GetExitTeleportForIdAndInRange(character, teleportId);
             if (teleport != null)
             {

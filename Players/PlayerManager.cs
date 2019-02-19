@@ -635,15 +635,12 @@ namespace GTA_RP
         /// </summary>
         /// <param name="client">Client</param>
         /// <param name="houseId">ID of the owned house</param>
-        public void SetCharacterSpawnHouse(Client client, int houseId)
+        public void SetCharacterSpawnHouse(Character character, int houseId)
         {
-            runMethodIfUsingCharacter(client, (Character character) =>
+            if (HouseManager.Instance().IsCharacterOwnerOrRenterOfHouse(character, houseId))
             {
-                if (HouseManager.Instance().IsCharacterOwnerOrRenterOfHouse(character, houseId))
-                {
-                    UpdateCharacterSpawnPosition(character, houseId);
-                }
-            });
+                UpdateCharacterSpawnPosition(character, houseId);
+            }
         }
 
         /// <summary>
@@ -1066,36 +1063,27 @@ namespace GTA_RP
         /// </summary>
         /// <param name="client">Sender</param>
         /// <param name="number">Number to call to</param>
-        public void TryStartPhoneCall(Client client, String number)
+        public void TryStartPhoneCall(Character caller, String number)
         {
-            runMethodIfUsingCharacter(client, (Character caller) =>
-            {
-                caller.phone.CallPhone(number);
-            });
+            caller.phone.CallPhone(number);
         }
 
         /// <summary>
         /// Attemps to accept a phone call
         /// </summary>
         /// <param name="client">Client who accepts the phone call</param>
-        public void TryAcceptPhoneCall(Client client)
+        public void TryAcceptPhoneCall(Character character)
         {
-            runMethodIfUsingCharacter(client, (Character character) =>
-            {
-                character.phone.PickupCall();
-            });
+            character.phone.PickupCall();
         }
 
         /// <summary>
         /// Attemps to hang up a phone call
         /// </summary>
         /// <param name="client">Client who tries to hang up the call</param>
-        public void TryHangupPhoneCall(Client client)
+        public void TryHangupPhoneCall(Character character)
         {
-            runMethodIfUsingCharacter(client, (Character character) =>
-            {
-                character.phone.HangUpCall();
-            });
+            character.phone.HangUpCall();
         }
 
         /// <summary>
@@ -1103,15 +1091,12 @@ namespace GTA_RP
         /// </summary>
         /// <param name="client">Client</param>
         /// <param name="contactNumber">Contact number which to delete</param>
-        public void TryDeleteContact(Client client, String contactNumber)
+        public void TryDeleteContact(Character character, String contactNumber)
         {
-            runMethodIfUsingCharacter(client, (Character character) =>
+            if (character.phone.HasContactForNumber(contactNumber))
             {
-                if (character.phone.HasContactForNumber(contactNumber))
-                {
-                    character.phone.RemoveContactFromAddressBook(contactNumber);
-                }
-            });
+                character.phone.RemoveContactFromAddressBook(contactNumber);
+            }
         }
 
         /// <summary>
@@ -1119,15 +1104,12 @@ namespace GTA_RP
         /// </summary>
         /// <param name="client">Client</param>
         /// <param name="id">Text message id</param>
-        public void TryDeleteTextMessage(Client client, int id)
+        public void TryDeleteTextMessage(Character character, int id)
         {
-            runMethodIfUsingCharacter(client, (Character character) =>
+            if (character.phone.HasTextMessageWithId(id))
             {
-                if (character.phone.HasTextMessageWithId(id))
-                {
-                    character.phone.RemoveTextMessage(id);
-                }
-            });
+                character.phone.RemoveTextMessage(id);
+            }
         }
 
         /// <summary>
@@ -1136,15 +1118,12 @@ namespace GTA_RP
         /// <param name="client">Client</param>
         /// <param name="contactName">Contact name</param>
         /// <param name="contactNumber">Contact number</param>
-        public void TryAddNewContact(Client client, String contactName, String contactNumber)
+        public void TryAddNewContact(Character character, String contactName, String contactNumber)
         {
-            runMethodIfUsingCharacter(client, (Character character) =>
+            if (ValidateContact(character.client, contactName, contactNumber))
             {
-                if (ValidateContact(client, contactName, contactNumber))
-                {
-                    character.phone.AddNameToAddressBook(contactName, contactNumber);
-                }
-            });
+                character.phone.AddNameToAddressBook(contactName, contactNumber);
+            }
         }
 
         /// <summary>
@@ -1153,17 +1132,13 @@ namespace GTA_RP
         /// <param name="client">Client</param>
         /// <param name="receiverNumber">Number to send message to</param>
         /// <param name="message">Message text</param>
-        public void TrySendTextMessage(Client client, String receiverNumber, String message)
+        public void TrySendTextMessage(Character character, String receiverNumber, String message)
         {
-            runMethodIfUsingCharacter(client, (Character character) =>
+            if (ValidateTextMessage(character.client, receiverNumber, message))
             {
-                // Implement additional checks like number length and message length
-                if (ValidateTextMessage(client, receiverNumber, message))
-                {
-                    character.phone.SendMessage(receiverNumber, message);
-                    character.SendNotification("Message sent!");
-                }
-            });
+                character.phone.SendMessage(receiverNumber, message);
+                character.SendNotification("Message sent!");
+            }
         }
 
         /// <summary>
@@ -1207,12 +1182,9 @@ namespace GTA_RP
         /// Phone out in hand
         /// </summary>
         /// <param name="client">Player</param>
-        public void SetPlayerUsingPhone(Client client)
+        public void SetPlayerUsingPhone(Character character)
         {
-            runMethodIfUsingCharacter(client, (Character character) =>
-            {
-                character.phone.SetPhoneUsing();
-            });
+            character.phone.SetPhoneUsing();
         }
 
         /// <summary>
@@ -1232,12 +1204,9 @@ namespace GTA_RP
         /// Sets phone out for player
         /// </summary>
         /// <param name="client">Player</param>
-        public void SetPlayerPhoneOut(Client client)
+        public void SetPlayerPhoneOut(Character character)
         {
-            runMethodIfUsingCharacter(client, (Character character) =>
-            {
-                character.phone.SetPhoneNotUsing();
-            });
+            character.phone.SetPhoneNotUsing();
         }
 
         /// <summary>
