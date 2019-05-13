@@ -5,10 +5,6 @@ This project is a roleplaying game mode for GTA-MP multiplayer modification for 
 ## NOTE
 The classes are fairly well documented so if you wonder how something is implemented, you should take a look at the code. If you find any bugs, please describe it and open an issue or pull request with your fix.
 
-#### Also note: I am in China for few months so the larger updates will resume at the beginning of February. The game mode has also not been tested with the beta branch of GTA-MP, so I suggest you to use the stable branch meanwhile.
-
-####
-
 ```diff
 -If you get sql errors, make sure you have used the latest gta_rp.sql file
 ```
